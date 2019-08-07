@@ -1,0 +1,406 @@
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%
+	String path = request.getContextPath();
+	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
+			+ path + "/";
+%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title></title>
+<%-- <link rel="stylesheet" type="text/css" href="<%=basePath %>template/css/easyui.css" >     影响到了样式--%>
+<link rel="stylesheet" href="<%=basePath%>template/css/cloud-admin.css" >
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/responsive.css">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/app.css">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/workspace.css">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/color_me.css">
+
+<script src="<%=basePath%>template/js/jquery/jquery-2.0.3.min.js"></script>
+<script src="<%=basePath%>template/js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+<script src="<%=basePath%>template/bootstrap-dist/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="<%=basePath %>template/js/jquery.easyui.min.js"></script>
+<style>
+ .easyui-progressbar{padding:1px;}     
+  /*   .easyui-progressbar-value{  
+        background : yellow;  
+    }   */
+
+
+.col-md-12 {
+	padding: 0px;
+}
+th,.alcenter {
+	text-align: center;
+}
+.span-1 {font-size: 15px;}
+	#table-modal_adduser .form-group, #table-modal .form-group{
+		width: 50%;
+		float: left;
+	}
+	#table-modal_adduser .form-group .control-label, #table-modal .form-group .control-label {
+		padding-top: 7px;
+		padding-right: 0px;
+	}
+	#table-modal_adduser .form-group .col-lg-8, #table-modal .form-group .col-lg-8{
+		padding-left: 0px;
+	}
+</style>
+</head>
+<body>
+	<jsp:include page="common.jsp"></jsp:include>
+	<div class="bg-light lter b-b wrapper-md">
+  		<h1 class="m-n h4">数据列表</h1>
+	</div>
+	<div class="wrapper-md">
+		<div class="col-md-12" style="margin-bottom:27px;">
+				<div class="" style="text-align: left;margin-bottom: 20px;">
+					<a href="<%=basePath %>noCaseData/importevidence_NoCase.php" type="button" class="btn w-xs btn-info" style="width: 135px;" >导入数据</a>
+				</div>
+
+				<div class="panel panel-default">
+					<div class="panel-heading">数据导入记录</div>
+					<div class="panel-body" style="padding: 0 0 15px;">
+						<table id="datatable" class="table table-striped table-hover br04" style="text-align: center;">
+							<thead>
+								<tr>
+									<th class="alcenter c20" style="text-align: left;font-weight:600;font-size:14px;">导入日期</th>
+									<th class="alcenter c20" style="font-weight:600;font-size:14px;text-align: left">操作人</th>
+									<th class="alcenter c20" style="font-weight:600;font-size:14px;text-align: left">上传方式</th>
+									<th class="alcenter c20" style="font-weight:600;font-size:14px;text-align: left">文件大小</th>
+									<th class="alcenter c20" style="font-weight:600;font-size:14px;text-align: left">数据名称</th>
+									<th class="alcenter c20" style="font-weight:600;font-size:14px;text-align: left">数据描述</th>
+									<th class="alcenter c20" style="font-weight:600;font-size:14px;text-align: left">上传数</th>
+									<th class="alcenter c20" style="font-weight:600;font-size:14px;text-align: left">成功数</th>
+									<th class="alcenter c20" style="font-weight:600;font-size:14px;text-align: left">失败数</th>
+									<th class="alcenter c20" style="font-weight:600;font-size:14px;text-align: left">数据来源</th>
+									<!-- <th class="alcenter" style="text-align: left"></th> -->
+									<th class="alcenter c20" style="font-weight:600;font-size:14px;text-align: left">关联案件</th>
+								</tr>
+							</thead>
+							<tbody class="c20" id="tbcont">
+
+							</tbody>
+						</table>
+					<div class="alcenter" style="font-size: 14px">
+						<div id="total_d5" class="pagecount inline" style="height: 29px;">
+							<span id="tot1_d5"></span>
+						</div>
+						<div class="pagebar inline" style="position: absolute; right: 126px; height: 29px;">
+							<ul class="pagination pagination-sm" style="margin: 0;">
+								<li id = "pages1_d5"></li>
+										
+								<li id = "pages_d5"></li>
+					            		
+								<li id = "pages2_d5"></li>
+							</ul>
+						</div>
+						<div style="float: right;margin-right: 11px;">
+								<input class="form-control" type="text" style="width:52px;height:28px;border-radius:2px; display: inline;" id="givePages_noCaseList" name="givePages_noCaseList" onkeydown="onKeyDown(event)"/>
+								<button type="button" class="btn" onclick="showEvidence(1)" style="width:52px;height:28px;line-height: 12px;">跳转</button>
+						</div>
+					</div>
+					</div>
+				</div>
+		</div>
+	</div>
+ <div class="modal right fade" id="myModal"  tabindex="-1" style="width:100%;height: 100%;margin: auto;">
+		<div class="panel panel-default" style="width:50%;height: 80%;margin:3% auto;" >
+			<div class="panel-heading">更改案件</div>
+	 			<div class="panel-body" style="width:100%;height: 100%;">
+	 					<div class="panel-body" style="width:100%">
+							<input id="caseinfo" name="caseinfo" class="form-control" placeholder="搜索案件名称/案件编号" type="text" style="float:left;width:52%;" onkeyup="showcase()"/>
+							<button type='button' class="btn btn-info" style="width: 70px;margin-left: 10px;height: 34px" onclick="showcase()">搜索</button>
+						</div>
+						<!-- <div class="panel-body" style="width:100%" >
+							<span style="float: left;">已选案件：</span> <div id="spans1" style="margin-left: 65px;margin-top: -9px;"></div>
+						</div> -->
+						<div class="panel-body" style="height: 65%;overflow-y: scroll;">		
+								<table id="datatable" class="table table-striped table-hover c20 br04">
+									<tbody id="tbcont2">
+										
+									</tbody>
+								</table>		
+						</div>
+						<button type='button' class="btn btn-info" style="width: 70px;height: 30px;margin-left: 45%;margin-top: 3%" onclick="checkCase();">关联</button>
+				</div>
+    	</div>
+</div>
+<jsp:include page="footer2.jsp"></jsp:include>
+</body>
+</html>
+<script type="text/javascript">
+window.onload = showEvidence(1);
+//获取无案件数据list
+function showEvidence(pageno){
+	var givePages_noCaseList = $("#givePages_noCaseList").val();
+	if(givePages_noCaseList != ""){
+		pageno = parseInt(givePages_noCaseList);
+	}
+	$.ajax({
+		type : "POST",
+		url : "<%=basePath%>noCaseData/showEvidence.php",
+		data : {
+			"pageIndex":pageno,
+
+		},
+		dataType : "json",
+		async: true,
+		success : function(data) {
+			$("#tbcont").empty();
+			
+			var docs=data.pictureList;
+			var sizes=10;
+			var pagesum=data.count;
+			var pagenum = pagesum / sizes;
+			var length=5;  //要显示的分页页数
+
+			if(pagenum%1!=0){
+					pagenum=pagenum+(1-pagenum%1);
+			}
+			$("#pages_d5").empty();
+			//用于删除之前显示的页数，动态添加时id名均设为order
+			for(var i=1;i<=length;i++)
+				  $("#orderA_5").remove();
+			if(pagesum<sizes){
+				var html2 = '<li class="active" id="orderA_5"><a href="#" onclick="showEvidence(1)">1</a></li >';
+				$("#pages_d5").after(html2);
+			}else{
+
+			if(pageno<pagenum){
+				if(pageno+length-1<=pagenum){
+					var html2="";
+					if(pageno-2>0){
+						for(var i =pageno-2;i<=pageno+length-1-2;i++){
+							if(i==pageno)
+								html2 += '<li class="active" id="orderA_5"><a href="#" onclick="showEvidence('+i+')">'+i+'</a></li >';
+								else
+									html2 += '<li id="orderA_5"><a href="#" onclick="showEvidence('+i+')">'+i+'</a></li >';
+					   				   }
+						}
+					else{
+						for(var i =1;i<=length;i++){
+							if(i==pageno)
+								html2 += '<li class="active" id="orderA_5"><a href="#" onclick="showEvidence('+i+')">'+i+'</a></li >';
+								else
+
+									html2 += '<li id="orderA_5"><a href="#" onclick="showEvidence('+i+')">'+i+'</a></li >';
+					   				   }
+					}
+				//alert(html2);
+				$("#pages_d5").after(html2);
+
+				}/* if */
+				else{
+					var html2="";
+					if(pagenum>=length){
+					for(var i =pageno-(length-1-pagenum+pageno);i<=pagenum;i++){
+
+
+						 if(i==pageno)
+							html2 += '<li class="active" id="orderA_5"><a href="#" onclick="showEvidence('+i+')">'+i+'</a></li >';
+						else
+							html2 += '<li id="orderA_5"><a href="#" onclick="showEvidence('+i+')">'+i+'</a></li >';
+
+					   }
+					//alert(html2);
+					$("#pages_d5").after(html2);
+					}
+					else{
+						for(var i =1;i<=pagenum;i++){
+							 if(i==pageno)
+								html2 += '<li class="active" id="orderA_5"><a href="#" onclick="showEvidence('+i+')">'+i+'</a></li >';
+							else
+								html2 += '<li id="orderA_5"><a href="#" onclick="showEvidence('+i+')">'+i+'</a></li >';
+						   }
+						$("#pages_d5").after(html2);
+					}
+				}
+			}
+			else{
+				if(pageno==pagenum){
+					var html2="";
+					for(var i =pageno-length+1>0?pageno-length+1:1;i<=pagenum;i++){
+					 if(i==pageno)
+						html2 += '<li class="active" id="orderA_5"><a href="#" onclick="showEvidence('+i+')">'+i+'</a></li >';
+					else
+						html2 += '<li id="orderA_5"><a href="#" onclick="showEvidence('+i+')">'+i+'</a></li >';
+				   }
+					$("#pages_d5").after(html2);
+				}/* if */
+			}
+		}
+
+			$("#tot1_d5").empty();
+			$("#pages1_d5").empty();
+			$("#pages2_d5").empty();
+			var html3 ='<span >共'+pagesum+'条，当前'+pageno+'/'+pagenum+'页</span>';
+			$("#tot1_d5").append(html3);
+
+
+			var html5 = '<a href="#" onclick="showEvidence('+pageno+'-1<1?1:'+pageno+'-1)"><</a>';
+			$("#pages1_d5").append(html5);
+
+			var html4 = '<a href="#" onclick="showEvidence('+pageno+'+1>'+pagenum+'?'+pagenum+':'+pageno+'+1)">></a>';
+			$("#pages2_d5").append(html4);
+
+			$("#tbcont").empty();
+			
+			
+			var evidenceList = data.evidenceList;
+			  $.each(evidenceList,function(i,item){
+				  var size3="0";
+				  if(item.evSize!=null && item.evSize!="" && item.evSize!="0"){
+					  var size=item.evSize/1024;
+					  var size1=(size+" ").split("\.")[0];
+					  var size2=((size+" ").split("\.")[1]+" M");
+					  var size4=size2.substring(0,2);
+					  var size3=size1+"."+size4;
+				  }
+				 
+				  var uptype="";
+				  var dataTypes= "";
+				  if(item.uptype == 2){
+					  uptype="客户端上传";
+				  }else {
+					  uptype="web上传";
+				  }
+				  if(item.dataTypes == 1){
+					  dataTypes="移动设备";
+				  }else if(item.dataTypes ==2 ){
+					  dataTypes="通信运营";
+				  }
+				  else if(item.dataTypes ==3 ){
+					  dataTypes="社交网站";
+				  }
+				  else if(item.dataTypes ==4 ){
+					  dataTypes="音频视频";
+				  }
+				  else if(item.dataTypes ==5 ){
+					  dataTypes="采集数据";
+				  }
+				  else if(item.dataTypes ==6 ){
+					  dataTypes="口供资料";
+				  }
+				  else if(item.dataTypes ==-1 ){
+					  dataTypes="未选择数据来源";
+				  }else{
+					  dataTypes="其他来源";
+				  }
+
+				  var getStatus;
+                  if (item.errorNum > 0) {
+                      getStatus = '<td style="text-align: left">'+'无法关联'+'</td>'
+                  } else {
+                      getStatus = '<td class="c24" style="text-align: left;">'+
+                      '<a class="c24" data-target="#myModal" data-toggle="modal" class="btn2" style="margin-right: 10px; margin-top: 1px; "onclick="addCase('+item.id+');">关联案件</a>'+
+                      '</td>'
+				  }
+					
+				var html =   '<tr>'+
+								'<td style="display: none;" id="evid">'+item.id+'</td>'+
+								'<td style="text-align: left">'+item.addTime+'</td>'+
+								'<td style="text-align: left">'+item.evAdmin+'</td>'+
+								'<td style="text-align: left">'+uptype+'</td>'+
+								'<td style="text-align: left">'+size3+' M</td>'+
+								'<td style="text-align: left">'+item.evName+'</td>'+
+								'<td style="text-align: left">'+item.comment+'</td>'+
+								'<td style="text-align: left">'+item.uploadNum+'</td>'+
+								'<td style="text-align: left">'+item.successNum+'</td>'+
+								'<td style="text-align: left">'+item.errorNum +'</td>'+
+								'<td style="text-align: left">'+dataTypes+'</td>'+
+                    			getStatus+
+							'</tr>';
+
+			$("#tbcont").append(html);	
+			});  
+			$("#givePages_noCaseList").val("");
+		}
+	});
+}
+
+//获取数据id
+var evID="";
+function addCase(evIDstr){
+	evID=evIDstr;
+} 
+
+//案件list
+ window.onload = showcase();
+function showcase(){
+	var casenumorname = document.getElementById("caseinfo").value;
+	//alert(casenumorname);
+	$.ajax({
+		type : "POST",
+		url : "<%=basePath%>admin/getCaseOfEmail.php",
+		data : {
+			"casenumorname":casenumorname
+		},
+		dataType : "json",
+		async: true,
+		success : function(data) {
+			$("#tbcont2").empty();
+			var htmlhead='<tr>'+
+				'<td class="td_left"></td>'+
+				'<td class="td_left">案件编号</td>'+
+				'<td class="td_right">案件名称</td>'+
+			'</tr>';
+			$("#tbcont2").append(htmlhead);	
+			$.each(data,function(i,item){
+				var htmlhead2='<tr data-toggle="modal">';
+				var html = '<tr>'+
+					'<td class="td_left"><input id="caselist'+i+'" type="checkbox" name="ids" value="'+item.id+'" onclick="showChoose(this.id);" />'+
+						'<td class="td_left">'+item.caseNum+'</td>'+
+						'<td class="td_right" id="">'+item.caseName+'</td>'+
+					'</tr>';
+				$("#tbcont2").append(html);					
+			});
+		},
+		error: function(XMLHttpRequest, textStatus, errorThrown) {
+		}
+	});
+}
+
+//选择案件后提交
+
+function checkCase(obj){
+    var CaseInfo = document.getElementsByName("ids");
+    var caseidStr ="";
+    for(i=0;i<CaseInfo.length;i++){
+        if(CaseInfo[i].checked){
+            if(caseidStr==""){
+            	caseidStr=CaseInfo[i].value;
+            }else{
+            	caseidStr=caseidStr+","+CaseInfo[i].value;
+            }
+        }
+    }
+    $.ajax({
+		type : "POST",
+		url : "<%=basePath%>noCaseData/addCase.php",
+		data : {
+			"caseID":caseidStr,
+			"evID":evID
+		},
+		dataType : "json",
+		async: true,
+		success : function(data) {
+			window.location.href="<%=basePath%>noCaseData/addevidence_NoCase.php"
+		},
+		error: function(XMLHttpRequest, textStatus, errorThrown) {
+			window.location.href="<%=basePath%>noCaseData/addevidence_NoCase.php"
+		}
+	});
+}
+//回车搜索事件
+function onKeyDown(event){
+   var e = event || window.event || arguments.callee.caller.arguments[0];
+   if(e && e.keyCode==13){ // enter 键
+	   showEvidence(1);
+   }
+}
+</script>

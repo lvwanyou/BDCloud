@@ -1,0 +1,919 @@
+package com.xl.cloud.util;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHitField;
+import org.elasticsearch.search.highlight.HighlightField;
+import org.junit.Test;
+
+import com.xl.cloud.bean.BankDetail;
+import com.xl.cloud.bean.BillDetail;
+import com.xl.cloud.bean.ContainerDetail;
+import com.xl.cloud.bean.CreditDetail;
+import com.xl.cloud.bean.EmlDetail;
+import com.xl.cloud.bean.FixedDetail;
+import com.xl.cloud.bean.IdentityDetail;
+import com.xl.cloud.bean.PassportDetail;
+import com.xl.cloud.bean.PaymentDetail;
+import com.xl.cloud.bean.PlateDetail;
+import com.xl.cloud.bean.PriceDetail;
+import com.xl.cloud.bean.QqDetail;
+import com.xl.cloud.bean.TeleDetail;
+import com.xl.cloud.bean.TransferDetail;
+import com.xl.cloud.bean.TransportDetail;
+import com.xl.cloud.bean.TwitterDetail;
+import com.xl.cloud.bean.WechatDetail;
+import com.xl.cloud.common.Global;
+import com.xl.cloud.dao.SqlDao;
+
+/**
+ * 数据挖掘功能,在一个案件建立索引后，将数据信息中银行卡号，身份证号等
+ * 
+ * @author lcl
+ *
+ */
+public class SearchAllUtil {
+	public static Map<String, Object> searchAll(String regexpQuery, String caseId) {
+
+		List<String> list = new ArrayList<String>();
+		Map<String, Object> map = null;
+		try {
+			
+			// 精确搜索
+			BoolQueryBuilder mustQuery = QueryBuilders.boolQuery();
+			mustQuery.must(QueryBuilders.matchAllQuery()); // 添加第1条must的条件 此处为匹配所有文档
+
+			String quickflag = "";
+			if ("手机号".equals(regexpQuery)) {
+				quickflag = Global.regPhone;
+			} else if ("固定电话".equals(regexpQuery)) {
+				quickflag = Global.regTel;
+			} else if ("身份证号".equals(regexpQuery)) {
+				quickflag = Global.regSFZ;
+			} else if ("邮箱号".equals(regexpQuery)) {
+				quickflag = Global.regEmail;
+			} else if ("银行卡号".equals(regexpQuery)) {
+				quickflag = Global.regCard;
+			} else if ("车牌号".equals(regexpQuery)) {
+				quickflag = Global.regLicense;
+			} else if ("运输车号".equals(regexpQuery)) {
+				quickflag = Global.regModel;
+			} else if ("集装箱号".equals(regexpQuery)) {
+				quickflag = Global.regContainer;
+			} else if ("电汇".equals(regexpQuery)) {
+				quickflag = Global.regTT;
+			} else if ("信用证".equals(regexpQuery)) {
+				quickflag = Global.regLC;
+			} else if ("护照".equals(regexpQuery)) {
+				quickflag = Global.passport;
+			}else if ("微信".equals(regexpQuery)) {
+				quickflag = Global.weChat;
+			} else if ("QQ".equals(regexpQuery)) {
+				quickflag = Global.QQnumber;
+			} else if ("推特号".equals(regexpQuery)) {
+				quickflag = Global.twitter;
+			} else if ("支付宝".equals(regexpQuery)) {
+				quickflag = Global.regUP;
+			} else if ("价格".equals(regexpQuery)) {
+				quickflag = Global.regPrice;
+			} else if ("发票".equals(regexpQuery)) {
+				quickflag = Global.regStamp;
+			}
+
+			if (!"".equals(quickflag)) {
+				QueryBuilder qb = QueryBuilders.regexpQuery("content", quickflag);
+				mustQuery.should(qb);
+			}
+
+			if (!"".equals(caseId)) {
+				QueryBuilder qb = QueryBuilders.matchPhraseQuery("caseID", caseId);
+				mustQuery.should(qb);
+			}
+			// "doc","docType",
+			SearchRequestBuilder searchRequestBuilder = EsClient.getClient().prepareSearch("es","doc")
+					.setTypes("email","docType").setQuery(mustQuery).addHighlightedField("*")
+					/* 星号表示在所有字段都高亮 */.setHighlighterRequireFieldMatch(false)// 配置高亮显示搜索结果
+					.setHighlighterPreTags("<font color='red' >").setHighlighterPostTags("</font>");// 配置高亮显示搜索结果
+
+			// 执行搜索
+			SearchResponse searchResponse = searchRequestBuilder.execute().actionGet();
+			int totalHits = (int) searchResponse.getHits().getTotalHits();
+			SearchHit[] hits = searchResponse.getHits().getHits();
+			//String fileName = "";
+			for (SearchHit searchHit : hits) {
+				Map<String, Object> source = searchHit.getSource();
+				String downloadUrl = (String) source.get("file_download_url");
+				/*if ("".equals(fileName)) {
+					fileName += downloadUrl; //.split("/")[8]; 截取文件名
+				} else {
+					fileName += "↑↑" + downloadUrl;
+				}*/
+				Map<String, HighlightField> highlightFields = searchHit.getHighlightFields();
+				HighlightField highlightcontent = highlightFields.get("content");
+				if(highlightcontent!=null){
+					if ((highlightcontent.toString()).indexOf("font") != -1) {
+						String gaoliang = highlightcontent.toString();
+						String gaoliang1 = gaoliang.split("font")[1];
+						String gaoliang2 = gaoliang1.substring(14, gaoliang1.length() - 2);
+						if(!"Email".equals(gaoliang2)&&!"email".equals(gaoliang2)){
+							list.add(gaoliang2+"↓↓"+downloadUrl);
+						}
+					}
+				}
+			}
+		    map = new HashMap<>();
+			map.put("list", list);
+			//map.put("fileName", fileName);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return map;
+	}
+
+	/**
+	 * 
+	 * @param regexpQuery
+	 * @param caseId
+	 *            根据案件ID 查询出相应的电话号
+	 * 
+	 */
+	public static void teleToDB(String regexpQuery, String caseId,SqlDao dao) {
+		Map<String, Object> searchAll = searchAll(regexpQuery, caseId);
+		if(searchAll==null){
+			return;
+		}
+		//String fileName = (String) searchAll.get("fileName");
+		List<String> listStr = (List<String>) searchAll.get("list");
+		String fileName="";
+		TeleDetail teleDetail = null;
+		for (String teleNum : listStr) {
+			System.out.println("电话数据)))))))))))))))))))))))))))))))))))))"+teleNum);
+			Pattern pattern = Pattern.compile(Global.regPhone);
+			// 创建匹配给定输入与此模式的匹配器。Global.regPhone
+			Matcher matcher = pattern.matcher(teleNum.split("↓↓")[0]);
+			// 查找字符串中是否有符合的子字符串
+			while (matcher.find()) {
+			// 查找到符合的即SET
+			teleDetail = new TeleDetail();
+			teleDetail.setTeleNum(teleNum.split("↓↓")[0]);
+			List<TeleDetail> listfromMysql = dao.getListfromMysql(teleDetail);
+			fileName = teleNum.split("↓↓")[1];
+			System.out.println("电话数据)))))))))))))))))))))))))))))))))))))"+fileName);
+			if (listfromMysql.size() > 0) {
+				TeleDetail teleDetail2 = listfromMysql.get(0);
+				teleDetail2.setCount(teleDetail2.getCount() + 1);
+				teleDetail2.setEvid(teleDetail2.getEvid()+"↑↑"+fileName);
+				dao.updateToMysql(teleDetail2);
+			} else {
+				teleDetail.setBelongCity("北京");
+				teleDetail.setCaseId(caseId);
+				teleDetail.setBelongProvince("北京");
+				teleDetail.setTeleType("联通");
+				teleDetail.setCount(1);
+				teleDetail.setEvid(fileName);
+				dao.setBeanToMysql(teleDetail);
+			  }
+			}
+	    }
+
+	}
+
+	/**
+	 * 
+	 * @param regexpQuery
+	 * @param caseId
+	 *            根据案件ID 查询出相应的身份证号
+	 * 
+	 */
+	public static void identityToDB(String regexpQuery, String caseId,SqlDao dao) {
+		Map<String, Object> searchAll = searchAll(regexpQuery, caseId);
+		if(searchAll==null){
+			return;
+		}
+		//String fileName = (String) searchAll.get("fileName");
+		List<String> listStr = (List<String>) searchAll.get("list");
+		String fileName="";
+		IdentityDetail identityDetail = null;
+		for (String idenNum : listStr) {
+			Pattern pattern = Pattern.compile(Global.regSFZ);
+			// 创建匹配给定输入与此模式的匹配器。Global.regPhone
+			Matcher matcher = pattern.matcher(idenNum.split("↓↓")[0]);
+			// 查找字符串中是否有符合的子字符串
+			while (matcher.find()) {
+			// 查找到符合的即SET
+			identityDetail = new IdentityDetail();
+			identityDetail.setIdentityNum(idenNum.split("↓↓")[0]);
+			List<IdentityDetail> listfromMysql = dao.getListfromMysql(identityDetail);
+			fileName = idenNum.split("↓↓")[1];
+			if (listfromMysql.size() > 0) {
+				IdentityDetail identityDetail2 = listfromMysql.get(0);
+				identityDetail2.setCount(identityDetail2.getCount() + 1);
+				identityDetail2.setEvid(identityDetail2.getEvid()+"↑↑"+fileName);
+				dao.updateToMysql(identityDetail2);
+			} else {
+				identityDetail.setBirthdate("1990-08-17");
+				identityDetail.setCaseId(caseId);
+				identityDetail.setGender("男");
+				identityDetail.setBelongarea("北京");
+				identityDetail.setCount(1);
+				identityDetail.setEvid(fileName);
+				dao.setBeanToMysql(identityDetail);
+			}
+		 }
+		}
+
+	}
+
+	/**
+	 * 
+	 * @param regexpQuery
+	 * @param caseId
+	 *            根据案件ID 查询出相应的车牌号
+	 * 
+	 */
+	public static void plateToDB(String regexpQuery, String caseId,SqlDao dao) {
+		Map<String, Object> searchAll = searchAll(regexpQuery, caseId);
+		if(searchAll==null){
+			return;
+		}
+		//String fileName = (String) searchAll.get("fileName");
+		List<String> listStr = (List<String>) searchAll.get("list");
+		String fileName="";
+		PlateDetail plateDetail = null;
+		for (String platenum : listStr) {
+			Pattern pattern = Pattern.compile(Global.regLicense);
+			// 创建匹配给定输入与此模式的匹配器。Global.regPhone
+			Matcher matcher = pattern.matcher(platenum.split("↓↓")[0]);
+			// 查找字符串中是否有符合的子字符串
+			while (matcher.find()) {
+			// 查找到符合的即SET
+			plateDetail = new PlateDetail();
+			plateDetail.setPlatenum(platenum.split("↓↓")[0]);
+			List<PlateDetail> listfromMysql = dao.getListfromMysql(plateDetail);
+			fileName = platenum.split("↓↓")[1];
+			if (listfromMysql.size() > 0) {
+				PlateDetail plateDetail2 = listfromMysql.get(0);
+				plateDetail2.setCount(plateDetail2.getCount() + 1);
+				plateDetail2.setEvid(plateDetail2.getEvid()+"↑↑"+fileName);
+				dao.updateToMysql(plateDetail2);
+			} else {
+				plateDetail.setPlateCity("湖南");
+				plateDetail.setCaseId(caseId);
+				plateDetail.setPlateType("轿车");
+				plateDetail.setCount(1);
+				plateDetail.setEvid(fileName);
+				dao.setBeanToMysql(plateDetail);
+			}
+		}
+		}
+	}
+
+	/**
+	 * 
+	 * @param regexpQuery
+	 * @param caseId
+	 *            根据案件ID 查询出相应的电汇号信息
+	 * 
+	 */
+	public static void transferToDB(String regexpQuery, String caseId,SqlDao dao) {
+		Map<String, Object> searchAll = searchAll(regexpQuery, caseId);
+		if(searchAll==null){
+			return;
+		}
+		//String fileName = (String) searchAll.get("fileName");
+		List<String> listStr = (List<String>) searchAll.get("list");
+		String fileName = "";
+		TransferDetail transferDetail = null;
+		for (String transfernum : listStr) {
+			Pattern pattern = Pattern.compile(Global.regTT);
+			// 创建匹配给定输入与此模式的匹配器。Global.regPhone
+			Matcher matcher = pattern.matcher(transfernum.split("↓↓")[0]);
+			// 查找字符串中是否有符合的子字符串
+			while (matcher.find()) {
+			// 查找到符合的即SET
+			transferDetail = new TransferDetail();
+			transferDetail.setTransfernum(transfernum.split("↓↓")[0]);
+			List<TransferDetail> listfromMysql = dao.getListfromMysql(transferDetail);
+			fileName = transfernum.split("↓↓")[1];
+			if (listfromMysql.size() > 0) {
+				TransferDetail transferDetail2 = listfromMysql.get(0);
+				transferDetail2.setCount(transferDetail2.getCount() + 1);
+				transferDetail2.setEvid(transferDetail2.getEvid()+"↑↑"+fileName);
+				dao.updateToMysql(transferDetail2);
+			} else {
+				transferDetail.setCaseId(caseId);
+				transferDetail.setCount(1);
+				transferDetail.setEvid(fileName);
+				dao.setBeanToMysql(transferDetail);
+			}
+		}
+		}
+	}
+
+	/**
+	 * 
+	 * @param regexpQuery
+	 * @param caseId
+	 *            根据案件ID 查询出相应的运输车号信息
+	 * 
+	 */
+	public static void lateToDB(String regexpQuery, String caseId,SqlDao dao) {
+		Map<String, Object> searchAll = searchAll(regexpQuery, caseId);
+		if(searchAll==null){
+			return;
+		}
+		//String fileName = (String) searchAll.get("fileName");
+		List<String> listStr = (List<String>) searchAll.get("list");
+		String fileName = "";
+		TransportDetail transportDetail = null;
+		for (String transportnum : listStr) {
+			Pattern pattern = Pattern.compile(Global.regModel);
+			// 创建匹配给定输入与此模式的匹配器。Global.regPhone
+			Matcher matcher = pattern.matcher(transportnum.split("↓↓")[0]);
+			// 查找字符串中是否有符合的子字符串
+			while (matcher.find()) {
+			// 查找到符合的即SET
+			transportDetail = new TransportDetail();
+			transportDetail.setTransportnum(transportnum.split("↓↓")[0]);
+			List<TransportDetail> listfromMysql = dao.getListfromMysql(transportDetail);
+			fileName = transportnum.split("↓↓")[1];
+			if (listfromMysql.size() > 0) {
+				TransportDetail transportDetail2 = listfromMysql.get(0);
+				transportDetail2.setCount(transportDetail2.getCount() + 1);
+				transportDetail2.setEvid(transportDetail2.getEvid()+"↑↑"+fileName);
+				dao.updateToMysql(transportDetail2);
+			} else {
+				transportDetail.setCaseId(caseId);
+				transportDetail.setCount(1);
+				transportDetail.setEvid(fileName);
+				dao.setBeanToMysql(transportDetail);
+			}
+		}
+		}
+	}
+
+	/**
+	 * 
+	 * @param regexpQuery
+	 * @param caseId
+	 *            根据案件ID 查询出相应的护照号信息
+	 * 
+	 */
+	public static void passportToDB(String regexpQuery, String caseId,SqlDao dao) {
+		Map<String, Object> searchAll = searchAll(regexpQuery, caseId);
+		if(searchAll==null){
+			return;
+		}
+		//String fileName = (String) searchAll.get("fileName");
+		List<String> listStr = (List<String>) searchAll.get("list");
+		String fileName = "";
+		PassportDetail passportDetail = null;
+		for (String passportnum : listStr) {
+			Pattern pattern = Pattern.compile(Global.passport);
+			// 创建匹配给定输入与此模式的匹配器。Global.regPhone
+			Matcher matcher = pattern.matcher(passportnum.split("↓↓")[0]);
+			// 查找字符串中是否有符合的子字符串
+			while (matcher.find()) {
+			// 查找到符合的即SET
+			passportDetail = new PassportDetail();
+			passportDetail.setPassportnum(passportnum.split("↓↓")[0]);
+			List<PassportDetail> listfromMysql = dao.getListfromMysql(passportDetail);
+			fileName = passportnum.split("↓↓")[1];
+			if (listfromMysql.size() > 0) {
+				PassportDetail passportDetail2 = listfromMysql.get(0);
+				passportDetail2.setCount(passportDetail2.getCount() + 1);
+				passportDetail2.setEvid(passportDetail2.getEvid()+"↑↑"+fileName);
+				dao.updateToMysql(passportDetail2);
+			} else {
+				passportDetail.setCaseId(caseId);
+				passportDetail.setCount(1);
+				passportDetail.setEvid(fileName);
+				dao.setBeanToMysql(passportDetail);
+			}
+		}
+		}
+	}
+
+	/**
+	 * 
+	 * @param regexpQuery
+	 * @param caseId
+	 *            根据案件ID 查询出相应的固定电话号码信息
+	 * 
+	 */
+	public static void fixedToDB(String regexpQuery, String caseId,SqlDao dao) {
+		Map<String, Object> searchAll = searchAll(regexpQuery, caseId);
+		if(searchAll==null){
+			return;
+		}
+		//String fileName = (String) searchAll.get("fileName");
+		List<String> listStr = (List<String>) searchAll.get("list");
+		String fileName = "";
+		FixedDetail fixedDetail = new FixedDetail();
+		for (String fixednum : listStr) {
+			Pattern pattern = Pattern.compile(Global.regTel);
+			// 创建匹配给定输入与此模式的匹配器。Global.regPhone
+			Matcher matcher = pattern.matcher(fixednum.split("↓↓")[0]);
+			// 查找字符串中是否有符合的子字符串
+			while (matcher.find()) {
+			// 查找到符合的即SET
+			fixedDetail = new FixedDetail();
+			fixedDetail.setFixednum(fixednum.split("↓↓")[0]);
+			List<FixedDetail> listfromMysql = dao.getListfromMysql(fixedDetail);
+			fileName = fixednum.split("↓↓")[1];
+			if (listfromMysql.size() > 0) {
+				FixedDetail fixedDetail2 = listfromMysql.get(0);
+				fixedDetail2.setCount(fixedDetail2.getCount() + 1);
+				fixedDetail2.setEvid(fixedDetail2.getEvid()+"↑↑"+fileName);
+				dao.updateToMysql(fixedDetail2);
+			} else {
+				fixedDetail.setFixedCity("贵阳");
+				fixedDetail.setFixedProvince("贵州");
+				fixedDetail.setCount(1);
+				fixedDetail.setCaseId(caseId);
+				fixedDetail.setEvid(fileName);
+				dao.setBeanToMysql(fixedDetail);
+			}
+		}
+		}
+	}
+
+	/**
+	 * 
+	 * @param regexpQuery
+	 * @param caseId
+	 *            根据案件ID 查询出相应的邮箱号信息
+	 * 
+	 */
+	public static void emlToDB(String regexpQuery, String caseId, SqlDao dao) {
+		Map<String, Object> searchAll = searchAll(regexpQuery, caseId);
+		if(searchAll==null){
+			return;
+		}
+		//String fileName = (String) searchAll.get("fileName");
+		List<String> listStr = (List<String>) searchAll.get("list");
+		String fileName = "";
+		EmlDetail emlDetail = null;
+		for (String emlnum : listStr) {
+			Pattern pattern = Pattern.compile(Global.regEmail);
+			// 创建匹配给定输入与此模式的匹配器。Global.regPhone
+			Matcher matcher = pattern.matcher(emlnum.split("↓↓")[0]);
+			// 查找字符串中是否有符合的子字符串
+			while (matcher.find()) {
+			// 查找到符合的即SET
+			emlDetail = new EmlDetail();
+			emlDetail.setEmlnum(emlnum.split("↓↓")[0]);
+			List<EmlDetail> listfromMysql = dao.getListfromMysql(emlDetail);
+			fileName = emlnum.split("↓↓")[1];
+			if (listfromMysql.size() > 0) {
+				EmlDetail emlDetail2 = listfromMysql.get(0);
+				emlDetail2.setCount(emlDetail2.getCount() + 1);
+				emlDetail2.setEvid(emlDetail2.getEvid()+"↑↑"+fileName);
+				dao.updateToMysql(emlDetail2);
+			} else {
+				emlDetail.setEmlType("QQ");
+				emlDetail.setCaseId(caseId);
+				emlDetail.setCount(1);
+				emlDetail.setEvid(fileName);
+				dao.setBeanToMysql(emlDetail);
+			}
+		}
+		}
+	}
+
+	/**
+	 * 
+	 * @param regexpQuery
+	 * @param caseId
+	 *            根据案件ID 查询出相应的信用证号信息
+	 * 
+	 */
+	public static void creditToDB(String regexpQuery, String caseId, SqlDao dao) {
+		Map<String, Object> searchAll = searchAll(regexpQuery, caseId);
+		if(searchAll==null){
+			return;
+		}
+		//String fileName = (String) searchAll.get("fileName");
+		List<String> listStr = (List<String>) searchAll.get("list");
+		String fileName = "";
+		CreditDetail creditDetail = null;
+		for (String creditnum : listStr) {
+			Pattern pattern = Pattern.compile(Global.regLC);
+			// 创建匹配给定输入与此模式的匹配器。Global.regPhone
+			Matcher matcher = pattern.matcher(creditnum.split("↓↓")[0]);
+			// 查找字符串中是否有符合的子字符串
+			while (matcher.find()) {
+			// 查找到符合的即SET
+			creditDetail = new CreditDetail();
+			creditDetail.setCreditnum(creditnum.split("↓↓")[0]);
+			List<CreditDetail> listfromMysql = dao.getListfromMysql(creditDetail);
+			fileName = creditnum.split("↓↓")[1];
+			if (listfromMysql.size() > 0) {
+				CreditDetail creditDetail2 = listfromMysql.get(0);
+				creditDetail2.setCount(creditDetail2.getCount() + 1);
+				creditDetail2.setEvid(creditDetail2.getEvid()+"↑↑"+fileName);
+				dao.updateToMysql(creditDetail2);
+			} else {
+				creditDetail.setCaseId(caseId);
+				creditDetail.setCount(1);
+				creditDetail.setEvid(fileName);
+				dao.setBeanToMysql(creditDetail);
+			}
+		}
+		}
+	}
+
+	/**
+	 * 
+	 * @param regexpQuery
+	 * @param caseId
+	 *            根据案件ID 查询出相应的集装箱号信息
+	 * 
+	 */
+	public static void containerToDB(String regexpQuery, String caseId, SqlDao dao) {
+		Map<String, Object> searchAll = searchAll(regexpQuery, caseId);
+		if(searchAll==null){
+			return;
+		}
+		//String fileName = (String) searchAll.get("fileName");
+		List<String> listStr = (List<String>) searchAll.get("list");
+		String fileName = "";
+		ContainerDetail containerDetail = null;
+		for (String containernum : listStr) {
+			Pattern pattern = Pattern.compile(Global.regContainer);
+			// 创建匹配给定输入与此模式的匹配器。Global.regPhone
+			Matcher matcher = pattern.matcher(containernum.split("↓↓")[0]);
+			// 查找字符串中是否有符合的子字符串
+			while (matcher.find()) {
+			// 查找到符合的即SET
+			containerDetail = new ContainerDetail();
+			containerDetail.setContainernum(containernum.split("↓↓")[0]);
+			List<ContainerDetail> listfromMysql = dao.getListfromMysql(containerDetail);
+			fileName = containernum.split("↓↓")[1];
+			if (listfromMysql.size() > 0) {
+				ContainerDetail container2 = listfromMysql.get(0);
+				container2.setCount(container2.getCount() + 1);
+				container2.setEvid(container2.getEvid()+"↑↑"+fileName);
+				dao.updateToMysql(container2);
+			} else {
+				containerDetail.setCaseId(caseId);
+				containerDetail.setCount(1);
+				containerDetail.setEvid(fileName);
+				dao.setBeanToMysql(containerDetail);
+			}
+		}
+		}
+	}
+
+	/**
+	 * 
+	 * @param regexpQuery
+	 * @param caseId
+	 *            根据案件ID 查询出相应的银行卡号信息
+	 * 
+	 */
+	public static void bankToDB(String regexpQuery, String caseId,SqlDao dao) {
+		Map<String, Object> searchAll = searchAll(regexpQuery, caseId);
+		if(searchAll==null){
+			return;
+		}
+		//String fileName = (String) searchAll.get("fileName");
+		List<String> listStr = (List<String>) searchAll.get("list");
+		String fileName = "";
+		BankDetail bankDetail = null;
+		for (String banknum : listStr) {
+			Pattern pattern = Pattern.compile(Global.regCard);
+			// 创建匹配给定输入与此模式的匹配器。Global.regPhone
+			Matcher matcher = pattern.matcher(banknum.split("↓↓")[0]);
+			// 查找字符串中是否有符合的子字符串
+			while (matcher.find()) {
+			// 查找到符合的即SET
+			bankDetail = new BankDetail();
+			bankDetail.setBanknum(banknum.split("↓↓")[0]);
+			List<BankDetail> listfromMysql = dao.getListfromMysql(bankDetail);
+			fileName = banknum.split("↓↓")[1];
+			if (listfromMysql.size() > 0) {
+				BankDetail bankDetail2 = listfromMysql.get(0);
+				bankDetail2.setCount(bankDetail2.getCount() + 1);
+				bankDetail2.setEvid(bankDetail2.getEvid()+"↑↑"+fileName);
+				dao.updateToMysql(bankDetail2);
+			} else {
+				bankDetail.setBankname("民生银行");
+				bankDetail.setBankType("工资卡");
+				bankDetail.setBankCity("上海");
+				bankDetail.setBankaddress("徐汇支行");
+				bankDetail.setCaseId(caseId);
+				bankDetail.setCount(1);
+				bankDetail.setEvid(fileName);
+				dao.setBeanToMysql(bankDetail);
+			}
+		}
+		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param regexpQuery
+	 * @param caseId
+	 *            根据案件ID 查询出相应的QQ号信息
+	 * 
+	 */
+	public static void qqToDB(String regexpQuery, String caseId,SqlDao dao) {
+		Map<String, Object> searchAll = searchAll(regexpQuery, caseId);
+		if(searchAll==null){
+			return;
+		}
+		//String fileName = (String) searchAll.get("fileName");
+		List<String> listStr = (List<String>) searchAll.get("list");
+		String fileName = "";
+		QqDetail qqDetail = null;
+		for (String qqnum : listStr) {
+			Pattern pattern = Pattern.compile(Global.QQnumber);
+			// 创建匹配给定输入与此模式的匹配器。Global.regPhone
+			Matcher matcher = pattern.matcher(qqnum.split("↓↓")[0]);
+			// 查找字符串中是否有符合的子字符串
+			while (matcher.find()) {
+			// 查找到符合的即SET
+			qqDetail = new QqDetail();
+			qqDetail.setQqnum(qqnum.split("↓↓")[0]);
+			List<QqDetail> listfromMysql = dao.getListfromMysql(qqDetail);
+			fileName = qqnum.split("↓↓")[1];
+			if (listfromMysql.size() > 0) {
+				QqDetail qqDetail2 = listfromMysql.get(0);
+				qqDetail2.setCount(qqDetail2.getCount() + 1);
+				qqDetail2.setEvid(qqDetail2.getEvid()+"↑↑"+fileName);
+				dao.updateToMysql(qqDetail2);
+			} else {
+				qqDetail.setCaseId(caseId);
+				qqDetail.setCount(1);
+				qqDetail.setEvid(fileName);
+				dao.setBeanToMysql(qqDetail);
+			}
+		}
+		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param regexpQuery
+	 * @param caseId
+	 *            根据案件ID 查询出相应的微信信息
+	 * 
+	 */
+	public static void wechatToDB(String regexpQuery, String caseId,SqlDao dao) {
+		Map<String, Object> searchAll = searchAll(regexpQuery, caseId);
+		if(searchAll==null){
+			return;
+		}
+		//String fileName = (String) searchAll.get("fileName");
+		List<String> listStr = (List<String>) searchAll.get("list");
+		String fileName = "";
+		WechatDetail wechatDetail = null;
+		for (String wechatnum : listStr) {
+			Pattern pattern = Pattern.compile(Global.weChat);
+			// 创建匹配给定输入与此模式的匹配器。Global.regPhone
+			Matcher matcher = pattern.matcher(wechatnum.split("↓↓")[0]);
+			// 查找字符串中是否有符合的子字符串
+			while (matcher.find()) {
+			// 查找到符合的即SET
+			wechatDetail = new WechatDetail();
+			wechatDetail.setWechatnum(wechatnum.split("↓↓")[0]);
+			List<WechatDetail> listfromMysql = dao.getListfromMysql(wechatDetail);
+			fileName = wechatnum.split("↓↓")[1];
+			if (listfromMysql.size() > 0) {
+				WechatDetail wechatDetail2 = listfromMysql.get(0);
+				wechatDetail2.setCount(wechatDetail2.getCount() + 1);
+				wechatDetail2.setEvid(wechatDetail2.getEvid()+"↑↑"+fileName);
+				dao.updateToMysql(wechatDetail2);
+			} else {
+				wechatDetail.setCaseId(caseId);
+				wechatDetail.setCount(1);
+				wechatDetail.setEvid(fileName);
+				dao.setBeanToMysql(wechatDetail);
+			}
+		}
+		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param regexpQuery
+	 * @param caseId
+	 *            根据案件ID 查询出相应的推特信息
+	 * 
+	 */
+	public static void TwitterDetailToDB(String regexpQuery, String caseId, SqlDao dao) {
+		Map<String, Object> searchAll = searchAll(regexpQuery, caseId);
+		if(searchAll==null){
+			return;
+		}
+		//String fileName = (String) searchAll.get("fileName");
+		List<String> listStr = (List<String>) searchAll.get("list");
+		String fileName = "";
+		TwitterDetail twitterDetail = null;
+		for (String twitternum : listStr) {
+			Pattern pattern = Pattern.compile(Global.twitter);
+			// 创建匹配给定输入与此模式的匹配器。Global.regPhone
+			Matcher matcher = pattern.matcher(twitternum.split("↓↓")[0]);
+			// 查找字符串中是否有符合的子字符串
+			while (matcher.find()) {
+			// 查找到符合的即SET
+			twitterDetail = new TwitterDetail();
+			twitterDetail.setTwitternum(twitternum.split("↓↓")[0]);
+			List<TwitterDetail> listfromMysql = dao.getListfromMysql(twitterDetail);
+			fileName = twitternum.split("↓↓")[1];
+			if (listfromMysql.size() > 0) {
+				TwitterDetail twitterDetail2 = listfromMysql.get(0);
+				twitterDetail2.setCount(twitterDetail2.getCount() + 1);
+				twitterDetail2.setEvid(twitterDetail2.getEvid()+"↑↑"+fileName);
+				dao.updateToMysql(twitterDetail2);
+			} else {
+				twitterDetail.setCaseId(caseId);
+				twitterDetail.setCount(1);
+				twitterDetail.setEvid(fileName);
+				dao.setBeanToMysql(twitterDetail);
+			}
+		}
+		}
+	}
+
+	/**
+	 * 
+	 * @param regexpQuery
+	 * @param caseId
+	 *            根据案件ID 查询出相应的支付宝信息
+	 * 
+	 */
+	public static void PaymentDetailToDB(String regexpQuery, String caseId, SqlDao dao) {
+		Map<String, Object> searchAll = searchAll(regexpQuery, caseId);
+		if(searchAll==null){
+			return;
+		}
+		//String fileName = (String) searchAll.get("fileName");
+		List<String> listStr = (List<String>) searchAll.get("list");
+		String fileName ="";
+		PaymentDetail paymentDetail = null;
+		for (String paymentnum : listStr) {
+			Pattern pattern = Pattern.compile(Global.regUP);
+			// 创建匹配给定输入与此模式的匹配器。Global.regPhone
+			Matcher matcher = pattern.matcher(paymentnum.split("↓↓")[0]);
+			// 查找字符串中是否有符合的子字符串
+			while (matcher.find()) {
+			// 查找到符合的即SET
+			paymentDetail = new PaymentDetail();
+			paymentDetail.setPaymentnum(paymentnum.split("↓↓")[0]);
+			List<PaymentDetail> listfromMysql = dao.getListfromMysql(paymentDetail);
+			fileName = paymentnum.split("↓↓")[1];
+			if (listfromMysql.size() > 0) {
+				PaymentDetail paymentDetail2 = listfromMysql.get(0);
+				paymentDetail2.setCount(paymentDetail2.getCount() + 1);
+				paymentDetail2.setEvid(paymentDetail2.getEvid()+"↑↑"+fileName);
+				dao.updateToMysql(paymentDetail2);
+			} else {
+				paymentDetail.setCaseId(caseId);
+				paymentDetail.setCount(1);
+				paymentDetail.setEvid(fileName);
+				dao.setBeanToMysql(paymentDetail);
+			}
+		}
+		}
+	}
+	
+	
+	
+	/**
+	 * 
+	 * @param regexpQuery
+	 * @param caseId
+	 *            根据案件ID 查询出相应的发票信息
+	 * 
+	 */
+	public static void BillDetailToDB(String regexpQuery, String caseId, SqlDao dao) {
+		Map<String, Object> searchAll = searchAll(regexpQuery, caseId);
+		if(searchAll==null){
+			return;
+		}
+		//String fileName = (String) searchAll.get("fileName");
+		List<String> listStr = (List<String>) searchAll.get("list");
+		String fileName ="";
+		BillDetail billDetail = null;
+		for (String billnum : listStr) {
+			Pattern pattern = Pattern.compile(Global.regStamp);
+			// 创建匹配给定输入与此模式的匹配器。Global.regPhone
+			Matcher matcher = pattern.matcher(billnum.split("↓↓")[0]);
+			// 查找字符串中是否有符合的子字符串
+			while (matcher.find()) {
+			// 查找到符合的即SET
+			billDetail = new BillDetail();
+			billDetail.setBillnum(billnum.split("↓↓")[0]);
+			List<BillDetail> listfromMysql = dao.getListfromMysql(billDetail);
+			fileName = billnum.split("↓↓")[1];
+			if (listfromMysql.size() > 0) {
+				BillDetail billDetail2 = listfromMysql.get(0);
+				billDetail2.setCount(billDetail2.getCount() + 1);
+				billDetail2.setEvid(billDetail2.getEvid()+"↑↑"+fileName);
+				dao.updateToMysql(billDetail2);
+			} else {
+				billDetail.setCaseId(caseId);
+				billDetail.setCount(1);
+				billDetail.setEvid(fileName);
+				dao.setBeanToMysql(billDetail);
+			}
+		}
+		}
+	}
+	
+	/**
+	 * 
+	 * @param regexpQuery
+	 * @param caseId
+	 *            根据案件ID 查询出相应的价格信息
+	 * 
+	 */
+	public static void PriceDetailToDB(String regexpQuery, String caseId, SqlDao dao) {
+		Map<String, Object> searchAll = searchAll(regexpQuery, caseId);
+		if(searchAll==null){
+			return;
+		}
+		//String fileName = (String) searchAll.get("fileName");
+		List<String> listStr = (List<String>) searchAll.get("list");
+		String fileName ="";
+		PriceDetail priceDetail = null;
+		for (String pricenum : listStr) {
+			Pattern pattern = Pattern.compile(Global.regPrice);
+			// 创建匹配给定输入与此模式的匹配器。Global.regPhone
+			Matcher matcher = pattern.matcher(pricenum.split("↓↓")[0]);
+			// 查找字符串中是否有符合的子字符串
+			while (matcher.find()) {
+			// 查找到符合的即SET
+			priceDetail = new PriceDetail();
+			priceDetail.setPricenum(pricenum.split("↓↓")[0]);
+			List<PriceDetail> listfromMysql = dao.getListfromMysql(priceDetail);
+			fileName = pricenum.split("↓↓")[1];
+			if (listfromMysql.size() > 0) {
+				PriceDetail priceDetail2 = listfromMysql.get(0);
+				priceDetail2.setCount(priceDetail2.getCount() + 1);
+				priceDetail2.setEvid(priceDetail2.getEvid()+"↑↑"+fileName);
+				dao.updateToMysql(priceDetail2);
+			} else {
+				priceDetail.setCaseId(caseId);
+				priceDetail.setCount(1);
+				priceDetail.setEvid(fileName);
+				dao.setBeanToMysql(priceDetail);
+			}
+		}
+		}
+	}
+	
+	// 主线程
+	public static void main(String[] args) {
+		String quickflag2="(0?(13|14|15|17|18)[0-9]{9}|0?(13|14|15|17|18)[0-9]{1}-[0-9]{4}-[0-9]{4}|(手机\\w).(13|14|15|17|18)[0-9]{1}-[0-9]{4}-[0-9]{4})";
+		String sa ="2154";
+		Map<String, Object> searchAllUtil = SearchAllUtil.searchAll("QQ", sa);
+		// SearchAllUtil.teleToDB("手机号","1987", sd);
+		for (String key : searchAllUtil.keySet()) {
+		    System.out.println("====="+searchAllUtil.get(key).toString());
+		}
+		
+	}
+	
+	@Test
+	public void test12()
+	{
+        //目标文本
+		//String content="沪A2968学 浙C365W5430CNY 15.34RMB 324 $ 432523￥ 52219970919807x QQ：740556217 护照 P45511245 SKYPE: 集装箱号 awrf4551132 qq 740556217 0.52352512元 ￥2852152 $3.2  $3.2rr  CNY222.255  RMB25.2 发票 0354874155552推特号 a45511245  微信 15787455562  微信 157-8745-5562 qq 7282352334221312313121343232ss 6222021001004480455 微信226000@qq.com sfsdfdsfs@163.com 1231546489710 沪A29685 浙C365W5  310105196312120103 116796349 微信 catcat555 推特 twdlll@126.com E50806300 zhifubao@hotmail.com 021-58651125 I93110282 运输 C62BK 4623665 5500033333 55er432223 66666 防守端发送方34234防守对方打死的人确认阿三的发达省份沙发上的方法";
+		String string2="13304110304↑↑环球慧思产品介绍.pdf";
+		String strings =string2.split("↑↑")[0];
+		String stringss =string2.split("↑↑")[1];
+		System.out.println("电话+=+++"+strings);
+		System.out.println("文件+=+++"+stringss);
+		/*//正则表达式
+		String quickflag="((QQ\\W)|qq\\W).[1-9]\\d{5,9})";
+		String quickflag2="(0?(13|14|15|17|18)[0-9]{9}|0?(13|14|15|17|18)[0-9]{1}-[0-9]{4}-[0-9]{4}|(手机(:|：|: |：| |)).(13|14|15|17|18)[0-9]{1}-[0-9]{4}-[0-9]{4})";
+		String quickflag3="(0?(13|14|15|17|18)[0-9]{9}|0?(13|14|15|17|18)[0-9]{1}-[0-9]{4}-[0-9]{4}|(手机\\w).(13|14|15|17|18)[0-9]{1}-[0-9]{4}-[0-9]{4})";
+		Pattern pattern = Pattern.compile(quickflag);
+		Matcher matcher = pattern.matcher(content);
+		while (matcher.find()) {
+			String temp = matcher.group();
+			System.out.println(temp);
+		}*/
+	}
+}

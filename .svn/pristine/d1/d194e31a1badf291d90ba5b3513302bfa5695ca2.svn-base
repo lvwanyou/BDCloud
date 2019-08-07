@@ -1,0 +1,265 @@
+package com.xl.cloud.action;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.lang.StringUtils;
+import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.common.text.Text;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.QueryStringQueryBuilder;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.highlight.HighlightField;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.xl.cloud.bean.Caseinfo;
+import com.xl.cloud.bean.Coordinatelog;
+import com.xl.cloud.bean.HackCount;
+import com.xl.cloud.bean.HackerDBCount;
+import com.xl.cloud.bean.allesDTO;
+import com.xl.cloud.dao.SqlDao;
+import com.xl.cloud.util.EsClient;
+import com.xl.cloud.util.JsonUtil;
+
+@Controller
+public class HackerSearch {
+
+	private SqlDao sqlDao = new SqlDao();
+	public SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+	// 大搜索结果
+	@RequestMapping(value = "/hackerSearchResults.php")
+	public String hackerSearchResults(HttpServletRequest request, HttpServletResponse response, HttpSession session,
+			Map<String, Object> map) throws IOException, InterruptedException {
+		String big_search_box = request.getParameter("big_search_box");
+		String typess = request.getParameter("typess");
+		System.out.println(typess);
+		System.out.println("big_search_box"+" : "+big_search_box);
+		session.setAttribute("typess", typess);
+		session.setAttribute("big_search_boxx", big_search_box);
+		return "hackerSearchResults";
+	}
+
+	// 查询黑客数据库
+	@RequestMapping(value = "/hackerSearchGHDB.php")
+	public void hackerSearchGHDB(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+		response.setContentType("textml; charset=UTF-8");
+		String big_search_box = request.getParameter("big_search_box");
+		BoolQueryBuilder mustQuery = QueryBuilders.boolQuery();
+		mustQuery.must(QueryBuilders.matchAllQuery()); // 添加第1条must的条件 此处为匹配所有文档
+		// mustQuery.must(QueryBuilders.matchPhraseQuery("subject",
+		// "信用管家消费提醒"));//添加第2条must的条件 title字段必须为【时间简史】
+		// ↑ 放入筛选条件(termQuery为精确搜索，大小写敏感且不支持*) 实验发现matchPhraseQuery可对中文精确匹配term
+
+		// mustQuery.must(QueryBuilders.matchQuery("auther", "霍金")); //
+		// 添加第3条must的条件
+		QueryBuilder queryBuilder = QueryBuilders.queryStringQuery(big_search_box)// .escape(true)//escape
+																					// 转义
+																					// 设为true，避免搜索[]、结尾为!的关键词时异常
+																					// 但无法搜索*
+				.defaultOperator(QueryStringQueryBuilder.Operator.AND);// 不同关键词之间使用and关系
+		mustQuery.must(queryBuilder);// 添加第4条must的条件 关键词全文搜索筛选条件
+		SearchRequestBuilder searchRequestBuilder = EsClient.getClient().prepareSearch("hackerdb").setTypes("hkdb")
+				.setQuery(mustQuery).addHighlightedField("*")/* 星号表示在所有字段都高亮 */.setHighlighterRequireFieldMatch(false)// 配置高亮显示搜索结果
+				.setHighlighterPreTags("<font color='red'>").setHighlighterPostTags("</font>");// 配置高亮显示搜索结果
+		searchRequestBuilder = searchRequestBuilder.addAggregation(AggregationBuilders.terms("agg1(聚类返回时根据此key获取聚类结果)")
+				.size(1000)/* 返回1000条聚类结果 */.field("要在文档中聚类的字段，如果是嵌套的则用点连接父子字段，如【person.company.name】"));
+		int pageIndex = 1;// 页数
+		int pageSize = 8;// 每页
+		String pageno = request.getParameter("pageno");
+		if (!StringUtils.isEmpty(pageno)) {
+			pageIndex = Integer.parseInt(pageno);
+		}
+		SearchResponse searchResponse = searchRequestBuilder.setFrom((pageIndex - 1) * pageSize)// 分页起始位置（跳过开始的n个）
+				.setSize(pageSize)// 本次返回的文档数量
+				.execute().actionGet();// 执行搜索
+		SearchHits hits = searchResponse.getHits();
+		SearchHit[] hitss = hits.hits();
+		System.out.println("************"+hits);
+		List<allesDTO> allesDTOList = new ArrayList<allesDTO>();
+		allesDTO allesDTO = new allesDTO();
+		
+
+		
+		for (SearchHit searchHit : hitss) {
+			Map<String, Object> source = searchHit.getSource();
+			String nick=(String) source.get("nick");
+			String gender=(String) source.get("gender");
+			String email = (String) source.get("email");
+			String qqNum = (String) source.get("qqNum");
+			String qqPasswd = (String) source.get("qqPasswd");
+			String emailPasswd = (String) source.get("emailPasswd");
+			String dataSource = (String) source.get("dataSource");
+			String qunNum=(String) source.get("qunNum");
+			String createDate=(String) source.get("createDate");
+			String title=(String) source.get("title");
+			String qunText=(String) source.get("qunText");
+			
+			Map<String, HighlightField> highlightFields = searchHit.getHighlightFields();
+			HighlightField highlightnick = highlightFields.get("nick");
+			HighlightField highlightgender = highlightFields.get("gender");
+			HighlightField highlightemail = highlightFields.get("email");
+			HighlightField highlightdataSource = highlightFields.get("dataSource");
+			HighlightField highlightqqNum = highlightFields.get("qqNum");
+			HighlightField highlightqqPasswd = highlightFields.get("qqPasswd");
+			HighlightField highlightemailPasswd = highlightFields.get("emailPasswd");
+			HighlightField highlightqunNum = highlightFields.get("qunNum");
+			HighlightField highlightcreateDate = highlightFields.get("createDate");
+			HighlightField highlighttitle = highlightFields.get("title");
+			HighlightField highlightqunText = highlightFields.get("qunText");
+			
+			allesDTO.setNick(nick);
+			allesDTO.setGender(gender);
+			allesDTO.setQunNum(qunNum);
+			allesDTO.setCreateDate(createDate);
+			allesDTO.setTitle(title);
+			allesDTO.setQunText(qunText);
+			
+			if (big_search_box != null) {
+				String s1 = "";
+				for (int i = 0; i < email.length(); i++) {
+					int flag = 0;
+					String char1 = email.charAt(i) + "";
+					for (int j = 0; j < big_search_box.length(); j++) {
+						String char2 = big_search_box.charAt(j) + "";
+						if (char1.equals(char2)) {
+							flag = 1;
+						}
+					}
+					if (flag == 0) {
+						s1 += char1;
+					} else {
+						s1 += "<font color='red' >" + char1 + "</font>";
+					}
+				}
+				allesDTO.setEmail(s1);
+			} else {
+				allesDTO.setEmail(email);
+			}
+			if (highlightqqPasswd != null) {
+				String s1 = "";
+				for (int i = 0; i < qqPasswd.length(); i++) {
+					int flag = 0;
+					String char1 = qqPasswd.charAt(i) + "";
+					for (int j = 0; j < big_search_box.length(); j++) {
+						String char2 = big_search_box.charAt(j) + "";
+						if (char1.equals(char2)) {
+							flag = 1;
+						}
+					}
+					if (flag == 0) {
+						s1 += char1;
+					} else {
+						s1 += "<font color='red' >" + char1 + "</font>";
+					}
+				}
+				allesDTO.setQqPasswd(s1);
+			} else {
+				allesDTO.setQqPasswd(qqPasswd);
+			}
+			if (highlightdataSource != null) {
+				String s1 = "";
+				for (int i = 0; i < dataSource.length(); i++) {
+					int flag = 0;
+					String char1 = dataSource.charAt(i) + "";
+					for (int j = 0; j < big_search_box.length(); j++) {
+						String char2 = big_search_box.charAt(j) + "";
+						if (char1.equals(char2)) {
+							flag = 1;
+						}
+					}
+					if (flag == 0) {
+						s1 += char1;
+					} else {
+						s1 += "<font color='red' >" + char1 + "</font>";
+					}
+				}
+				allesDTO.setDataSource(s1);
+			} else {
+				allesDTO.setDataSource(dataSource);
+			}
+			if (highlightqqNum != null) {
+				String s1 = "";
+				for (int i = 0; i < qqNum.length(); i++) {
+					int flag = 0;
+					String char1 = qqNum.charAt(i) + "";
+					for (int j = 0; j < big_search_box.length(); j++) {
+						String char2 = big_search_box.charAt(j) + "";
+						if (char1.equals(char2)) {
+							flag = 1;
+						}
+					}
+					if (flag == 0) {
+						s1 += char1;
+					} else {
+						s1 += "<font color='red' >" + char1 + "</font>";
+					}
+				}
+				allesDTO.setQqNum(s1);
+			} else {
+				allesDTO.setQqNum(qqNum);
+			}
+			
+			if (highlightemailPasswd != null) {
+				String s1 = "";
+				for (int i = 0; i < emailPasswd.length(); i++) {
+					int flag = 0;
+					String char1 = emailPasswd.charAt(i) + "";
+					for (int j = 0; j < big_search_box.length(); j++) {
+						String char2 = big_search_box.charAt(j) + "";
+						if (char1.equals(char2)) {
+							flag = 1;
+						}
+					}
+					if (flag == 0) {
+						s1 += char1;
+					} else {
+						s1 += "<font color='red' >" + char1 + "</font>";
+					}
+				}
+				allesDTO.setEmailPasswd(s1);
+			} else {
+				allesDTO.setEmailPasswd(emailPasswd);
+			}
+
+			allesDTOList.add(allesDTO);
+		}
+		HashMap<Object, Object> hashMap = new HashMap<>();
+		hashMap.put("allesDTOList", allesDTOList);
+		hashMap.put("total", searchResponse.getHits().getTotalHits());
+
+		PrintWriter writer = null;
+		try {
+			writer = response.getWriter();
+			writer.write(JsonUtil.map2json(hashMap));
+			writer.flush();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (writer != null) {
+				writer.close();
+			}
+		}
+
+	}
+
+	//查询更新的hacker记录的数量
+	
+
+
+}

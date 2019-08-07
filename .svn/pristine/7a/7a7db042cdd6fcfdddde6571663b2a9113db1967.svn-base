@@ -1,0 +1,1038 @@
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<%
+	String path = request.getContextPath();
+	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
+			+ path + "/";
+%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title></title>
+<link href="<%=basePath%>template/css/cloud-admin.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/responsive.css">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/app.css">
+<script src="<%=basePath%>template/js/jquery/jquery-2.0.3.min.js"></script>
+<script src="<%=basePath%>template/js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+<script src="<%=basePath%>template/bootstrap-dist/js/bootstrap.min.js"></script>
+<style>
+.span-1 {
+	display: inline-block;
+	padding-left: 25px;
+	padding-right: 25px;
+	margin-top: 20px;
+	margin-left: 20px;
+	border: 1px solid #FBD5CA;
+	width: auto;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 2px 12px 2px 2px;
+	background-color: #FEF4F1;
+}
+
+.span-2 {
+	padding-left: 25px;
+	padding-right: 25px;
+	display: inline-block;
+	margin-top: 20px;
+	margin-left: 20px;
+	border: 1px solid #D5E4F1;
+	width: auto;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 2px 12px 2px 2px;
+	background-color: #F1F7FB;
+}
+
+.span-3 {
+	padding-left: 25px;
+	padding-right: 25px;
+	display: inline-block;
+	margin-top: 20px;
+	margin-left: 20px;
+	border: 1px solid #FBE4C3;
+	width: auto;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 2px 12px 2px 2px;
+	background-color: #FBF6EE;
+}
+
+.span-4 {
+	padding-left: 25px;
+	padding-right: 25px;
+	display: inline-block;
+	margin-top: 20px;
+	margin-left: 20px;
+	border: 1px solid #D5EAE5;
+	width: auto;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 2px 12px 2px 2px;
+	background-color: #F0F8F6;
+}
+
+.span-5 {
+	padding-left: 25px;
+	padding-right: 25px;
+	display: inline-block;
+	margin-top: 20px;
+	margin-left: 20px;
+	border: 1px solid #EEE8B7;
+	width: auto;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 2px 12px 2px 2px;
+	background-color: #FEFDF2;
+}
+
+.span-6 {
+	padding-left: 25px;
+	padding-right: 25px;
+	display: inline-block;
+	margin-top: 20px;
+	margin-left: 20px;
+	border: 1px solid #C8E5F0;
+	width: auto;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 2px 12px 2px 2px;
+	background-color: #E9F5FA;
+}
+
+.span-7 {
+	padding-left: 25px;
+	padding-right: 25px;
+	display: inline-block;
+	margin-top: 20px;
+	margin-left: 20px;
+	border: 1px solid #DBDBF0;
+	width: auto;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 2px 12px 2px 2px;
+	background-color: #F2F2FA;
+}
+
+.alcenter {
+	text-align: center;
+}
+
+.inline {
+	display: inline-block;
+}
+.form-inline .form-control {
+	width:auto;
+}
+.clabel {
+	margin-right:14px;
+}
+
+.mybtn {
+	position: fixed;
+	right: 10px;
+	bottom: 20px;
+	display: block;
+	width: 50px;
+	height: 50px;
+	border-radius: 50px;
+	padding: 0px;
+	text-align: center;
+	line-height: 50px;
+}
+
+.modal.left .modal-dialog, .modal.right .modal-dialog {
+	position: fixed;
+	margin: auto;
+	width: 620px;
+	height: 100%;
+	-webkit-transform: translate3d(0%, 0, 0);
+	-ms-transform: translate3d(0%, 0, 0);
+	-o-transform: translate3d(0%, 0, 0);
+	transform: translate3d(0%, 0, 0);
+}
+
+.modal.left .modal-content, .modal.right .modal-content {
+	height: 100%;
+	overflow-y: auto;
+}
+
+.modal.left .modal-body, .modal.right .modal-body {
+	padding: 15px 15px 80px;
+}
+
+/*Left*/
+.modal.left.fade .modal-dialog {
+	left: -320px;
+	-webkit-transition: opacity 0.3s linear, left 0.3s ease-out;
+	-moz-transition: opacity 0.3s linear, left 0.3s ease-out;
+	-o-transition: opacity 0.3s linear, left 0.3s ease-out;
+	transition: opacity 0.3s linear, left 0.3s ease-out;
+}
+
+.modal.left.fade.in .modal-dialog {
+	left: 0;
+}
+
+/*Right*/
+.modal.right.fade .modal-dialog {
+	right: -320px;
+	-webkit-transition: opacity 0.3s linear, right 0.3s ease-out;
+	-moz-transition: opacity 0.3s linear, right 0.3s ease-out;
+	-o-transition: opacity 0.3s linear, right 0.3s ease-out;
+	transition: opacity 0.3s linear, right 0.3s ease-out;
+}
+
+.modal.right.fade.in .modal-dialog {
+	right: 0;
+}
+
+/* ----- MODAL STYLE ----- */
+.modal-content {
+	border-radius: 0;
+	border: none;
+}
+
+.modal-header {
+	border-bottom-color: #EEEEEE;
+	background-color: #FAFAFA;
+}
+
+.td_left {
+	text-align: left;
+}
+
+.td_right {
+	text-align: right;
+}
+.red_num {
+	color:#fff;
+	background-color:red;
+	width: 15px;
+	height: 15px;
+	border-radius:50%;
+	float:right;
+	text-align:center;
+}
+</style>
+</head>
+<body>
+	<jsp:include page="common.jsp"></jsp:include>
+		<div class="bg-light lter b-b wrapper-md">
+		<h1 class="m-n h4">文档工作台</h1>
+	</div>
+	<div class="container">
+		<div class="col-md-12">
+			<div class="row" style="margin-top: 1%;">
+				<div class="panel panel-default">
+					<div class="panel-heading">搜索<span style="float: right;"><img src="<%=basePath %>template/img/addevidence.png" onclick="testOfSearch(this)"></span></div>
+					<div class="panel-body" id="searchOfForm" style="display: block;">
+						<form class="form-inline" role="form" id="searchForm" action="<%=basePath%>admin/getEvidence.php" method="post">
+							<input type="hidden" name="pageno" id="pageno"/>
+							<div class="form-group">
+								<label for="" class="clabel">文件名:</label><input id="evName" name="evName" value=""
+									class="form-control" placeholder="请输入文件名..." type="text" style="width:390px;"/>
+							</div>
+							<div class="form-group">
+								<label for="" class="clabel">案件名:</label><input id="caseName" name="caseName" value=""
+									class="form-control" placeholder="请输入案件名..." type="text" style="width:390px;"/>
+							</div>
+							<div class="form-group">
+								<label for="" class="clabel">类型:</label>
+								<select class="form-control"  style="width:390px;color: #BFA6A6;" id="evStatus" name="evStatus">
+								    <option></option>
+								    <option>.doc</option>
+								    <option>.docx</option>
+						            <option>.pdf</option>
+						            <option>.xls</option>
+						            <option>.xlsx</option>
+						            <option>.ppt</option>
+						            <option>.pptx</option>
+						            <option>.txt</option>
+								</select>
+							</div>
+							
+							<button type="button" class="btn btn-info" style="width:80px;" onclick="showAllHandledFile(1)">搜索</button>
+							<!-- <a id="url" href="#"><button type="button2" class="btn btn-info" style="width:80px;" onclick="exportDoc()" >导出</button></a> -->
+							<a id="url" href="#"><div  class="btn btn-info" style="width:80px;"onclick="exportDoc()">导出</div></a>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="panel panel-default">
+					<div class="panel-heading">文件列表   <span style="float: right;" onclick="showAllHandledFile(1)">
+					 <select style="width:100px; height: 27px;margin-top: -4px;"id="sortType" name="sortType">
+						<option>修改时间</option>
+						<option>创建时间</option>
+						<option>访问时间</option>
+						<option>文件大小</option>
+						<option>文件名</option>
+						<option>文件类型</option>
+					</select></span> </div>
+					<div class="panel-body" style="padding: 0 0 15px;">
+						<table id="datatables" class="table table-striped table-hover"
+							style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+							<thead>
+								<tr>
+									<th class="alcenter"><input type="checkbox" id="ckall" onclick="selectAll()"/></th>
+									<th class="alcenter">收藏</th>
+									<th class="alcenter">协同分析</th>
+									<th class="alcenter">文件名</th>
+									<th class="alcenter">文件类型</th>
+									<th class="alcenter">文件大小</th>
+									<th class="alcenter">创建时间</th>
+									<th class="alcenter">访问时间</th>
+									<th class="alcenter">修改时间</th>
+									<th class="alcenter">导入时间</th>
+									<th class="alcenter">所属案件</th>
+									
+								</tr>
+							</thead>
+							<tbody id="doc_list">
+							
+							</tbody>
+						</table>
+						<div class="alcenter" style="font-size: 14px">
+							<div id="total" class="pagecount inline" style="height: 29px;">
+								<span id="tot"></span>
+							</div>
+							<div class="pagebar inline"
+								style="position: absolute; right: 10px; height: 29px;">
+								<ul class="pagination pagination-sm" style="margin: 0;">
+									<li id = "pages1"></li>
+									
+									<li id = "pages"></li>	
+				            		
+									<li id = "pages2"></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="modal right fade" id="myModal" tabindex="-1" role="dialog"
+			aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="panel panel-default" style="padding-right: 10px;">
+						<div class="panel-body" style="height: 950px;" >
+							<div class="panel-heading"
+								style="padding: 10px; background-color: #DDDDDD; border: 1px solid #DDDDDD;">命中预览</div>
+							
+								<span id="test1" ></span>
+								<div class="panel-heading" style="padding: 10px; background-color: #fff; border: 1px solid #DDDDDD;">
+								   <div style=" background-color: #fff; height: 60px;float: left;">
+								   <img  id="docTypeyl" src="<%=basePath %>template/img/pdf.png" style="width: 50px; background-color: #fff; height: 60px;">
+								   </div>
+								   <div style="margin-top: 17px;margin-left: 65px;"><span id="docfileNameyl"></span>&nbsp;&nbsp;&nbsp;<span id="docdateyl"></span><br><span id="docfileSizeyl" ></span>
+								    <div style=" padding-left: 300px; padding-bottom: 0px;">
+						                  <img src="<%=basePath %>template/img/201.png" style="width: 15px; background-color: #fff; height: 15px;"><a id="url2" href="#"><span id="url2" onclick="downloaddoc()">下载文件</span></a>
+						                   <span id="docfileurl" style=" display:none;"></span>
+						                   <span id="docType" style=" display:none;"></span>
+						                  <span id="docContent" style=" display:none;"></span>
+						                  <span id="docPreviewId" style=" display:none;"></span>  
+						                  <img src="<%=basePath %>template/img/202.png" style="margin-left: 15px; width: 15px; background-color: #fff; height: 15px;">
+								        
+								          <a href="#"  target="_blank" id="lookurl" onclick="lookOnline()">在线预览</a>
+								         </div> 
+								         </div>
+								<hr>
+								     <div style="width: 530px; background-color: #fff; height: 300px;">
+								        <table id="datatable" class="table table-striped table-hover"
+								style="border: 1px solid #DDDDDD;">
+								<tbody id="tbcont">
+									<tr data-toggle="modal" >
+										<td class="td_left">收藏</td>
+										<td class="td_right" id="id_right"></td>
+									</tr>
+									
+									<tr data-toggle="modal">
+										<td class="td_left">文件名</td>
+										<td class="td_right" id="caseNum_right"></td>
+									</tr>
+									<tr data-toggle="modal">
+										<td class="td_left">文件类型</td>
+										<td class="td_right" id="caseName_right"></td>
+									</tr>
+									<tr data-toggle="modal">
+										<td class="td_left">文件大小</td>
+										<td class="td_right" id="caseType_rignt"></td>
+									</tr>
+									<tr data-toggle="modal">
+										<td class="td_left">创建时间</td>
+										<td class="td_right" id="shi_right"></td>
+									</tr>
+									<tr data-toggle="modal">
+										<td class="td_left">访问时间</td>
+										<td class="td_right" id="section_right"></td>
+									</tr>
+									<tr data-toggle="modal">
+										<td class="td_left">修改时间</td>
+										<td class="td_right" id="trustee_right"></td>
+									</tr>
+									<tr data-toggle="modal">
+										<td class="td_left">导入时间</td>
+										<td class="td_right" id="importTime_right"></td>
+									</tr>
+									<tr data-toggle="modal">
+										<td class="td_left">所属案件</td>
+										<td class="td_right" id="status_right"></td>
+									</tr>
+								</tbody>
+							</table>
+					</div>
+					
+					<div class="panel panel-default" style="margin-top:50px;">
+							<div class="panel-heading">文档摘要</div>
+							<div class="panel-body">
+							<div id="content_right"></div>
+							
+							</div>
+					</div>
+					</div>
+					</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 弹出取消收藏框 -->
+	<div class="modal fade" id="cancelFavorite" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" >取消收藏</h4>
+				</div>
+				
+				<div class="modal-footer">
+					<span id="cancelDocId" style="display:none"></span>
+					<span id="cancelDocFlag" style="display:none"></span>
+					<span id="cancelDocNumber" style="display:none"></span>
+					<button type="button" class="btn btn-default" data-dismiss="modal" onclick="cancelFavorite()">确定</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal -->
+	</div>
+	<!-- 弹出框       选择标签 class="modal right fade"  tabindex="-1"  -->
+	<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="myModalfavorite"   
+				style="width: 100%; height: 100%; margin: auto;">
+				<div class="panel panel-default"
+					style="width: 50%; height: 80%; margin: 3% auto;">
+					<div class="panel-heading">文档收藏 - 选择标签</div>
+					
+					<div class="panel-body" style="width: 100%; height: 100%;">
+						<div class="panel-body" style="width: 100%">
+							<label style="float:left;margin-top:7px;">新建标签：</label>
+							<input type="text" id="favoLabelName" style="float:left; width: 60%;" name="favoLabelName" class="form-control" placeholder="请输入..." />
+							<button type="button" class="btn btn-info" style="width: 70px; margin-left: 10px; height: 33px" onclick="addFavoLabel()">添加</button>
+						</div>
+						<div class="panel-body" style="padding: 0 0 0 20px;overflow-y:auto;height:62%;border: 1px solid #EAEAEA;">
+									<span id="tbcontOfDoc" > 
+										
+								    </span>
+						</div>
+						<span id="docId" style="display:none"></span>
+						<span id="docFlag" style="display:none"></span>
+						<span id="docNumber" style="display:none"></span>
+						<!-- data-dismiss="modal" -->
+						<button type='button' class="btn btn-info" style="width: 65px; height: 30px; margin-left: 39%; margin-top: 3%;"
+								data-dismiss="modal" onclick="addFavorite();" >确定</button>
+								 
+						<button type='button' class="btn btn-info" style="width: 65px; height: 30px; margin-left: 8px;margin-top: 3%;"
+								data-dismiss="modal">取消</button>
+					</div>
+				</div>
+			</div>
+</body>
+</html>
+<script type="text/javascript">
+
+document.onkeydown = function(e) {
+    //捕捉回车事件
+    var ev = (typeof event!= 'undefined') ? window.event : e;
+    if(ev.keyCode == 13) {
+        return false;
+    }
+}
+
+function searchone(i) {
+	$.ajax({
+		type : "POST",
+		url : "<%=basePath%>getDocunmentAction.php",
+		data : {
+		},
+		success : function(data) {
+		},
+		error: function(XMLHttpRequest, textStatus, errorThrown) {
+		}
+	});
+	
+	    var casess = document.getElementById("docdetails9"+i+"").innerText;
+		var docfileName = document.getElementById("docdetails1"+i+"").innerText;
+		var docdate = document.getElementById("docdetails2"+i+"").innerText;
+		var docType = document.getElementById("docdetails3"+i+"").innerText;
+		var doccontent = document.getElementById("docdetails4"+i+"").innerText;
+		var docfileSize = document.getElementById("docdetails5"+i+"").innerText;
+		var docfileurl = document.getElementById("docdetails6"+i+"").innerText;
+		var docPreviewId = document.getElementById("docdetails0"+i+"").innerText;
+		var edittime = document.getElementById("docdetails10"+i+"").innerText;
+		var caratetime = document.getElementById("docdetails11"+i+"").innerText;
+		var importTime = document.getElementById("docdetails13"+i+"").innerText;
+		var xb = document.getElementById("docdetails7"+i+"").innerText;
+
+		if("0"==xb){
+			xb="未收藏";
+		}else{
+			xb="已收藏";
+		}
+		document.getElementById("docPreviewId").innerText= docPreviewId;
+		//表格中字段
+		document.getElementById("id_right").innerText= xb;
+		document.getElementById("caseNum_right").innerText= docfileName;
+		document.getElementById("caseName_right").innerText= docType;
+
+		document.getElementById("caseType_rignt").innerText= docfileSize+'MB';
+		document.getElementById("shi_right").innerText= caratetime;
+		document.getElementById("section_right").innerText= docdate;
+
+		document.getElementById("trustee_right").innerText= edittime;
+		document.getElementById("status_right").innerText= casess;
+		document.getElementById("importTime_right").innerText= importTime;
+		/* document.getElementById("content_right").innerText= content; */
+ 		document.getElementById("content_right").innerText= doccontent;
+
+		document.getElementById("docContent").innerText= doccontent;
+
+		document.getElementById("docfileNameyl").innerText= docfileName;
+		document.getElementById("docdateyl").innerText= docdate;
+		document.getElementById("docTypeyl").innerText= docType;
+		//lyxg根据类型匹配相应图片
+		var docImg=document.getElementById("docTypeyl")
+		docType="temp"+docType;//防止.前面为空时分割不成功
+		var strs= new Array(); //定义一数组
+		strs= docType.split("."); //得到类型
+		var typeName=strs[1];
+		docImg.setAttribute("src", "<%=basePath %>template/img/"+typeName+".png");
+		document.getElementById("docfileSizeyl").innerText= docfileSize+'MB';
+		document.getElementById("docfileurl").innerText= docfileurl;
+		upReadFlag(i);
+	}
+	
+	function upReadFlag(i) {
+		var esId = document.getElementById("docdetails0"+i+"").innerText;
+		var readflag = document.getElementById("docdetails12"+i+"").innerText;
+		
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>admin/upReadFlag.php",
+			data : {
+				'esId':esId,
+				'readflag':readflag
+			},
+			dataType : "json",
+			async: true,
+			success : function(data) {
+				
+					var src="<%=basePath%>"+"template/img/unread.png";
+					$(("#"+'ifRead'+i)).attr('src',src);
+				
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+				alert('修改已读未读失败');
+			}
+		})
+	}
+
+//开始导出
+function exportDoc() {
+	var checkboxs = document.getElementsByName("ids_url");
+	var i = 0;
+	var count = 0;
+	var len = checkboxs.length;
+	var urlstr = "";
+	for(i = 0; i < len; i++){
+		if(checkboxs[i].checked){	
+			if(count == 0){
+				urlstr += checkboxs[i].value;
+			}else{
+				urlstr += ","+checkboxs[i].value;
+			}
+			count = count + 1;
+		}
+	}
+	if(urlstr=="")
+		alert("请先选择导出文件");
+	else
+		 $("#url").attr("href","<%=basePath %>admin/exportDOC.php?docpath="+urlstr); 
+}
+
+function selectAll(){
+	var ckall=document.getElementById("ckall");
+    var ck=document.getElementsByName("ids_url");
+    for(var i=0;i<ck.length;i++){
+   	   ck[i].checked=ckall.checked;
+    }
+}
+
+function showChoose(id){
+	 var ckall=document.getElementById(id);
+	   	ck[i].checked=ckall.checked;
+}
+	 
+window.onload = showAllHandledFile(1);
+var dl=1;
+//显示在表格文档显示
+function showAllHandledFile(pageno){
+	var evName =$("#evName").val();
+	var caseName =$("#caseName").val();
+	var evStatus =$("#evStatus").val();
+	var sortType =$("#sortType").val();
+	
+	$.ajax({
+		type : "POST",
+		url : "<%=basePath%>admin/getEvidence.php",
+		data : {
+			"evName":evName,
+			"caseName":caseName,
+			"evStatus":evStatus,
+			"pageno":pageno,
+			"sortType":sortType
+		},
+		dataType : "json",
+		async: true,
+		success : function(data) {
+			var docs=data.hits.hits;
+			var sizes=10;
+			var pagesum=data.hits.total;
+			var pagenum = pagesum / sizes;
+			var length=10;  //要显示的分页页数
+				
+			if(pagenum%1!=0){
+					pagenum=pagenum+(1-pagenum%1);
+			}
+			$("#pages").empty();
+			
+			//用于删除之前显示的页数，动态添加时id名均设为order
+			for(var i=1;i<=length;i++)
+				  $("#order").remove();
+			
+			if(pagesum<sizes){
+				var html2 = '<li class="active" id="order"><a href="#" onclick="showAllHandledFile(1)">1</a></li >';
+				$("#pages").after(html2);	
+				
+				
+			}else{
+			
+			if(pageno<pagenum){
+				if(pageno+length-1<=pagenum){
+					var html2="";
+					if(pageno-2>0){
+						for(var i =pageno-2;i<=pageno+length-1-2;i++){	
+							if(i==pageno)
+								html2 += '<li class="active" id="order"><a href="#" onclick="showAllHandledFile('+i+')">'+i+'</a></li >';
+								else
+					
+									html2 += '<li id="order"><a href="#" onclick="showAllHandledFile('+i+')">'+i+'</a></li >';  
+					   				   }
+						}
+					else{
+						for(var i =1;i<=length;i++){	
+							if(i==pageno)
+								html2 += '<li class="active" id="order"><a href="#" onclick="showAllHandledFile('+i+')">'+i+'</a></li >';
+								else
+					
+									html2 += '<li id="order"><a href="#" onclick="showAllHandledFile('+i+')">'+i+'</a></li >';  
+					   				   }
+					}
+				//alert(html2);
+				$("#pages").after(html2);
+				}/* if */
+				else{
+					var html2="";
+					if(pagenum>=length){
+					for(var i =pageno-(length-1-pagenum+pageno);i<=pagenum;i++){	
+						 if(i==pageno)
+							html2 += '<li class="active" id="order"><a href="#" onclick="showAllHandledFile('+i+')">'+i+'</a></li >';
+						else
+							html2 += '<li id="order"><a href="#" onclick="showAllHandledFile('+i+')">'+i+'</a></li >'; 
+					   }
+					//alert(html2);
+					$("#pages").after(html2);	
+					}
+					else{
+						for(var i =1;i<=pagenum;i++){	
+							 if(i==pageno)
+								html2 += '<li class="active" id="order"><a href="#" onclick="showAllHandledFile('+i+')">'+i+'</a></li >';
+							else
+								html2 += '<li id="order"><a href="#" onclick="showAllHandledFile('+i+')">'+i+'</a></li >';
+						   }
+						$("#pages").after(html2);	
+					}
+				}
+			}
+			else{
+				if(pageno==pagenum){
+					var html2="";
+					for(var i =pageno-length+1>0?pageno-length+1:1;i<=pagenum;i++){	
+					if(i==pageno)
+						html2 += '<li class="active" id="order"><a href="#" onclick="showAllHandledFile('+i+')">'+i+'</a></li >';
+					else
+						html2 += '<li id="order"><a href="#" onclick="showAllHandledFile('+i+')">'+i+'</a></li >';
+				   }
+					$("#pages").after(html2);
+				}/* if */
+			}
+		}
+			$("#tot").empty();
+			$("#pages1").empty();
+			$("#pages2").empty();
+			var html3 ='<span >共'+pagesum+'条，当前'+pageno+'/'+pagenum+'页</span>';
+			$("#tot").append(html3);
+			
+			var html5 = '<a href="#" onclick="showAllHandledFile('+pageno+'-1<1?1:'+pageno+'-1)"><</a>';
+			$("#pages1").append(html5);
+			
+			var html4 = '<a href="#" onclick="showAllHandledFile('+pageno+'+1>'+pagenum+'?'+pagenum+':'+pageno+'+1)">></a>';
+			$("#pages2").append(html4);
+			$("#doc_list").empty();
+	/* 		if(pagesum==0){
+				 $("#datatables").empty();
+					var html01 = '<table style="border-bottom: 1px solid #DDDDDD; width: 1685px; height: 90px;" >'+
+										'<tr>'+
+									'</tr>'+
+									'<tr>'+
+								'</tr>'+
+									'<tr>'+
+										'<td>未找到相关信息</td>'+
+									'</tr>'+
+								'</table>';
+					$("#datatables").append(html01);	
+			 } */
+			$.each(docs,function(i,item){
+                var content = item._source.content;
+                var getContent = content.split("\n");
+			/* 	var docss=docs.size;
+				alert(docss);
+				if(docss==0){
+				 $("#tbcont").empty();
+					var html01 = '<table style="border-bottom: 1px solid #DDDDDD; width: 1685px; height: 90px;" >'+
+										'<tr>'+
+									'</tr>'+
+									'<tr>'+
+								'</tr>'+
+									'<tr>'+
+										'<td>未找到相关信息</td>'+
+									'</tr>'+
+								'</table>';
+					$("#tbcont").append(html01);	
+			 }  */
+				fileName=item._source.fileName;
+				if(evName!=null&&evName!=""){
+					var str="/"+evName+"/i";
+					var fileName2=fileName.toLowerCase();  //临时的名字，获取索引用
+					var index=fileName2.indexOf(evName.toLowerCase());
+					var str2=fileName.substring(index,index+evName.length); //用于替换成红色字体显示，防止因大小写不同导致替换结果大小写与原来不一致
+					fileName=fileName.replace(eval(str),"<font color=red>"+str2+"</font>");
+				}
+				myCaseName=item._source.caseName;
+				if(caseName!=null&&caseName!=""){
+					var str="/"+caseName+"/i";
+					var myCaseName2=myCaseName.toLowerCase();  //临时的名字，获取索引用
+					var index=myCaseName2.indexOf(caseName.toLowerCase());
+					var str2=myCaseName.substring(index,index+caseName.length); //用于替换成红色字体显示，防止因大小写不同导致替换结果大小写与原来不一致
+					myCaseName=myCaseName.replace(eval(str),"<font color=red>"+str2+"</font>");
+				}
+				dType=item._source.docType;
+				if(evStatus!=null&&evStatus!=""){
+					var str="/"+evStatus+"/i"
+					var dType2=dType.toLowerCase();  //临时的名字，获取索引用
+					var index=dType2.indexOf(evStatus.toLowerCase());
+					var str2=dType.substring(index,index+evStatus.length); //用于替换成红色字体显示，防止因大小写不同导致替换结果大小写与原来不一致
+					dType=dType.replace(eval(str),"<font color=red>"+str2+"</font>");
+				}
+
+				var docStarFlag=item._source.starFlag;
+
+				var src="<%=basePath%>"+"template/img/star2.png";
+				if(docStarFlag=='1'){
+					src="<%=basePath%>"+"template/img/star.png";
+				}
+
+				//进页面判断星标是否为1   页面刷新后已收藏的图片还是显示亮的星星
+				 var readFlag=item._source.readFlag;
+
+				 var readRrc="<%=basePath%>"+"template/img/read.png";
+				 if(readFlag=='1'){
+					 readRrc="<%=basePath%>"+"template/img/unread.png";
+				 }
+				 var fileSize;
+				 //alert(a.toFixed(2));
+				 if(item._source.fileSize/1024>1)
+				 	fileSize=(item._source.fileSize/1024).toFixed(2)+"MB";
+				 else
+					 fileSize=item._source.fileSize+"KB";
+
+
+				var html = '+<tr>'+
+				    '<td><input type="checkbox" id="caselist'+i+'" name="ids_url" value="'+item._source.file_download_url+'" onclick="showChoose(this.id);"/></td>'+
+				    '<td><img src='+src+' onclick="updocumentstar('+i+');" id="docstar'+i+'" data-target="#myModalfavorite" data-toggle="modal" /></td>'+
+				    '<td><img src='+readRrc+' id="ifRead'+i+'"/></td>'+
+				    '<td data-toggle="modal" data-target="#myModal" onclick="searchone('+i+')">'+fileName+'</td> '+
+					'<td data-toggle="modal" data-target="#myModal" onclick="searchone('+i+')">'+dType+'</td>'+
+						'<td data-toggle="modal" data-target="#myModal" onclick="searchone('+i+')">'+fileSize +'</td>'+
+					'<td data-toggle="modal" data-target="#myModal" onclick="searchone('+i+')">'+item._source.createDate +'</td>'+
+					'<td data-toggle="modal" data-target="#myModal" onclick="searchone('+i+')">'+item._source.editDate +'</td>'+
+					'<td data-toggle="modal" data-target="#myModal" onclick="searchone('+i+')">'+item._source.viewDate +'</td>'+
+					'<td style=" display:none;">'+item._source.file_download_url +'</td>'+
+					'<td data-toggle="modal" data-target="#myModal" onclick="searchone('+i+')">'+item._source.importDate+'</td>'+
+					'<td data-toggle="modal" data-target="#myModal" onclick="searchone('+i+')">'+myCaseName+'</td>'+
+				    '<td id="">'+
+				    '<span id="docdetails0'+i+'" style=" display:none;">'+item._id+'</span>'+
+				    '<span id="docdetails1'+i+'" style=" display:none;">'+item._source.fileName+'</span>'+
+					'<span id="docdetails2'+i+'" style=" display:none;">'+item._source.viewDate+'</span>'+
+					'<span id="docdetails11'+i+'" style=" display:none;">'+item._source.createDate+'</span>'+
+					'<span id="docdetails10'+i+'" style=" display:none;">'+item._source.editDate+'</span>'+
+					'<span id="docdetails3'+i+'" style=" display:none;">'+item._source.docType+'</span>'+
+					'<span id="docdetails4'+i+'" style=" display:none;">'+getContent[0]+'</span>'+
+					'<span id="docdetails5'+i+'" style=" display:none;">'+item._source.fileSize+'</span>'+
+					'<span id="docdetails6'+i+'" style=" display:none;">'+item._source.file_download_url+'</span>'+
+					'<span id="docdetails7'+i+'" style=" display:none;">'+item._source.starFlag+'</span>'+
+					'<span id="docdetails12'+i+'" style=" display:none;">'+item._source.readFlag+'</span>'+
+					/*'<span id="docdetails8'+i+'" style=" display:none;">'+item._source.content+'</span>'+*/
+					'<span id="docdetails13'+i+'" style=" display:none;">'+item._source.importDate+'</span>'+
+				    '<span id="docdetails9'+i+'" style=" display:none;">'+myCaseName+'</span>'+
+				    '</td> '+
+				    '<span id="docdetails8'+i+'">'+item._source.fileName+'</span>'+
+
+				'</tr>';
+
+				$("#doc_list").append(html);
+			});
+		},
+		error: function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("失败");
+		}
+	});
+}
+//下载
+function downloaddoc(){
+	var docpath = document.getElementById("docfileurl").innerText;
+
+	//对docpath进行编码
+	var docpath_encode=encodeURI(encodeURI(docpath));
+	$("#url2").attr("href","<%=basePath %>admin/downloadDOC.php?docpath="+docpath_encode);
+}
+
+//文档在线预览
+function lookOnline(){
+	var lookdocpath = document.getElementById("docfileurl").innerText;
+	//txt文档只需新弹出窗口
+	var docType = document.getElementById("caseName_right").innerText;
+	if(docType == '.txt') {
+		//$("#docContent").css("display" , "block");
+		var id=document.getElementById("docPreviewId").innerText;
+		<%-- window.open("<%=basePath %>preview/showtxt.html") --%>
+		$("#lookurl").attr("href","<%=basePath %>admin/lookOnlineTxt.php?docId="+id);
+	}else{
+		//对lookdocpath进行编码
+		var lookdocpath_encode=encodeURI(encodeURI(lookdocpath));
+		$("#lookurl").attr("href","<%=basePath %>admin/lookOnline.php?lookdocpath="+lookdocpath_encode);
+	}
+}
+//点击弹出收藏或者取消框
+function updocumentstar(i){
+	var esid = document.getElementById("docdetails0"+i+"").innerText;
+	var flag = document.getElementById("docdetails7"+i+"").innerText;
+	
+	if(flag=='1'){
+		$(("#"+'docstar'+i)).attr('data-target',"#cancelFavorite");
+		//取消收藏
+		$('#cancelDocId').val(esid);
+		$('#cancelDocNumber').val(i);
+		$('#cancelDocFlag').val(flag);
+	}else {
+		//进行收藏
+		$(("#"+'docstar'+i)).attr('data-target',"#myModalfavorite");
+		$('#docId').val(esid);
+		$('#docNumber').val(i);
+		$('#docFlag').val('0');
+	} 
+}
+//取消收藏
+function cancelFavorite(){
+	var esid=$('#cancelDocId').val();
+	var i=$('#cancelDocNumber').val();
+	var flag=$('#cancelDocFlag').val();
+	doAddOrCancelFavorite(esid,flag,i,'');
+}
+//执行收藏
+function addFavorite(){
+	var values=[];
+	$("input[name='ids']:checked").each(function(){
+		values.push($(this).val());
+	});
+	if(values.length==0){
+		alert('请先选中类别');
+		$(("#"+'docstar'+i)).attr('data-target',"#myModalfavorite");
+	}else{
+		var esid=$('#docId').val();
+		var i=$('#docNumber').val();
+		var flag=$('#docFlag').val();
+		//alert(values);
+		doAddOrCancelFavorite(esid,flag,i,values.toString());
+		//$('#myModalfavorite').modal('hide');
+	}
+}
+//取消或者收藏
+function doAddOrCancelFavorite(esid,flag,i,values){
+	$.ajax({
+		type : "POST",
+		url : "<%=basePath%>admin/favoDocument.php",
+		data : {
+			'esid':esid,
+			'flag':flag,
+			'docLabel':values
+		},
+		dataType : "json",
+		async: true,
+		success : function(data) {
+			//进行收藏
+			if(flag==0){
+				var src="<%=basePath%>"+"template/img/star.png";
+				$(("#"+'docstar'+i)).attr('src',src);
+				document.getElementById("docdetails7"+i+"").innerText=1;
+				alert("收藏成功！");
+			}
+			//取消收藏
+			if(flag==1){
+				var src="<%=basePath%>"+"template/img/star2.png";
+				//document.getElementById("docstar'+i+'").src = src;
+				$(("#"+'docstar'+i)).attr('src',src);
+				document.getElementById("docdetails7"+i+"").innerText=0;
+			}
+			//关闭对话框
+//			$('#myModalfavorite').modal('toggle');
+		},
+		error: function(XMLHttpRequest, textStatus, errorThrown) {
+			alert('请求收藏失败');
+		}
+	})
+}
+
+window.onload = showAllLabelOfDoc();
+//查询所有标签
+function showAllLabelOfDoc(){
+//	var casenumorname = document.getElementById("caseinfo").value;
+	$.ajax({
+		type : "POST",
+		url : "<%=basePath%>admin/showAllLabelOfDoc.php",
+		data : {
+//			"casenumorname":casenumorname
+		},
+		dataType : "json",
+		async: true,
+		success : function(data) {
+			$("#tbcontOfDoc").empty();
+			for(var i = data.length - 1; i >= 0;i--){  
+				if(i % 7 == 1) {
+					var html = '<span>'+
+						'<span class="td_left"><input id="caselist'+i+'" type="checkbox"  name="ids" value="'+data[i].label+'" onclick="showChoose(this.id);" />'+
+							'<span class="span-1" id="">'+data[i].label+'</span>'+
+						'</span><br/>';
+						}
+					if(i % 7 == 2) {
+					var html = '<span>'+
+						'<span class="td_left"><input id="caselist'+i+'" type="checkbox"  name="ids" value="'+data[i].label+'" onclick="showChoose(this.id);" />'+
+							'<span class="span-2" id="">'+data[i].label+'</span>'+
+						'</span><br/>';
+						}
+					if(i % 7 == 3) {
+					var html = '<span>'+
+						'<span class="td_left"><input id="caselist'+i+'" type="checkbox"  name="ids" value="'+data[i].label+'" onclick="showChoose(this.id);" />'+
+							'<span class="span-3" id="">'+data[i].label+'</span>'+
+						'</span><br/>';
+						}
+					if(i % 7 == 4) {
+					var html = '<span>'+
+						'<span class="td_left"><input id="caselist'+i+'" type="checkbox"  name="ids" value="'+data[i].label+'" onclick="showChoose(this.id);" />'+
+							'<span class="span-4" id="">'+data[i].label+'</span>'+
+						'</span><br/>';
+						}
+					if(i % 7 == 5) {
+					var html = '<span>'+
+						'<span class="td_left"><input id="caselist'+i+'" type="checkbox"  name="ids" value="'+data[i].label+'" onclick="showChoose(this.id);" />'+
+							'<span class="span-5" id="">'+data[i].label+'</span>'+
+						'</span><br/>';
+						}
+					if(i % 7 == 6) {
+					var html = '<span>'+
+						'<span class="td_left"><input id="caselist'+i+'" type="checkbox"  name="ids" value="'+data[i].label+'" onclick="showChoose(this.id);" />'+
+							'<span class="span-6" id="">'+data[i].label+'</span>'+
+						'</span><br/>';
+						}
+					if(i % 7 == 7) {
+					var html = '<span>'+
+						'<span class="td_left"><input id="caselist'+i+'" type="checkbox"  name="ids" value="'+data[i].label+'" onclick="showChoose(this.id);" />'+
+							'<span class="span-7" id="">'+data[i].label+'</span>'+
+						'</span><br/>';
+						}
+					if(i % 7 == 0) {
+					var html = '<span>'+
+						'<span class="td_left"><input id="caselist'+i+'" type="checkbox"  name="ids" value="'+data[i].label+'" onclick="showChoose(this.id);" />'+
+							'<span class="span-3" id="">'+data[i].label+'</span>'+
+						'</span><br/>';
+						}
+					$("#tbcontOfDoc").append(html);	
+			}
+		},
+		error: function(XMLHttpRequest, textStatus, errorThrown) {
+		}
+	});
+}
+//折叠
+function testOfSearch(obj){
+  var div1=document.getElementById("searchOfForm");
+  if(div1.style.display=="block"){
+    div1.style.display="none";
+    obj.src="<%=basePath %>template/img/downXia.png";
+  }else{
+    div1.style.display="block";
+    obj.src="<%=basePath %>template/img/addevidence.png";
+  }
+}
+function addFavoLabel() {
+	var favoLabelName = $("#favoLabelName").val();
+	$.ajax({
+		type : "POST",
+		url : "<%=basePath%>admin/addFavoLabel.php",
+		data : {
+			'favoLabelName':favoLabelName
+		},
+		dataType : "json",
+		async: true,
+		success : function(data) {
+			showAllLabelOfDoc();
+		},
+		error: function(XMLHttpRequest, textStatus, errorThrown) {
+			alert('新建标签失败');
+		}
+	})
+}
+</script>

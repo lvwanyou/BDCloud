@@ -1,0 +1,687 @@
+<%@ page language="java" contentType="text/html; charset=utf-8"
+	pageEncoding="utf-8"%>
+	<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%
+	String path = request.getContextPath();
+	String basePath = request.getScheme() + "://"
+			+ request.getServerName() + ":" + request.getServerPort()
+			+ path + "/";
+%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title></title>
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/cloud-admin.css">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/responsive.css">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/app.css">
+<script src="<%=basePath%>template/js/cutover/echarts.js"></script>
+<script src="<%=basePath%>template/build/echarts.js"></script>
+<style>
+	.top_div{
+		margin-right:1%;
+		float:left;
+		width:19%;
+		height:90px;
+	}
+	.top_p{
+		margin:5px 0px 0px 10px;
+		float:left;
+		font-size: 36px;
+		color: #ffffff;
+
+	}
+	.bottom_p{
+		font-size: 14px;
+		float:right;
+		margin:60px 20px 5px 0px;
+		color: #ffffff;
+		
+	}
+
+</style>
+<script src="<%=basePath %>template/js/script_left.js"></script>
+<script>
+		window.onresize =function(){
+		    cityCountTendencyChart.resize();
+		    mainWhCountTendencyChart.resize();
+		    littleWhCountTendencyChart.resize();
+		    cityCountVisionChart.resize();
+		    mainWhCountVisionChart.resize();
+		
+		}  
+		window.onresize = function(){
+		
+		   setTimeout(function(){
+		       $('a').innerHTML = Math.floor(Math.random() * 100);
+		   }, 1000)
+		}
+    </script>
+
+</head>
+
+
+<body>
+	<jsp:include page="common.jsp"></jsp:include>
+
+
+	<div class="wrapper-md">
+		<div class="col-md-12">
+			<div class="panel panel-default">
+				<form class="form-inline" role="form" id="searchForm" action="<%=basePath%>admin/showAllCaseNum.php" method="post">
+				<div class="panel-heading">案件数量统计</div>
+				<div class="panel-body" style="padding-top: 15px;" >
+					<div class="top_div" style="background-color: #f55050;" >
+						<p class="top_p" id="totalNum"></p>
+						<p class="bottom_p">案件总数</p>
+					</div>
+					<div class="top_div" style="background-color: #1ABD9D;">
+						<p class="top_p" value="year" id="totalNum1"></p>
+						<p class="bottom_p">本年度案件总数</p>
+					</div>
+					<div class="top_div" style="background-color: #3499DB;">
+						<p class="top_p" id="totalNum2"></p>
+						<p class="bottom_p">数据批次总数</p>
+					</div>
+					<div class="top_div" style="background-color: #9B58B5;">
+						<p class="top_p" id="totalNum4"></p>
+						<p class="bottom_p">嫌疑人命中</p>
+					</div>
+					<div class="top_div" style="background-color: #465E9D;">
+						<p class="top_p" id="sum"></p>
+						<p class="bottom_p" >布控预警命中</p>
+					</div>
+					
+				</div>
+				</form>
+			</div>
+			
+				<div class="panel panel-default" style="width:49%;float: right;overflow-x:auto;overflow-y:hidden;">
+			<div class="panel-heading">数据增加趋势图</div>
+			<div id="main" style="height:280px;width:797px;overflow-y:hidden;overflow-x:auto;"></div>
+			
+    <!-- ECharts单文件引入 -->
+
+<script src="<%=basePath%>template/build/dist/echarts.js"></script>
+
+    <script type="text/javascript">
+        // 路径配置
+        require.config({
+            paths: {
+            	
+                echarts:'<%=basePath%>template/build/dist/'
+            }
+        });
+        
+        // 使用
+        require(
+            [
+                'echarts',
+                'echarts/chart/line' // 使用柱状图就加载bar模块，按需加载
+            ],
+            function (ec) {
+            	var sizes= [];
+            	$.ajax({
+                    url:"<%=basePath %>admin/SearchData.php",
+                    data:{
+                    },
+                    type:"post",
+                    dataType:"json",
+                    success: function(data){
+                    	 //alert(data);
+                    	 
+                    	// alert(sizes);
+                         // 基于准备好的dom，初始化echarts图表
+                         var myChart = ec.init(document.getElementById('main')); 
+                         
+                         option = {
+                         	    title : {
+                         	        text: '',
+                         	        subtext: ''
+                         	    },
+                         	    tooltip : {
+                         	        trigger: 'axis'
+                         	    },
+                         	    legend: {
+                         	         data:['数据','单位/G'] 
+                         	    },
+                         	    calculable : true,
+                         	    xAxis : [
+                         	        {
+                         	            type : 'category',
+                         	            boundaryGap : false,
+                         	            data : ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月']
+                         	        }
+                         	    ], 
+                         	    yAxis : [
+                         	        {
+                         	            type : 'value'
+                         	        }
+                         	    ],
+                         	     series : [
+                         	 
+                         	        {
+                         	            name:'数据',
+                         	            type:'line',
+                         	            smooth:true,
+                         	            itemStyle: {normal: {color:'#31AEF2',borderColor:'#4EB9F3',borderWidth:'5px',areaStyle: {type: 'default',color:'rgba(135, 206, 235, 0.5)'},
+                         	            					lineStyle:{color:'#4EB9F3'}}},
+                         	            
+                         	            data: data//[1320, 1132, 601, 234, 120, 90, 20,122, 734, 391, 390, 30,] 
+                         	            					
+                         	         
+                         	        }
+                         	    ] 
+                         	};
+                     
+                 
+                         // 为echarts对象加载数据 
+                        myChart.setOption(option); 
+            	   /*     	 $.each(data,function(i,item){
+            	       		
+            	       		sizes.push(item);
+            	       	 }); */
+                      
+                    }
+                }); 
+            	
+            }
+        );
+    </script>
+			</div>
+			
+			<div class="panel panel-default" style="width:49%; height:50%; float: left;">
+			<div class="panel-heading">命中预警</div>
+							<div class="panel panel-default" style=" position:relative; height:280px;margin-bottom: 0px; overflow-y :auto;">
+									<!-- <div class="panel-heading">资料匹配结果</div> -->
+									<table id="datatable" class="table table-striped table-hover"
+										style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+										<thead>
+											<tr >
+												<th style="text-align: left">匹配日期</th>
+												<th style="text-align: left">命中项</th>
+												<th style="text-align: left">涉嫌案件名称</th>
+												<th style="text-align: left">嫌疑人姓名</th>
+												<th style="text-align: left">命中次数</th>
+											</tr>
+										</thead>
+										<tbody id="clues">
+										
+										
+										</tbody>
+									</table>
+								</div>
+			</div>
+			
+			
+			
+			<div class="panel panel-default" style="width:49%;float: left;overflow-x:auto;overflow-y:hidden;">
+			<div class="panel-heading">黑客数据库趋势图</div>
+			<div id="list" style="width:100%;height:300px;"></div>
+			
+		<div class="modal right fade" id="myModal" tabindex="-1"
+				style="width: 100%; height: 100%; margin: auto;">
+				<div class="panel panel-default"
+					style="width: 30%; height: 80%; margin: 3% auto;">
+					<div class="panel-heading">命中文件列表</div>
+					<div class="panel-body" style="width: 100%; height: 90%; overflow-y :auto;">
+						<table id="datatable" class="table table-striped table-hover"
+							style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+							<thead>
+								<tr >
+									<th style="text-align: left">名称</th>
+								</tr>
+							</thead>
+							<tbody id="clues2">
+
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>		
+			
+
+		<script type="text/javascript">
+        // 路径配置
+        require.config({
+            paths: {
+                echarts: '<%=basePath%>template/build/dist/'
+            }
+        });
+        
+        // 使用
+        require(
+            [
+                'echarts',
+                'echarts/chart/bar' // 使用柱状图就加载bar模块，按需加载
+            ],
+            function (ec) {
+            	<%-- $.ajax({
+            		url:"<%=basePath %>admin/HackerDB.php",
+            		data:{
+            			
+            		},
+            		type:"post",
+            		dataType:"json",
+            		success:function(data){
+            			alert(data); --%>
+            $.get('<%=basePath%>admin/HackerDB.php').done(function (data) {
+            	//alert(data);
+            	data = eval('('+data+')'); 
+    	        var sum =data.arrayList;
+
+                // 基于准备好的dom，初始化echarts图表
+                var myChart = ec.init(document.getElementById('list')); 
+                
+                var option = {
+                		
+                		
+                		 title : {
+                			 
+                		        //text: '本年度案收结趋势图',
+                		        //fontStyle:'italic'
+                		        //subtext: '纯属虚构'
+                		    },
+                		    
+                    tooltip: {
+                        show: true
+                    },
+                    legend: {
+                    	//itemGap:0,
+                        data:['单位/万条'],
+                        x:'680px',
+                     y:'40px'
+                    },                 
+                    xAxis : [
+                        {
+                            type : 'category',
+                            data : ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"]
+                        }
+                    ],
+                    yAxis:
+                    	[
+                    {
+                        type: 'value',
+                        //splitNumber:1,
+                        splitNumber: 10,
+                        min: 0,
+                        max: data
+                    }],
+
+                    series : [
+                              
+                              
+                        {
+                        	type:'bar',
+                            "name":"黑客数据库：单位/万条",
+                            "type":"bar",
+                            "barGap":"5",
+                            itemStyle: {normal: {color:'#6CE0C7'
+            					}},
+                            "data":data
+                    
+                        },
+                       /*  {
+                        	type:'bar',
+                            "name":"结案",
+                            "type":"bar",
+                            "baryGap":"5",
+                            itemStyle: {normal: {color:'#4EB9F3'
+        					}},
+                            "data":[100, 100, 200,50, 200, 200,100, 100, 200,50, 200, 300]
+                  
+                        }, */
+                        
+                    ],
+                   
+                };
+       
+                // 为echarts对象加载数据 
+                myChart.setOption(option); 
+            	/* 	}*/
+            	}); 
+            }
+        );
+        
+    </script>  
+    	</div>
+    	<div class="panel panel-default" style="width:49%;float: right;overflow-x:auto;overflow-y:hidden;">
+			<div class="panel-heading">数据类型趋势图 &nbsp;(<b>总容量：22T</b> &nbsp;<b id="Surplus">剩余容量：20.7T</b>)</div>
+			<div id="yuan" style="width:100%;height:300px;"></div>
+
+		<script type="text/javascript">
+		// 路径配置
+        require.config({
+            paths: {
+                echarts: '<%=basePath%>template/build/dist/'
+            }
+        });
+        
+        // 使用
+        require(
+            [
+                'echarts',
+                'echarts/chart/pie' 
+            ],
+            function (ec) {
+                // 基于准备好的dom，初始化echarts图表
+                var myChart = ec.init(document.getElementById('yuan')); 
+                
+               var option = {
+            		   
+            		   title : {
+              			 
+           		        text: '总容量：',
+           		        //fontStyle:'italic'
+           		        //subtext: '纯属虚构'
+           		    },
+                	    tooltip : {
+                	        trigger: 'item',
+                	        formatter: "{a} <br/>{b} : {c} ({d}%)"
+                	    },
+                	    legend: {
+                	        orient : 'vertical',
+                	        x : 'right',
+                	        data:['电子邮件','电子话单','图片资料','工作文档','黑客数据库']
+                	    },
+                	 
+                	    calculable : true,
+                	    series : [
+                	        {
+                	            name:'数据来源',
+                	            type:'pie',
+                	            radius : ['50%', '70%'],
+                	            itemStyle : {
+                	                normal : {
+                	                    label : {
+                	                        show : false
+                	                    },
+                	                    labelLine : {
+                	                        show : false
+                	                    }
+                	                },
+                	                emphasis : {
+                	                    label : {
+                	                        show : true,
+                	                        position : 'center',
+                	                        textStyle : {
+                	                            fontSize : '30',
+                	                            fontWeight : 'bold'
+                	                        }
+                	                    }
+                	                }
+                	            },
+                	            data:[
+                	                {value:335, name:'电子邮件'},
+                	                {value:310, name:'电子话单'},
+                	                {value:234, name:'图片资料'},
+                	                {value:135, name:'工作文档'},
+                	                {value:1548, name:'黑客数据库'}
+                	            ]
+                	        }
+                	    ]
+                	};
+               $.get('<%=basePath%>admin/DataType.php').done(function (data) {
+        	    	//alert(data);
+        	    	data = eval('('+data+')'); 
+	    	        var dateTime = [];
+	    	        var datesum = [];
+	    	        var dateTimeList =data.arrayList;
+	    	        var dateTimeList1 =data.arrayList1;
+	    	        $("#Surplus").html("剩余容量："+dateTimeList1+"T");
+        	    	$.each(dateTimeList,function(i,item){	
+        	    		var name1 = item.split(" ")[0];
+        	    		var value1 = item.split(" ")[1];
+        	    		var node={
+        	    				value:value1, 
+        	    				name:name1	
+        	    		};
+        	    		datesum.push(node);
+        	    		//alert(dateTime);
+        			});
+        	    	
+        	    	$.each(dateTimeList,function(i,item){	
+        	    		var name1 = item.split(" ")[0];
+        	    		dateTime.push(name1);
+        			});
+        	    	
+        	        myChart.setOption({ 
+        	        	
+        	        	/*  title : {
+                  			 
+                		        text: '总容量：22T',
+                		      
+                		        //fontStyle:'italic'
+                		       //subtext: '纯属虚构'
+                		    },
+                		    title1 : {
+                     			 
+                		        text: '剩余容量：20.5T',
+                		      
+                		        //fontStyle:'italic'
+                		       //subtext: '纯属虚构'
+                		    }, */
+        	        	  tooltip : {
+                  	        trigger: 'item',
+                  	        formatter: "{a} <br/>{b} : {c} ({d}%)"
+                  	    },
+                  	    legend: {
+                  	        orient : 'vertical',
+                  	        x : 'right',
+                  	        data:dateTime
+                  	    },
+        	        	 calculable : true,
+                 	   	 series : [
+                 	        {
+                 	            name:'数据来源',
+                 	            type:'pie',
+                 	            radius : ['50%', '70%'],
+                 	            itemStyle : {
+                 	                normal : {
+                 	                    label : {
+                 	                        show : false
+                 	                    },
+                 	                    labelLine : {
+                 	                        show : false
+                 	                    }
+                 	                },
+                 	                emphasis : {
+                 	                    label : {
+                 	                        show : true,
+                 	                        position : 'center',
+                 	                        textStyle : {
+                 	                            fontSize : '30',
+                 	                            fontWeight : 'bold'
+                 	                        }
+                 	                    }
+                 	                }
+                 	            },
+                 	            data:datesum
+                 	            	/* [
+                	                {value:335, name:'电子邮件'},
+                	                {value:310, name:'电子话单'},
+                	                {value:234, name:'图片资料'},
+                	                {value:135, name:'工作文档'},
+                	                {value:1548, name:'黑客数据库'}
+                	            ]  */}
+                 	    ]
+        	        })
+        	    });                                  
+       
+                // 为echarts对象加载数据 
+               // myChart.setOption(option); 
+            }
+        );
+        
+    </script>
+    	</div>
+		</div>
+	</div>
+
+	<script src="<%=basePath%>template/js/jquery/jquery-2.0.3.min.js"></script>
+	<script
+		src="<%=basePath%>template/js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+	<script src="<%=basePath%>template/bootstrap-dist/js/bootstrap.min.js"></script>
+
+	<script src="<%=basePath%>template/js/shengshiqu/jquery.js"></script>
+	<script type="text/javascript"
+		src="<%=basePath%>template/js/shengshiqu/area.js"></script>
+	<script type="text/javascript"
+		src="<%=basePath%>template/js/shengshiqu/location.js"></script>
+	<script src="<%=basePath%>template/js/shengshiqu/select2.js"></script>
+	<script
+		src="<%=basePath%>template/js/shengshiqu/select2_locale_zh-CN.js"></script>
+		
+
+<script>
+//命中预警
+window.onload = getClues();
+function getClues() {
+	 //$("#clues").empty();
+	$.ajax({
+        url:"<%=basePath %>clueWarn/getClue.php",
+        data:{
+             "caseId":""     
+        },
+        type:"post",
+        dataType:"json",
+        success: function(data){
+        	var html="";
+	       	 $.each(data,function(i,item){
+	       		 html+='<tr >'+
+						'<td style="text-align: left">'+item.clueTime+'</td>'+
+						'<td style="text-align: left">'+item.clue+'</td>'+
+						'<td style="text-align: left">'+item.caseName+'</td>'+
+						'<td style="text-align: left">'+item.suspectName+'</td>'+
+						'<td style="text-align: left"><a data-target="#myModal" data-toggle="modal" type="button"  onclick="showFile('+i+')" >'+item.num+'</a>'+
+						'<span id="fileNames'+i+'" style=" display:none;">'+item.fileName+'</span></td>'+
+					'</tr>';
+	       	 });
+           $("#clues").append(html);	
+           $("#sum").html(data.length);
+        }
+    });
+}
+//点击命中次数 显示文件列表
+function showFile(num) {
+	$("#clues2").empty();
+	var fileNames = $("#fileNames"+num).html();
+	var files=fileNames.split("/");
+	var html="";
+   	 $.each(files,function(i,item){
+   		 html+='<tr >'+
+					'<td style="text-align: left">'+item+'</td>'+
+				'</tr>';
+   	 });
+    $("#clues2").append(html);	
+
+}
+//查询所有的案件总数
+window.onload=showCase();
+function showCase() {
+	//alert(1);
+	$.ajax({
+       url:"<%=basePath %>admin/showAllCase.php",
+       data:{
+                 
+       },
+       type:"post",
+       dataType:"json",
+       success: function(data){
+    	   //alert(data);
+    	  $("#totalNum").html(data);
+       } ,
+		error: function(XMLHttpRequest, textStatus, errorThrown) {
+			//alert("失败");
+		}
+   });
+}
+
+//查询年度案件总数
+window.onload=showCaseNum();
+function showCaseNum() {
+	//alert(1);
+	$.ajax({
+       url:"<%=basePath %>admin/showAllCaseNum.php",
+       data:{
+                 
+       },
+       type:"post",
+       dataType:"json",
+       success: function(data1){
+    	  // alert(data1);
+    	  $("#totalNum1").html(data1);
+       } ,
+		error: function(XMLHttpRequest, textStatus, errorThrown) {
+			//alert("失败");
+		}
+   });
+}
+
+//按数据批次查询
+window.onload=showData();
+function showData() {
+	//alert(1);
+	$.ajax({
+       url:"<%=basePath %>admin/showDataList.php",
+       data:{
+                 
+       },
+       type:"post",
+       dataType:"json",
+       success: function(data2){
+    	   //alert(data2);
+    	  $("#totalNum2").html(data2);
+       } ,
+		error: function(XMLHttpRequest, textStatus, errorThrown) {
+			//alert("失败");
+		}
+   });
+}
+
+//嫌疑人命中
+//按数据批次查询
+window.onload=showSuspect();
+function showSuspect() {
+	//alert(1);
+	$.ajax({
+       url:"<%=basePath %>admin/showSuspect.php",
+       data:{
+                 
+       },
+       type:"post",
+       dataType:"json",
+       success: function(data4){
+    	   //alert(data2);
+    	  $("#totalNum4").html(data4);
+       } ,
+		error: function(XMLHttpRequest, textStatus, errorThrown) {
+			//alert("失败");
+		}
+   });
+}
+<%--  window.onload=ShowhackDB();
+function ShowhackDB(){
+	$.ajax({
+		url:"<%=basePath %>admin/HackerDB.php",
+		data:{
+			
+		},
+		type:"post",
+		dataType:"json",
+		success:function(data){
+			alert(data);
+		},
+		error:function(XMLHttpRequest,textStatus,erroeThrown){
+			alsert("失败");
+		}
+	})
+}   --%>
+</script>
+
+	
+</body>
+</html>

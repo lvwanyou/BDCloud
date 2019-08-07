@@ -1,0 +1,993 @@
+<%@ page language="java" contentType="text/html; charset=utf-8"
+	pageEncoding="utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%
+	String path = request.getContextPath();
+	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
+			+ path + "/";
+%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title></title>
+<link href="<%=basePath%>template/css/cloud-admin.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/responsive.css">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/app.css">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/easyui.css" />
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/easyui2.css" />
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/bootstrap.css">
+
+<script src="<%=basePath%>template/js/jquery/jquery-2.0.3.min.js"></script>
+<script type="text/javascript">
+	$(document).ready( function(){
+		var div_height = $("#wrapper-md-ds").height()-40;
+		//alert(div_height);
+		$("#ds_div").css("height", div_height+"px");
+	});
+	
+	
+	//折叠
+	function testOfSearch(obj){
+	  var div1=document.getElementById("searchOfForm");
+	  if(div1.style.display=="block"){
+	    div1.style.display="none";
+	    obj.src="<%=basePath %>template/img/downXia.png";
+	  }else{
+	    div1.style.display="block";
+	    obj.src="<%=basePath %>template/img/addevidence.png";
+	  }
+	}
+</script>
+<script type="text/javascript" src="<%=basePath%>template/js/jquery.easyui.min.js"></script>
+<style>
+.alcenter {
+	text-align: center;
+}
+
+.inline {
+	display: inline-block;
+}
+.form-inline .form-control {
+	/*width:auto;*/
+	max-width: 391px;
+	width: 391px;
+}
+.clabel {
+	margin-right:14px;
+}
+.row{
+	margin-left: 0px;
+}
+.panel-header, .datagrid-header{
+	display: none;
+}
+.datagrid-body::-webkit-scrollbar{
+			width: 10px;
+			height: 10px;
+			background-color: #F5F5F5;
+		}
+		.datagrid-body::-webkit-scrollbar-track  
+		{  
+		    background-color: #F5F5F5;  
+		}
+		.datagrid-body::-webkit-scrollbar-thumb  
+		{  
+		    background-color: #3992d0;  
+		}
+		.datagrid-header td
+		{
+		    border:none;
+		}
+		.panel{
+		margin-bottom: 20px;
+		text-align: inherit;
+		border: 1px solid #dee5e7;
+	}
+	.panel-body{
+		padding: 15px;
+		border: none;
+		font-size: 14px;
+	}
+	.panel-header{
+		padding:0;
+		border-width:0;
+		border-top-width:1px;
+	}
+	.datagrid-header-row{
+		width:100%;
+	}
+	.datagrid-body td{
+		background-color: #fff;
+		height:100%;
+		border-width: 0 0 0 0;
+	}
+	.datagrid-wrap.panel-body{
+		background-color: #fff;
+	}
+	.panel.datagrid.easyui-fluid{
+		overflow: hidden;
+		text-align: left;
+		border: 0;
+		margin: 0;
+	}
+	.col-md-2 .panel-body{
+		padding: 0 0 0 0;
+	}
+	.col-md-2 .panel{
+		border-bottom: none;
+	}
+	#table-modal_adduser .form-group, #table-modal_edituser .form-group{
+		width: 50%;
+		float: left;
+	}
+	#table-modal_adduser .form-group .control-label, #table-modal_edituser .form-group .control-label {
+		padding-top: 7px;
+		padding-right: 0px;
+	}
+	#table-modal_adduser .form-group .col-lg-8, #table-modal_edituser .form-group .col-lg-8{
+		padding-left: 0px;
+	}
+	.btnA {
+		color: #475E9C;
+	}
+	a.btnA:hover, a.btnA:focus {
+		color: #384b7e;
+	}
+	.tree-title{
+		cursor: pointer;
+		padding:0 8px;
+	}
+	.tree-title{color:#666;font-size:14px;height:30px;line-height:30px;}
+	.tree-checkbox0,.tree-hit,.tree-checkbox1,.tree-checkbox2{margin-top:5px;}
+/* 	.pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus {
+    z-index: 2;
+    color: #ffffff;
+    background-color: #337ab7;
+    border-color: #337ab7;
+    cursor: default; */
+}
+</style>
+<script type="text/javascript">
+function subForm(pageno){
+	$("#pageno").val(pageno);
+	$("#searchForm").submit();
+}
+</script>
+</head>
+<body>
+	<jsp:include page="common.jsp"></jsp:include>
+	<div class="bg-light lter b-b wrapper-md">
+  		<h1 class="m-n h4">用户管理</h1>
+	</div>
+
+	<div id="wrapper-md-ds" class="wrapper-md" style="height:760px;padding-bottom: 20px;">
+		<div class="col-md-2" style="padding-right: 20px;margin-left: -15px;height: 500px;">
+			<div class="row" style="height: 500px;">
+				<div class="panel panel-default" style="height: 760px;">
+					<div class="panel-heading" style="margin-bottom:15px;">选择单位</div>
+					<div id="ds_div" class="panel-body" style="padding-left:15px;overflow:auto;">
+						<table title="Folder Browser" class="easyui-treegrid"
+									style="width: 100%; height: 100%; float: left; margin-bottom: 0px; color: #4A99D3; font-size: 16px; border: 1px solid #3992d0; text-align: center;"
+									id="caseTreeGrid_ds"
+									data-options="
+											<!--  url: '<%=basePath%>json.php',-->
+											<!-- url: '<%=basePath%>admin/initDSTree.php',-->
+											lines: true,
+											checkbox: false,
+											idField: 'id',						 
+											animate:'true',
+											treeField: 'text',
+											onClickCell:onClickCells_ds,
+											loader:myloader
+									">
+									<thead
+										style="background-color: #E6F3F9; color: #4A99D3; font-size: 20px; border: 1px solid #3992d0; text-align: center; display: none;">
+										<tr style="height:30px;line-height:30px;">
+											<th data-options="field:'text'" style="width: 90%;">
+												<!-- <input type="checkbox" id="_REPLACE_MAIN"  class="_table-blue-checkbox-hidden"/> -->
+												<span style="color: #3992D0; font-size: 14px"></span>
+											</th>
+										</tr>
+									</thead>
+								</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-10">
+			
+			<div class="row">
+				<div class="panel panel-default">
+					<div id="loadDiv_user" style="text-align: center;margin-top: 10px;position: absolute;left:50%;z-index:99;display: none;">
+				 		<img alt="" src="<%=basePath%>template/img/loading3.gif">
+					</div>
+					<div class="panel-heading">内容</div>
+					<div class="panel-body" style="padding: 0 0 15px;">
+						<table id="datatable" class="table table-striped table-hover" style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+							<thead  id="tou" >
+								
+							</thead>
+							<tbody  id="tbcont">
+								 	
+							</tbody>
+						</table>
+						
+						<!-- 分页 -->
+						<div class="alcenter" style="font-size: 14px; padding-top: 20px; padding-bottom: 20px;">
+							<div  class="pagecount inline" style="height: 29px; padding-left: 0%;">
+								<span id="tot">
+								
+								</span>
+							</div>
+							<div class="pagebar inline" style="position: absolute; right: 128px; height: 29px;">
+								<ul class="pagination pagination-sm" style="margin: 0;" id="pageUL">
+								
+								</ul>
+							</div>
+							<div style="float: right;margin-right: 11px;">
+								<input class="form-control" type="text" style="width:52px;height:28px;border-radius:2px; display: inline;" id="givePages_phoneQuzheng" name="givePages_phoneQuzheng" onkeydown="onKeyDown(event)"/>
+								<button type="button" class="btn" onclick="searchUser(1)" style="width:52px;height:28px;line-height: 12px;">跳转</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+</div>
+<jsp:include page="footer2.jsp"></jsp:include>
+<script src="<%=basePath%>template/js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+<script src="<%=basePath%>template/bootstrap-dist/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+	
+	function myloader(param,success,error){
+	    $.ajax({
+	        url:"<%=basePath %>phone/hemlDataTree.php",
+	        data:{
+	        },
+	        type:"get",
+	        dataType:"json",
+	        success: function(data){
+	            success(data); 
+	        }
+	    });
+	}
+	var dsId;
+	function onClickCells_ds(field,row){
+		var tempid = String(row.id);
+		dsId=tempid;
+		searchUser(1);
+	}
+	
+	function searchUser(page){
+		
+		var givePages_phoneQuzheng = $("#givePages_phoneQuzheng").val();
+    	if(givePages_phoneQuzheng != ""){
+    		page = parseInt(givePages_phoneQuzheng);
+    	}
+		
+		$.ajax({
+			type: "POST",
+			url: "<%=basePath %>phone/getPhoneData.php",
+			dataType : "json",
+			data : {
+				"pageIndex":page,
+				"dsId":dsId
+			},							    
+			success : function(data) {
+				var sum=data.count;//总数
+				var sum2=10;//每页个数
+				var sum3=parseInt( sum /(sum2+1)+1);//总页数
+				//分页开始
+				$("#pageUL").html("");
+				var tmp = "";
+				if(parseInt(page) == 1)
+					tmp += '<li id="orderA_5"><a href="javascript:void(0)" onclick="searchUser('+sum3+')">&lt;</a></li >';
+				else
+					tmp += '<li id="orderA_5"><a href="javascript:void(0)" onclick="searchUser('+ (parseInt(page) - 1) +')">&lt;</a></li >';
+				var flag=0;
+				for(p = 1; p <= sum3; p++){
+					if(p>=page-5 && flag<5){
+						if(p == page)
+							tmp += '<li class="active" id="orderA_5"><a href="javascript:void(0)" onclick="searchUser('+ p +')">'+p+'</a></li >';
+						else
+							tmp += '<li id="orderA_5"><a href="javascript:void(0)" onclick="searchUser('+ p +')">'+p+'</a></li >';
+						flag++;
+					}
+				}
+				if(page == sum3)
+					tmp += '<li id="orderA_5"><a href="javascript:void(0)" onclick="searchUser(1)">&gt;</a></li >';
+				else
+					tmp += '<li id="orderA_5"><a href="javascript:void(0)" onclick="searchUser('+ (parseInt(page) + 1) +')">&gt;</a></li >';
+				$("#pageUL").html(tmp);
+				$("#tot").html("共"+sum+"条,当前"+page+"/"+sum3+"页");
+				//分页结束
+				$("#tou").empty();
+				$("#tbcont").empty();
+				var touhtml="";
+				var conthtml="";
+				var phoneList = data.phoneList;
+				$.each(phoneList,function(i,item){
+					//电子邮箱 QQ邮箱通讯录对象					
+					if(dsId=="qqemail_mailList"){
+						touhtml='<tr>'+
+						'<td  style="text-align:eft">名称</td>'+
+						'<td  style="text-align:eft">邮箱</td>'+
+						'<td  style="text-align:eft">md5加密</td></tr>';
+						conthtml+='<tr>'+
+						'<td  style="text-align:eft">'+item.cName+'</td>'+
+						'<td  style="text-align:eft">'+item.mail+'</td>'+
+						'<td  style="text-align:eft">'+item.md5+'</td></tr>';
+					}
+					//通话记录
+					if(dsId=="phone_callLog"){
+						touhtml='<tr>'+
+						'<td  style="text-align:eft">用户名</td>'+
+						'<td  style="text-align:eft">用户电话</td>'+
+						'<td  style="text-align:eft">呼叫状态</td>'+
+						'<td  style="text-align:eft">呼叫时间</td>'+
+						'<td  style="text-align:eft">呼叫时长</td>'+
+						'<td  style="text-align:eft">md5加密</td></tr>';
+						conthtml+='<tr>'+
+						'<td  style="text-align:eft">'+item.name+'</td>'+
+						'<td  style="text-align:eft">'+item.telPhone+'</td>'+
+						'<td  style="text-align:eft">'+item.callStatus+'</td>'+
+						'<td  style="text-align:eft">'+item.callTime+'</td>'+
+						'<td  style="text-align:eft">'+item.duration+'</td>'+
+						'<td  style="text-align:eft">'+item.md5+'</td></tr>';
+					}
+					//通讯录
+					if(dsId=="phone_mailList"){
+						touhtml='<tr>'+
+						 '<td  style="text-align:eft">用户名</td>'+
+						 '<td  style="text-align:eft">用户手机号</td>'+
+						 '<td  style="text-align:eft">是否删除</td>'+
+						 '<td  style="text-align:eft">创建时间</td>'+
+						 '<td  style="text-align:eft">更新时间</td>'+
+						 '<td  style="text-align:eft">md5加密</td></tr>';
+						conthtml+='<tr>'+
+						 '<td  style="text-align:eft">'+item.name+'</td>'+
+						 '<td  style="text-align:eft">'+item.telphone.split(";")[0]+'</td>'+
+						 '<td  style="text-align:eft">'+item.deleteFlag+'</td>'+
+						 '<td  style="text-align:eft">'+item.createTime+'</td>'+
+						 '<td  style="text-align:eft">'+item.lastUpdateTime+'</td>'+
+						 '<td  style="text-align:eft">'+item.md5+'</td></tr>';
+					}
+					//手机信息 短信联系人对象
+					if(dsId=="phone_smsContact"){
+						touhtml='<tr>'+
+						'<td  style="text-align:eft">用户名</td>'+
+						'<td  style="text-align:eft">手机号</td>'+
+						'<td  style="text-align:eft">md5加密</td></tr>';
+						conthtml+='<tr>'+
+						'<td  style="text-align:eft">'+item.name+'</td>'+
+						'<td  style="text-align:eft">'+item.telphone+'</td>'+
+						'<td  style="text-align:eft">'+item.md5+'</td></tr>';
+					}
+					//QQ邮箱 与邮件相关页面对象（垃圾箱 已删除 已发送 收件箱 草稿箱）
+					if(dsId=="qqEmail"){
+						touhtml='<tr>'+
+						 '<td  style="text-align:eft">发件人</td>'+
+						 '<td  style="text-align:eft">收件人</td>'+
+						 '<td  style="text-align:eft">抄送</td>'+
+						 '<td  style="text-align:eft">密送</td>'+
+						 '<td  style="text-align:eft">主题</td>'+
+						 '<td  style="text-align:eft">内容</td>'+
+						 '<td  style="text-align:eft">附件</td>'+
+						 '<td  style="text-align:eft">附件路径</td>'+
+						 '<td  style="text-align:eft">发送时间</td>'+
+						 '<td  style="text-align:eft">已读</td>'+
+						 '<td  style="text-align:eft">md5加密</td></tr>';
+						conthtml+='<tr>'+
+						 '<td  style="text-align:eft">'+item.sender+'</td>'+
+						 '<td  style="text-align:eft">'+item.recipient+'</td>'+
+						 '<td  style="text-align:eft">'+item.cc+'</td>'+
+						 '<td  style="text-align:eft">'+item.time+'</td>'+
+						 '<td  style="text-align:eft">'+item.bcc+'</td>'+
+						 '<td  style="text-align:eft">'+item.theme+'</td>'+
+						 '<td  style="text-align:eft">'+item.content+'</td>'+
+						 '<td  style="text-align:eft">'+item.annex+'</td>'+
+						 '<td  style="text-align:eft">'+item.annexPath+'</td>'+
+						 '<td  style="text-align:eft">'+item.read+'</td>'+
+						 '<td  style="text-align:eft">'+item.md5+'</td></tr>';
+					}
+					//支付宝陌生人、好友页面对象
+					if(dsId=="zfb_friends"){
+						touhtml='<tr>'+
+						 '<td  style="text-align:eft">备注名称</td>'+
+						 '<td  style="text-align:eft">昵称</td>'+
+						 '<td  style="text-align:eft">全名</td>'+
+						 '<td  style="text-align:eft">认证状态</td>'+
+						 '<td  style="text-align:eft">账号</td>'+
+						 '<td  style="text-align:eft">会员等级</td>'+
+						 '<td  style="text-align:eft">地区</td>'+
+						 '<td  style="text-align:eft">签名</td>'+
+						 '<td  style="text-align:eft">手机联系人</td>'+
+						 '<td  style="text-align:eft">手机号</td>'+
+						 '<td  style="text-align:eft">头像</td>'+
+						 '<td  style="text-align:eft">md5加密</td>' ;
+						conthtml+='<tr>'+
+						 '<td  style="text-align:eft">'+item.memoName+'</td>'+
+						 '<td  style="text-align:eft">'+item.nickName+'</td>'+
+						 '<td  style="text-align:eft">'+item.fullName+'</td>'+
+						 '<td  style="text-align:eft">'+item.authStatus+'</td>'+
+						 '<td  style="text-align:eft">'+item.acc+'</td>'+
+						 '<td  style="text-align:eft">'+item.memberLevel+'</td>'+
+						 '<td  style="text-align:eft">'+item.area+'</td>'+
+						 '<td  style="text-align:eft">'+item.signature+'</td>'+
+						 '<td  style="text-align:eft">'+item.contacts+'</td>'+
+						 '<td  style="text-align:eft">'+item.telephone+'</td>'+
+						 '<td  style="text-align:eft">'+item.avatar+'</td>'+
+						 '<td  style="text-align:eft">'+item.md5+'</td>' ;
+					}
+					//程序列表页面对象
+					if(dsId=="phone_AppList"){
+						touhtml='<tr>'+
+						 '<td  style="text-align:eft">名称</td>'+
+						 '<td  style="text-align:eft">包名</td>'+
+						 '<td  style="text-align:eft">版本</td>'+
+						 '<td  style="text-align:eft">类型</td>'+
+						 '<td  style="text-align:eft">大小</td>'+
+						 '<td  style="text-align:eft">更新日期</td>'+
+						 '<td  style="text-align:eft">安装路径</td>'+
+						 '<td  style="text-align:eft">权限</td>'+
+						 '<td  style="text-align:eft">图标</td>'+
+						 '<td  style="text-align:eft">md5加密</td>' ;
+						conthtml+='<tr>'+
+						 '<td  style="text-align:eft">'+item.name+'</td>'+
+						 '<td  style="text-align:eft">'+item.packageName+'</td>'+
+						 '<td  style="text-align:eft">'+item.version+'</td>'+
+						 '<td  style="text-align:eft">'+item.type+'</td>'+
+						 '<td  style="text-align:eft">'+item.size+'</td>'+
+						 '<td  style="text-align:eft">'+item.updateDate+'</td>'+
+						 '<td  style="text-align:eft">'+item.installPath+'</td>'+
+						 '<td  style="text-align:eft">'+item.permission+'</td>'+
+						 '<td  style="text-align:eft">'+item.icon+'</td>'+
+						 '<td  style="text-align:eft">'+item.md5+'</td>' ;
+					}
+					
+					//应用程序地理位置页面对象
+					if(dsId=="phone_AppLocation"){
+						touhtml='<tr>'+
+						 '<td  style="text-align:eft">应用名称</td>'+
+						 '<td  style="text-align:eft">用户ID</td>'+
+						 '<td  style="text-align:eft">用户名</td>'+
+						 '<td  style="text-align:eft">纬度</td>'+
+						 '<td  style="text-align:eft">经度</td>'+
+						 '<td  style="text-align:eft">地点</td>'+
+						 '<td  style="text-align:eft">详细地址</td>'+
+						 '<td  style="text-align:eft">时间</td>'+
+						 '<td  style="text-align:eft">分享对象ID</td>'+
+						 '<td  style="text-align:eft">来源账号名称</td>'+
+						 '<td  style="text-align:eft">md5加密</td>' ;
+						conthtml+='<tr>'+
+						 '<td  style="text-align:eft">'+item.appName+'</td>'+
+						 '<td  style="text-align:eft">'+item.userId+'</td>'+
+						 '<td  style="text-align:eft">'+item.userName+'</td>'+
+						 '<td  style="text-align:eft">'+item.latitude+'</td>'+
+						 '<td  style="text-align:eft">'+item.longitude+'</td>'+
+						 '<td  style="text-align:eft">'+item.location+'</td>'+
+						 '<td  style="text-align:eft">'+item.add+'</td>'+
+						 '<td  style="text-align:eft">'+item.time+'</td>'+
+						 '<td  style="text-align:eft">'+item.shareObjId+'</td>'+
+						 '<td  style="text-align:eft">'+item.srcAccId+'</td>'+
+						 '<td  style="text-align:eft">'+item.md5+'</td>' ;
+					}
+					
+					//系统日志 应用程序使用记录 页面对象
+					if(dsId=="phone_AppUseRecord"){
+						touhtml='<tr>'+
+						 '<td  style="text-align:eft">包名</td>'+
+						 '<td  style="text-align:eft">最后更新时间</td>'+
+						 '<td  style="text-align:eft">包路径</td>'+
+						 '<td  style="text-align:eft">最新修改时间</td>'+
+						 '<td  style="text-align:eft">最后运行时间</td>'+
+						 '<td  style="text-align:eft">第一次安装时间</td>'+
+						 '<td  style="text-align:eft">状态</td>'+
+						 '<td  style="text-align:eft">md5加密</td>' ;
+						conthtml+='<tr>'+
+						 '<td  style="text-align:eft">'+item.packageName+'</td>'+
+						 '<td  style="text-align:eft">'+item.lastUpdateTime+'</td>'+
+						 '<td  style="text-align:eft">'+item.packagePath+'</td>'+
+						 '<td  style="text-align:eft">'+item.newestModifiedTime+'</td>'+
+						 '<td  style="text-align:eft">'+item.lastRunTime+'</td>'+
+						 '<td  style="text-align:eft">'+item.firstInstallTime+'</td>'+
+						 '<td  style="text-align:eft">'+item.status+'</td>'+
+						 '<td  style="text-align:eft">'+item.md5+'</td>' ;
+					}
+					//浏览器书签页面对象
+					if(dsId=="browser_bookmarks"){
+						touhtml='<tr>'+
+						 '<td  style="text-align:eft">标题</td>'+
+						 '<td  style="text-align:eft">网址</td>'+
+						 '<td  style="text-align:eft">日期</td>'+
+						 '<td  style="text-align:eft">md5加密</td>' ;
+						conthtml+='<tr>'+
+						 '<td  style="text-align:eft">'+item.title+'</td>'+
+						 '<td  style="text-align:eft">'+item.url+'</td>'+
+						 '<td  style="text-align:eft">'+item.date+'</td>'+
+						 '<td  style="text-align:eft">'+item.md5+'</td>' ;
+					}
+					
+					//各个浏览器的实力记录页面对象
+					if(dsId=="browser_history"){
+						touhtml='<tr>'+
+						 '<td  style="text-align:eft">标题</td>'+
+						 '<td  style="text-align:eft">网址</td>'+
+						 '<td  style="text-align:eft">日期</td>'+
+						 '<td  style="text-align:eft">访问次数</td>'+
+						 '<td  style="text-align:eft">最后访问时间</td>'+
+						 '<td  style="text-align:eft">md5加密</td>' ;
+						conthtml+='<tr>'+
+						 '<td  style="text-align:eft">'+item.title+'</td>'+
+						 '<td  style="text-align:eft">'+item.url+'</td>'+
+						 '<td  style="text-align:eft">'+item.date+'</td>'+
+						 '<td  style="text-align:eft">'+item.times+'</td>'+
+						 '<td  style="text-align:eft">'+item.lastTime+'</td>'+
+						 '<td  style="text-align:eft">'+item.md5+'</td>' ;
+					}
+					//浏览器Cookies页面对象
+					if(dsId=="browser_cookies"){
+						touhtml='<tr>'+
+						 '<td  style="text-align:eft">名称</td>'+
+						 '<td  style="text-align:eft">修改时间</td>'+
+						 '<td  style="text-align:eft">最后访问时间</td>'+
+						 '<td  style="text-align:eft">文件名称</td>'+
+						 '<td  style="text-align:eft">用户名</td>'+
+						 '<td  style="text-align:eft">点击次数</td>'+
+						 '<td  style="text-align:eft">Cookies文件路径</td>'+
+						 '<td  style="text-align:eft">预览路径</td>'+
+						 '<td  style="text-align:eft">域名</td>'+
+						 '<td  style="text-align:eft">路径</td>'+
+						 '<td  style="text-align:eft">md5加密</td>' ;
+						conthtml+='<tr>'+
+						 '<td  style="text-align:eft">'+item.name+'</td>'+
+						 '<td  style="text-align:eft">'+item.modifiedDate+'</td>'+
+						 '<td  style="text-align:eft">'+item.lastTime+'</td>'+
+						 '<td  style="text-align:eft">'+item.fileName+'</td>'+
+						 '<td  style="text-align:eft">'+item.userName+'</td>'+
+						 '<td  style="text-align:eft">'+item.clickTimes+'</td>'+
+						 '<td  style="text-align:eft">'+item.cookiesPath+'</td>'+
+						 '<td  style="text-align:eft">'+item.previewPath+'</td>'+
+						 '<td  style="text-align:eft">'+item.domainName+'</td>'+
+						 '<td  style="text-align:eft">'+item.path+'</td>'+
+						 '<td  style="text-align:eft">'+item.md5+'</td>' ;
+					}
+					
+
+					//滴滴出行 消息页面对象
+					if(dsId=="Didi_Mess"){
+						touhtml='<tr>'+
+						 '<td  style="text-align:eft">发送者ID</td>'+
+						 '<td  style="text-align:eft">发送者昵称</td>'+
+						 '<td  style="text-align:eft">接收者ID</td>'+
+						 '<td  style="text-align:eft">接收者昵称</td>'+
+						 '<td  style="text-align:eft">消息</td>'+
+						 '<td  style="text-align:eft">时间</td>'+
+						 '<td  style="text-align:eft">消息类型</td>'+
+						 '<td  style="text-align:eft">附件路径</td>'+
+						 '<td  style="text-align:eft">md5加密</td>' ;
+						conthtml+='<tr>'+
+						 '<td  style="text-align:eft">'+item.senderId+'</td>'+
+						 '<td  style="text-align:eft">'+item.senderName+'</td>'+
+						 '<td  style="text-align:eft">'+item.recipientId+'</td>'+
+						 '<td  style="text-align:eft">'+item.recipientName+'</td>'+
+						 '<td  style="text-align:eft">'+item.mess+'</td>'+
+						 '<td  style="text-align:eft">'+item.time+'</td>'+
+						 '<td  style="text-align:eft">'+item.messType+'</td>'+
+						 '<td  style="text-align:eft">'+item.annex+'</td>'+
+						 '<td  style="text-align:eft">'+item.md5+'</td>' ;
+					}
+					//滴滴出行 个人信息页面对象
+					if(dsId=="Didi_PersonMess"){
+						touhtml='<tr>'+
+						 '<td  style="text-align:eft">手机号码</td>'+
+						 '<td  style="text-align:eft">当前位置</td>'+
+						 '<td  style="text-align:eft">当前城市</td>'+
+						 '<td  style="text-align:eft">md5加密</td>' ;
+						conthtml+='<tr>'+
+						 '<td  style="text-align:eft">'+item.telephone+'</td>'+
+						 '<td  style="text-align:eft">'+item.add+'</td>'+
+						 '<td  style="text-align:eft">'+item.city+'</td>'+
+						 '<td  style="text-align:eft">'+item.md5+'</td>' ;
+					}	
+					//滴滴出行 个人设置对象
+					if(dsId=="Didi_PersonSet"){
+						touhtml='<tr>'+
+						 '<td  style="text-align:eft">家庭地址</td>'+
+						 '<td  style="text-align:eft">公司地址</td>'+
+						 '<td  style="text-align:eft">家庭经度</td>'+
+						 '<td  style="text-align:eft">家庭纬度</td>'+
+						 '<td  style="text-align:eft">公司经度</td>'+
+						 '<td  style="text-align:eft">公司维度</td>'+
+						 '<td  style="text-align:eft">md5加密</td>' ;
+						conthtml+='<tr>'+
+						 '<td  style="text-align:eft">'+item.homeAdd+'</td>'+
+						 '<td  style="text-align:eft">'+item.compAdd+'</td>'+
+						 '<td  style="text-align:eft">'+item.homeLongitude+'</td>'+
+						 '<td  style="text-align:eft">'+item.homeLatitude+'</td>'+
+						 '<td  style="text-align:eft">'+item.compLongitude+'</td>'+
+						 '<td  style="text-align:eft">'+item.compLatitude+'</td>'+
+						 '<td  style="text-align:eft">'+item.md5+'</td>' ;
+					}
+					//地图信息 腾讯地图 搜索位置页面对象
+					if(dsId=="TMap_LoactionSearch"){
+						touhtml='<tr>'+
+						 '<td  style="text-align:eft">位置ID</td>'+
+						 '<td  style="text-align:eft">时间</td>'+
+						 '<td  style="text-align:eft">位置名称</td>'+
+						 '<td  style="text-align:eft">地址</td>'+
+						 '<td  style="text-align:eft">经度</td>'+
+						 '<td  style="text-align:eft">纬度</td>'+
+						 '<td  style="text-align:eft">备注</td>'+
+						 '<td  style="text-align:eft">md5加密</td>' ;
+						conthtml+='<tr>'+
+						 '<td  style="text-align:eft">'+item.addId+'</td>'+
+						 '<td  style="text-align:eft">'+item.time+'</td>'+
+						 '<td  style="text-align:eft">'+item.addname+'</td>'+
+						 '<td  style="text-align:eft">'+item.add+'</td>'+
+						 '<td  style="text-align:eft">'+item.longitude+'</td>'+
+						 '<td  style="text-align:eft">'+item.latitude+'</td>'+
+						 '<td  style="text-align:eft">'+item.remarks+'</td>'+
+						 '<td  style="text-align:eft">'+item.md5+'</td>' ;
+					}
+					//手机内的媒体文件（图片 视频）页面对象
+					if(dsId=="phone_MediaFile"){
+						touhtml='<tr>'+
+						 '<td  style="text-align:eft">保存路径</td>'+
+						 '<td  style="text-align:eft">文件名</td>'+
+						 '<td  style="text-align:eft">大小</td>'+
+						 '<td  style="text-align:eft">修改时间</td>'+
+						 '<td  style="text-align:eft">创建时间</td>'+
+						 '<td  style="text-align:eft">路径</td>'+
+						 '<td  style="text-align:eft">是否删除</td>'+ 
+						 '<td  style="text-align:eft">本机拍摄(图片)</td>'+
+						 '<td  style="text-align:eft">文件md5</td>'+
+						 '<td  style="text-align:eft">自拍（图片）</td>'+
+						 '<td  style="text-align:eft">md5加密</td>' ;
+						conthtml+='<tr>'+
+						 '<td  style="text-align:eft">'+item.file+'</td>'+
+						 '<td  style="text-align:eft">'+item.fileName+'</td>'+
+						 '<td  style="text-align:eft">'+item.size+'</td>'+
+						 '<td  style="text-align:eft">'+item.modifiedTime+'</td>'+
+						 '<td  style="text-align:eft">'+item.createTime+'</td>'+
+						 '<td  style="text-align:eft">'+item.filePath+'</td>'+
+						'<td  style="text-align:eft">'+item.deleteflag+'</td>'+ 
+						 '<td  style="text-align:eft">'+item.localShoot+'</td>'+
+						 '<td  style="text-align:eft">'+item.fileMd5+'</td>'+
+						 '<td  style="text-align:eft">'+item.selfTimer+'</td>'+
+						 '<td  style="text-align:eft">'+item.md5+'</td>' ;
+					}
+					//短信 彩信 页面对象
+					if(dsId=="phone_Message"){
+						touhtml='<tr>'+
+						 '<td  style="text-align:eft">通讯对象</td>'+
+						 '<td  style="text-align:eft">发送者</td>'+
+						 '<td  style="text-align:eft">类型</td>'+
+						 '<td  style="text-align:eft">时间</td>'+
+						 '<td  style="text-align:eft">内容</td>'+
+						 '<td  style="text-align:eft">图片(彩信)</td></tr>';
+						conthtml+='<tr>'+
+						 '<td  style="text-align:eft">'+item.otherSide+'</td>'+
+						 '<td  style="text-align:eft">'+item.sender+'</td>'+
+						 '<td  style="text-align:eft">'+item.type+'</td>'+
+						 '<td  style="text-align:eft">'+item.time+'</td>'+
+						 '<td  style="text-align:eft">'+item.content+'</td>'+
+						 '<td  style="text-align:eft">'+item.img+'</td></tr>';
+					}
+					//微信公众号消息
+					if(dsId=="WeChat_OfficialAccMess"){
+						touhtml='<tr>'+
+						 '<td  style="text-align:eft">公众号</td>'+
+						 '<td  style="text-align:eft">标题</td>'+
+						 '<td  style="text-align:eft">图片</td>'+
+						 '<td  style="text-align:eft">描述</td>'+
+						 '<td  style="text-align:eft">链接</td>'+
+						 '<td  style="text-align:eft">发布时间</td>'+
+						 '<td  style="text-align:eft">md5加密</td></tr>';
+						conthtml+='<tr>'+
+						 '<td  style="text-align:eft">'+item.officialAcc+'</td>'+
+						 '<td  style="text-align:eft">'+item.title+'</td>'+
+						 '<td  style="text-align:eft">'+item.pic+'</td>'+
+						 '<td  style="text-align:eft">'+item.description+'</td>'+
+						 '<td  style="text-align:eft">'+item.url+'</td>'+
+						 '<td  style="text-align:eft">'+item.time+'</td>'+
+						 '<td  style="text-align:eft">'+item.md5+'</td></tr>';
+					}
+					//拍照位置信息页面对象
+					if(dsId=="phone_PhotoLocation"){
+						touhtml='<tr>'+
+						 '<td  style="text-align:eft">名称</td>'+
+						 '<td  style="text-align:eft">大小</td>'+
+						 '<td  style="text-align:eft">类型</td>'+
+						 '<td  style="text-align:eft">日期</td>'+
+						 '<td  style="text-align:eft">路径</td>'+
+						 '<td  style="text-align:eft">经度</td>'+
+						 '<td  style="text-align:eft">纬度</td>'+
+						 '<td  style="text-align:eft">md5加密</td></tr>';
+						conthtml+='<tr>'+
+						 '<td  style="text-align:eft">'+item.name+'</td>'+
+						 '<td  style="text-align:eft">'+item.size+'</td>'+
+						 '<td  style="text-align:eft">'+item.type+'</td>'+
+						 '<td  style="text-align:eft">'+item.date+'</td>'+
+						 '<td  style="text-align:eft">'+item.path+'</td>'+
+						 '<td  style="text-align:eft">'+item.longitude+'</td>'+
+						 '<td  style="text-align:eft">'+item.latitude+'</td>'+
+						 '<td  style="text-align:eft">'+item.md5+'</td></tr>';
+					}
+					//QQ邮箱 账号信息对象
+					if(dsId=="qqEmail_IdInfo"){
+						touhtml='<tr>'+
+						 '<td  style="text-align:eft">邮箱地址</td>'+
+						 '<td  style="text-align:eft">昵称</td>'+
+						 '<td  style="text-align:eft">密码</td>'+
+						 '<td  style="text-align:eft">md5加密</td></tr>';
+						conthtml+='<tr>'+
+						 '<td  style="text-align:eft">'+item.mail+'</td>'+
+						 '<td  style="text-align:eft">'+item.nickName+'</td>'+
+						 '<td  style="text-align:eft">'+item.pwd+'</td>'+
+						 '<td  style="text-align:eft">'+item.md5+'</td></tr>';
+					}
+					//腾讯地图 搜索路线对象
+					if(dsId=="TMap_RouteSearch"){
+						touhtml='<tr>'+
+						 '<td  style="text-align:eft">路线ID</td>'+
+						 '<td  style="text-align:eft">路线类型</td>'+
+						 '<td  style="text-align:eft">起点名称</td>'+
+						 '<td  style="text-align:eft">起点位置</td>'+
+						 '<td  style="text-align:eft">起点经度</td>'+
+						 '<td  style="text-align:eft">起点纬度</td>'+
+						 '<td  style="text-align:eft">终点名称</td>'+
+						 '<td  style="text-align:eft">终点地址</td>'+
+						 '<td  style="text-align:eft">终点经度</td>'+
+						 '<td  style="text-align:eft">终点纬度</td>'+
+						 '<td  style="text-align:eft">md5加密</td></tr>';
+						conthtml+='<tr>'+
+						 '<td  style="text-align:eft">'+item.routeId+'</td>'+
+						 '<td  style="text-align:eft">'+item.routeType+'</td>'+
+						 '<td  style="text-align:eft">'+item.startName+'</td>'+
+						 '<td  style="text-align:eft">'+item.startAdd+'</td>'+
+						 '<td  style="text-align:eft">'+item.startLongitude+'</td>'+
+						 '<td  style="text-align:eft">'+item.startLatitude+'</td>'+
+						 '<td  style="text-align:eft">'+item.endName+'</td>'+
+						 '<td  style="text-align:eft">'+item.endAdd+'</td>'+
+						 '<td  style="text-align:eft">'+item.endLongitude+'</td>'+
+						 '<td  style="text-align:eft">'+item.endLatitude+'</td>'+
+						 '<td  style="text-align:eft">'+item.md5+'</td></tr>';
+					}
+					//腾讯地图  个人信息对象
+					if(dsId=="TMap_PersonMess"){
+						touhtml='<tr>'+
+						 '<td  style="text-align:eft">用户ID</td>'+
+						 '<td  style="text-align:eft">用户名</td>'+
+						 '<td  style="text-align:eft">昵称</td>'+
+						 '<td  style="text-align:eft">生日</td>'+
+						 '<td  style="text-align:eft">性别</td>'+
+						 '<td  style="text-align:eft">头像</td>'+
+						 '<td  style="text-align:eft">邮箱</td>'+
+						 '<td  style="text-align:eft">电话</td>'+
+						 '<td  style="text-align:eft">所在地</td>'+
+						 '<td  style="text-align:eft">签名</td>'+
+						 '<td  style="text-align:eft">新浪微博ID</td>'+
+						 '<td  style="text-align:eft">新浪微博昵称</td>'+
+						 '<td  style="text-align:eft">qq号码</td>'+
+						 '<td  style="text-align:eft">qq昵称</td>'+
+						 '<td  style="text-align:eft">淘宝ID</td>'+
+						 '<td  style="text-align:eft">淘宝昵称</td>'+
+						 '<td  style="text-align:eft">联通WO+ID</td>'+
+						 '<td  style="text-align:eft">最近更新时间</td>'+
+						 '<td  style="text-align:eft">md5加密</td></tr>';
+						conthtml+='<tr>'+
+						 '<td  style="text-align:eft">'+item.userId+'</td>'+
+						 '<td  style="text-align:eft">'+item.userName+'</td>'+
+						 '<td  style="text-align:eft">'+item.nickName+'</td>'+
+						 '<td  style="text-align:eft">'+item.birth+'</td>'+
+						 '<td  style="text-align:eft">'+item.sex+'</td>'+
+						 '<td  style="text-align:eft">'+item.avatar+'</td>'+
+						 '<td  style="text-align:eft">'+item.mail+'</td>'+
+						 '<td  style="text-align:eft">'+item.telephone+'</td>'+
+						 '<td  style="text-align:eft">'+item.add+'</td>'+
+						 '<td  style="text-align:eft">'+item.signature+'</td>'+
+						 '<td  style="text-align:eft">'+item.sinaId+'</td>'+
+						 '<td  style="text-align:eft">'+item.sinaName+'</td>'+
+						 '<td  style="text-align:eft">'+item.qq+'</td>'+
+						 '<td  style="text-align:eft">'+item.qqName+'</td>'+
+						 '<td  style="text-align:eft">'+item.tbId+'</td>'+
+						 '<td  style="text-align:eft">'+item.tbName+'</td>'+
+						 '<td  style="text-align:eft">'+item.CUId+'</td>'+
+						 '<td  style="text-align:eft">'+item.updateTime+'</td>'+
+						 '<td  style="text-align:eft">'+item.md5+'</td></tr>';
+					}
+					//短信息
+					if(dsId=="phone_shortMsg"){
+						touhtml='<tr>'+
+						 '<td  style="text-align:eft">发件人</td>'+
+						 '<td  style="text-align:eft">收件人</td>'+
+						 '<td  style="text-align:eft">发送时间</td>'+
+						 '<td  style="text-align:eft">接收时间</td>'+
+						 '<td  style="text-align:eft">发送内容</td>'+
+						 '<td  style="text-align:eft">接收内容</td>'+
+						 '<td  style="text-align:eft">原始/删除</td></tr>';
+						conthtml+='<tr>'+
+						 '<td  style="text-align:eft">'+item.sender+'</td>'+
+						 '<td  style="text-align:eft">'+item.addressee+'</td>'+
+						 '<td  style="text-align:eft">'+item.sendTime+'</td>'+
+						 '<td  style="text-align:eft">'+item.acceptTime+'</td>'+
+						 '<td  style="text-align:eft">'+item.sendContent+'</td>'+
+						 '<td  style="text-align:eft">'+item.acceptContent+'</td>'+
+						 '<td  style="text-align:eft">'+item.isDelete+'</td></tr>';
+					}
+					//淘宝搜索历史页面对象
+					if(dsId=="taobao_history"){
+						touhtml='<tr>'+
+						 '<td  style="text-align:eft">关键字	</td>'+
+						 '<td  style="text-align:eft">搜索时间</td>'+
+						 '<td  style="text-align:eft">md5加密</td></tr>';
+						conthtml+='<tr>'+
+						 '<td  style="text-align:eft">'+item.keyWord+'</td>'+
+						 '<td  style="text-align:eft">'+item.time+'</td>'+
+						 '<td  style="text-align:eft">'+item.md5+'</td></tr>';
+					}
+					//系统日志中 使用过的号码 页面对象
+					if(dsId=="phone_used"){
+						touhtml='<tr>'+
+						 '<td  style="text-align:eft">号码</td>'+
+						 '<td  style="text-align:eft">ICCID</td>'+
+						 '<td  style="text-align:eft">最后更新时间</td>'+
+						 '<td  style="text-align:eft">md5加密</td></tr>';
+						conthtml+='<tr>'+
+						 '<td  style="text-align:eft">'+item.number+'</td>'+
+						 '<td  style="text-align:eft">'+item.iccid+'</td>'+
+						 '<td  style="text-align:eft">'+item.lastUpdateTime+'</td>'+
+						 '<td  style="text-align:eft">'+item.md5+'</td></tr>';
+					}
+					//微信通讯录下的页面对象
+					if(dsId=="WeChat_Contacts"){
+						touhtml='<tr>'+
+						 '<td  style="text-align:eft">微信ID</td>'+
+						 '<td  style="text-align:eft">好友账号</td>'+
+						 '<td  style="text-align:eft">好友昵称</td>'+
+						 '<td  style="text-align:eft">性别</td>'+
+						 '<td  style="text-align:eft">个性签名</td>'+
+						 '<td  style="text-align:eft">备注</td>'+
+						 '<td  style="text-align:eft">所在地</td>'+
+						 '<td  style="text-align:eft">头像</td>'+
+						 '<td  style="text-align:eft">qq账号</td>'+
+						 '<td  style="text-align:eft">qq昵称</td>'+
+						 '<td  style="text-align:eft">邮箱地址</td>'+
+						 '<td  style="text-align:eft">移动电话</td>'+
+						 '<td  style="text-align:eft">描述</td>'+
+						 '<td  style="text-align:eft">标签</td>'+
+						 '<td  style="text-align:eft">md5加密</td></tr>';
+						conthtml+='<tr>'+
+						 '<td  style="text-align:eft">'+item.wxId+'</td>'+
+						 '<td  style="text-align:eft">'+item.friendAcc+'</td>'+
+						 '<td  style="text-align:eft">'+item.friendNick+'</td>'+
+						 '<td  style="text-align:eft">'+item.sex+'</td>'+
+						 '<td  style="text-align:eft">'+item.signature+'</td>'+
+						 '<td  style="text-align:eft">'+item.remarks+'</td>'+
+						 '<td  style="text-align:eft">'+item.location+'</td>'+
+						 '<td  style="text-align:eft">'+item.avatar+'</td>'+
+						 '<td  style="text-align:eft">'+item.qq+'</td>'+
+						 '<td  style="text-align:eft">'+item.qqNick+'</td>'+
+						 '<td  style="text-align:eft">'+item.mail+'</td>'+
+						 '<td  style="text-align:eft">'+item.telephone+'</td>'+
+						 '<td  style="text-align:eft">'+item.description+'</td>'+
+						 '<td  style="text-align:eft">'+item.tab+'</td>'+
+						 '<td  style="text-align:eft">'+item.md5+'</td></tr>';
+					}
+					//微信群相关页面对象
+					if(dsId=="WeChat_Group"){
+						touhtml='<tr>'+
+						 '<td  style="text-align:eft">群账号</td>'+
+						 '<td  style="text-align:eft">群名称</td>'+
+						 '<td  style="text-align:eft">群主号码/td>'+
+						 '<td  style="text-align:eft">群主昵称</td>'+
+						 '<td  style="text-align:eft">成员个数</td>'+
+						 '<td  style="text-align:eft">我在本群的昵称</td>'+
+						 '<td  style="text-align:eft">成员昵称</td>'+
+						'<td  style="text-align:eft">成员账号</td>'+
+						'<td  style="text-align:eft">成员个性签名</td>'+
+						'<td  style="text-align:eft">成员所在地</td>'+
+						'<td  style="text-align:eft">成员头像</td>'+
+						'<td  style="text-align:eft">md5加密</td></tr>';
+						conthtml+='<tr>'+
+						 '<td  style="text-align:eft">'+item.groupId+'</td>'+
+						 '<td  style="text-align:eft">'+item.groupName+'</td>'+
+						 '<td  style="text-align:eft">'+item.groupLord+'</td>'+
+						 '<td  style="text-align:eft">'+item.lordNick+'</td>'+
+						 '<td  style="text-align:eft">'+item.memberNum+'</td>'+
+						 '<td  style="text-align:eft">'+item.myNick+'</td>'+
+						 '<td  style="text-align:eft">'+item.memberNick+'</td>'+
+						'<td  style="text-align:eft">'+item.memberId+'</td>'+
+						'<td  style="text-align:eft">'+item.memberSignature+'</td>'+
+						'<td  style="text-align:eft">'+item.memberLocation+'</td>'+
+						'<td  style="text-align:eft">'+item.memberAvatar+'</td>'+
+						'<td  style="text-align:eft">'+item.md5+'</td></tr>';
+					}
+					//微信媒体文件（图片、音频、视频）页面对象
+					if(dsId=="WeChat_MediaFile"){
+						touhtml='<tr>'+
+						'<td  style="text-align:eft">保存路径</td>'+
+						'<td  style="text-align:eft">文件名</td>'+
+						'<td  style="text-align:eft">大小</td>'+
+						'<td  style="text-align:eft">修改时间</td>'+
+						'<td  style="text-align:eft">创建时间</td>'+
+						'<td  style="text-align:eft">所在路径</td>'+
+						'<td  style="text-align:eft">md5加密</td></tr>';
+						conthtml+='<tr>'+
+						'<td  style="text-align:eft">'+item.file+'</td>'+
+						'<td  style="text-align:eft">'+item.fileName+'</td>'+
+						'<td  style="text-align:eft">'+item.size+'</td>'+
+						'<td  style="text-align:eft">'+item.modifiedTime+'</td>'+
+						'<td  style="text-align:eft">'+item.createTime+'</td>'+
+						'<td  style="text-align:eft">'+item.filePath+'</td>'+
+						'<td  style="text-align:eft">'+item.md5+'</td></tr>';
+					}
+					//微信 聊天记录
+					if(dsId=="WeChat_Message"){
+						touhtml='<tr>'+
+						'<td  style="text-align:eft">通讯对象</td>'+
+						'<td  style="text-align:eft">发送者</td>'+
+						'<td  style="text-align:eft">类型</td>'+
+						'<td  style="text-align:eft">消息类型</td>'+
+						'<td  style="text-align:eft">内容</td>'+
+						'<td  style="text-align:eft">时间</td></tr>';
+						conthtml+='<tr>'+
+						'<td  style="text-align:eft">'+item.otherSide+'</td>'+
+						'<td  style="text-align:eft">'+item.sender+'</td>'+
+						'<td  style="text-align:eft">'+item.type+'</td>'+
+						'<td  style="text-align:eft">'+item.messType+'</td>'+
+						'<td  style="text-align:eft">'+item.content+'</td>'+
+						'<td  style="text-align:eft">'+item.time+'</td></tr>';
+					}
+					//位置信息中 Wi-Fi信息 页面对象
+					if(dsId=="phone_WiFi"){
+						touhtml='<tr>'+
+						'<td  style="text-align:eft">MAC</td>'+
+						'<td  style="text-align:eft">名称</td>'+
+						'<td  style="text-align:eft">最近加入时间</td>'+
+						'<td  style="text-align:eft">经度</td>'+
+						'<td  style="text-align:eft">纬度</td>'+
+						'<td  style="text-align:eft">地平线</td>'+
+						'<td  style="text-align:eft">探测时间</td>'+
+						'<td  style="text-align:eft">终端IP地址</td>'+
+						'<td  style="text-align:eft">加密方式</td>'+
+						'<td  style="text-align:eft">连接方式</td>'+
+						'<td  style="text-align:eft">md5加密</td></tr>';
+						conthtml+='<tr>'+
+						'<td  style="text-align:eft">'+item.MAC+'</td>'+
+						'<td  style="text-align:eft">'+item.name+'</td>'+
+						'<td  style="text-align:eft">'+item.lastJoinTime+'</td>'+
+						'<td  style="text-align:eft">'+item.longitude+'</td>'+
+						'<td  style="text-align:eft">'+item.latitude+'</td>'+
+						'<td  style="text-align:eft">'+item.horizon+'</td>'+
+						'<td  style="text-align:eft">'+item.detectionTime+'</td>'+
+						'<td  style="text-align:eft">'+item.terminalIp+'</td>'+
+						'<td  style="text-align:eft">'+item.encryption+'</td>'+
+						'<td  style="text-align:eft">'+item.connType+'</td>'+
+						'<td  style="text-align:eft">'+item.md5+'</td></tr>';
+					}
+				});
+				$("#givePages_phoneQuzheng").val("");
+				$("#tou").append(touhtml);
+				$("#tbcont").append(conthtml);
+			},
+			error : function(data) {
+				alert("查询失败，请重试!");
+			}
+		});
+	}
+	//回车搜索事件
+	function onKeyDown(event){
+	   var e = event || window.event || arguments.callee.caller.arguments[0];
+	   if(e && e.keyCode==13){ // enter 键
+		   searchUser(1);
+	   }
+	}
+	</script>
+</body>
+</html>

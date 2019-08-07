@@ -1,0 +1,68 @@
+package com.xl.cloud.bean;
+/***
+ * 身份号码详细信息
+ * @author root
+ *
+ */
+public class IdentityDetail {
+			private String identityNum;
+			private String belongarea;
+			private String birthdate;
+			private String gender;
+			private String count;
+			private String caseId;
+			private String evid;
+			
+			public String getEvid() {
+				return evid;
+			}
+			public void setEvid(String evid) {
+				this.evid = evid;
+			}
+			
+			public String getIdentityNum() {
+				return identityNum;
+			}
+			public void setIdentityNum(String identityNum) {
+				this.identityNum = identityNum;
+			}
+			public String getBelongarea() {
+				return belongarea;
+			}
+			public void setBelongarea(String belongarea) {
+				this.belongarea = belongarea;
+			}
+			public String getBirthdate() {
+				return birthdate;
+			}
+			public void setBirthdate(String birthdate) {
+				this.birthdate = birthdate;
+			}
+			public String getGender() {
+				return gender;
+			}
+			public void setGender(String gender) {
+				this.gender = gender;
+			}
+			public String getCount() {
+				return count;
+			}
+			public void setCount(String count) {
+				this.count = count;
+			}
+			public String getCaseId() {
+				return caseId;
+			}
+			public void setCaseId(String caseId) {
+				this.caseId = caseId;
+			}
+			
+			@Override
+			public String toString() {
+				return "IdentityDetail [identityNum=" + identityNum
+						+ ", belongarea=" + belongarea + ", birthdate="
+						+ birthdate + ", gender=" + gender + ", count=" + count
+						+ ", caseId=" + caseId + "]";
+			}
+	
+}

@@ -1,0 +1,615 @@
+package com.xl.cloud.action;
+
+import com.xl.cloud.bean.*;
+import com.xl.cloud.dao.SqlDao;
+import com.xl.cloud.util.JsonUtil;
+import com.xl.cloud.util.TrimIllegalChar;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+/*
+ * YC_TODO:
+ * 2017/9/18
+ *
+ * 线索管理
+ */
+@Controller
+public class ThreadManageAction {
+    private SqlDao sqlDao = new SqlDao();
+    final Logger logger = Logger.getLogger(BuildCollection.class);
+    private static final long serialVersionUID = 1L;
+    final static TrimIllegalChar tic=new TrimIllegalChar();
+    public SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+    /* YC_TODO: 2017/9/19 线索上报_涉嫌人员的静态页面 */
+    @RequestMapping("/showAddInvolve.php")
+    public String showAddInvolve_Person() {
+        return "addInvolve_Person";
+    }
+
+    /* YC_TODO: 2017/9/19 线索上报_涉嫌单位的静态页面 */
+    @RequestMapping("/showAddInvolve_Unit.php")
+    public String showAddInvolve_Unit() {
+        return "";
+    }
+
+	/* YC_TODO: 2017/9/20 线索上报_新建涉嫌人员 */
+	@RequestMapping("/addInvolve_Person.php")
+	public void addInvolve_Person(HttpServletRequest request, Map<String, Object> map, HttpServletResponse response,
+								  HttpSession session) {
+		response.setContentType("text/html;charset=utf-8");
+		final String userName = (String) session.getAttribute("userName");
+		String section = (String) session.getAttribute("section");
+		User user = (User) session.getAttribute("user");
+		final String addcaseid = request.getParameter("caseid");
+		String dataTypes = request.getParameter("dataTypes");
+		String filelength = request.getParameter("filelength");
+		String region = request.getParameter("region");
+		String status = request.getParameter("status");
+		System.out.println("测试测试测试："+status);
+
+		String threadType = null;
+		if ("涉税".equals(dataTypes)) {
+			dataTypes = "1";
+			threadType = "涉税";
+		} else if ("非涉税".equals(dataTypes)) {
+			dataTypes = "2";
+			threadType = "非涉税";
+		} else {
+			dataTypes = "-1";
+		}
+		String evName = request.getParameter("evName");// 证据名称
+		session.setAttribute("evName", evName);
+		String uuid = request.getParameter("evUUID");
+		session.setAttribute("evUUID", uuid);
+
+		final String collectionName = evName;
+		final String hdfsPath = "/tmp/" + evName + "/emaildata/" + addcaseid;
+		String res = "{}";
+
+		String evType = request.getParameter("evType");// 数据类型
+		String comment = request.getParameter("comment");// 证据描述
+		String evAdmin = userName;
+		// 管理人
+		/*
+		 * String evAdmin = request.getParameter("evAdmin");// 管理人
+		 */ String tempPath = request.getParameter("dirPath");// 文件夹路径
+		String fangshi = request.getParameter("fangshi");
+		String fileType = null;
+		if ("电子邮件".equals(evType)) {
+			evType = "1";
+			fileType = "电子邮件";
+		} else if ("综合文档".equals(evType)) {
+			evType = "2";
+			fileType = "综合文档";
+		} else if ("电子话单".equals(evType)) {
+			evType = "3";
+			fileType = "电子话单";
+		} else if ("手机取证".equals(evType)) {
+			evType = "4";
+			fileType = "手机取证";
+		} else if ("黑客数据".equals(evType)) {
+			evType = "5";
+			fileType = "黑客数据";
+		} else if ("图片资料".equals(evType)) {
+			evType = "6";
+			fileType = "图片资料";
+		} else {
+			evType = "-1";
+		}
+		int uptype = -1;
+		String uploadStyle = null;
+		if (fangshi.equals("选择本地文件夹上传")) {
+			if (!StringUtils.isEmpty(tempPath)) {
+				tempPath = "/emaildata/" + evName;
+			}
+			uptype = 1;
+			uploadStyle = "文件夹上传";
+		} else if (fangshi.equals("选择本地文件上传")) {
+			if (!StringUtils.isEmpty(tempPath)) {
+				int inx = tempPath.lastIndexOf("\\");
+				tempPath = tempPath.substring(inx + 1);
+				tempPath = "/emaildata/" + tempPath;
+			}
+			uptype = 0;
+			uploadStyle = "文件上传";
+		}
+		final String dirPath = tempPath;
+
+		Evidence evi = new Evidence();
+		evi.setCaseID(Integer.parseInt(addcaseid));
+
+		final String filepath = "/emaildata/" + addcaseid + "/" + addcaseid + uuid.substring(0, 10);
+		String getName = null;
+		int spersonID = -1;
+		if(status.equals("0")) {
+			String[] spliteName = evName.split("\\s");
+			Involve_Person involve_person = new Involve_Person();
+			involve_person.setName(spliteName[0]);
+			getName = spliteName[0];
+			involve_person.setPhone(spliteName[1]);
+			involve_person.setEmail(spliteName[2]);
+			involve_person.setSuspectName(evName);
+			involve_person.setUploadStyle(uploadStyle);
+			involve_person.setThreadType(threadType);
+			involve_person.setSusItem(comment);
+			involve_person.setReportPerson(userName);
+			involve_person.setFilePath(filepath);
+			involve_person.setCreateTime(dateFormat.format(new Date()));
+			involve_person.setFileType(fileType);
+			involve_person.setRegion(region);
+			System.out.println("测试数据：" + involve_person.getSuspectName());
+			sqlDao.setBeanToMysql(involve_person);
+			List<Involve_Person>  involve_personList = sqlDao.getListfromMysql(involve_person);
+			spersonID = involve_personList.get(0).getId();
+			evi.setSpersonID(spersonID);
+		} else {
+			System.out.println("进入了Unit增加");
+			Involve_Unit involve_unit = new Involve_Unit();
+			involve_unit.setCreateTime(dateFormat.format(new Date()));
+			involve_unit.setFilePath(filepath);
+			involve_unit.setFileType(fileType);
+			involve_unit.setRegion(region);
+			involve_unit.setSusItem(comment);
+			involve_unit.setSusUnit(evName);
+			involve_unit.setThreadType(threadType);
+			involve_unit.setUploadStyle(uploadStyle);
+			System.out.println("走到这一步");
+			sqlDao.setBeanToMysql(involve_unit);
+			System.out.println("没走到这一步");
+			List<Involve_Unit>  involve_personList = sqlDao.getListfromMysql(involve_unit);
+			spersonID = involve_personList.get(0).getId();
+			getName = evName;
+			evi.setSunitID(spersonID);
+		}
+
+
+		evi.setEvType(Integer.parseInt(evType));
+		evi.setDataTypes(Integer.parseInt(dataTypes));
+		evi.setComment(comment);
+		evi.setDirPath(filepath);
+		evi.setEvAdmin(evAdmin);
+		evi.setUptype(uptype);
+		evi.setEvName(getName);
+		evi.setUploadNum(filelength);
+		evi.setSuccessNum("0");
+		evi.setErrorNum(filelength);
+		evi.setFinished("true");
+		evi.setStatus("on");
+		evi.setAddTime(dateFormat.format(new Date()));
+		evi.setStartSolrTime(evi.getAddTime());
+		evi.setCurrFlag("1");
+		evi.setUUID(addcaseid + uuid.substring(0, 10));
+		sqlDao.setBeanToMysql(evi);
+		Evidence eviTemp = new Evidence();
+		eviTemp.setUUID(addcaseid + uuid.substring(0, 10));
+		List<Evidence> eviTemps = sqlDao.getListfromMysql(eviTemp);
+		if (eviTemps != null && eviTemps.size() > 0) {
+			eviTemp = eviTemps.get(0);
+		}
+		final int eviTempID = eviTemp.getId();
+		session.setAttribute("eviTempID", eviTempID);
+
+		class Runs implements Runnable {
+			@Override
+			public void run() {
+				String copyLocal = "hadoop fs -copyFromLocal " + filepath + " " + hdfsPath;
+				String mkdir = "hadoop fs -mkdir -p " + hdfsPath;
+				Process process;
+				try {
+					logger.info("<============================================>");
+					logger.info("<=========mkdir:" + mkdir + "==========>");
+					logger.info("<=========unzipCmd:" + copyLocal + "==========>");
+					logger.info("<============================================>");
+					process = Runtime.getRuntime().exec(mkdir);
+					process.waitFor();
+					process = Runtime.getRuntime().exec(copyLocal);
+
+					InputStream iserror = process.getErrorStream();
+					InputStreamReader isrerror = new InputStreamReader(iserror);
+					BufferedReader brerror = new BufferedReader(isrerror);
+					while (true) {
+						String s = brerror.readLine();
+						// logger.info("run1--------------" + s);
+						if (s == null) {
+							break;
+						}
+					}
+					process.waitFor();
+					Evidence evidence = new Evidence();
+					evidence.setId(eviTempID);
+					List<Evidence> evidences = sqlDao.getListfromMysql(evidence);
+					if (evidences.size() > 0) {
+						evidence = evidences.get(0);
+						evidence.setFinished("true");
+						sqlDao.updateToMysql(evidence);
+					}
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		Runs runs = new Runs();
+		Thread unzipThread2 = new Thread(runs);
+		unzipThread2.start();
+		res = "{\"evID\":\"" + eviTempID + "\",\"res\":\"succ\"}";
+		PrintWriter pw = null;
+		try {
+			pw = response.getWriter();
+			pw.write(res);
+			pw.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (pw != null) {
+				pw.close();
+			}
+		}
+	}
+    
+    
+    
+	@RequestMapping(value = "/admin/cluelist.php")
+	public String showIndexQueue(HttpServletRequest request, Map<String, Object> map, HttpSession session,
+			HttpServletResponse response) throws SecurityException, IllegalArgumentException, NoSuchMethodException,
+			IllegalAccessException, InvocationTargetException {
+		
+		String name = request.getParameter("name");//涉嫌人员姓名
+		String region = request.getParameter("region");//地区
+		String startDate = request.getParameter("startDate");//开始时间
+		String endDate = request.getParameter("endDate");//结束时间
+		String pageno = request.getParameter("pageno");
+		int pageIndex = 1;//当前页数
+		int pageSize = 10;//每页个数
+		int num = 0;//总页数
+		if (!StringUtils.isEmpty(pageno)) {
+			pageIndex = Integer.parseInt(pageno);
+		}
+		
+		//List<Involve_Person> list = new ArrayList<Involve_Person>();
+		Involve_Person involve_person = new Involve_Person();
+		List<Involve_Person> list1= new ArrayList<Involve_Person>();
+		if(name!=null && !name.equals("") ){
+			involve_person.setName(name);
+		}
+		if(region!=null && !region.equals("")){
+			involve_person.setRegion(region);
+		}
+		
+		if(startDate != null && !"".equals(startDate) && endDate != null && !"".equals(endDate)){
+			 list1 =  sqlDao.getListfromMysqlLikeev(involve_person, startDate, endDate, (pageIndex - 1) * pageSize, pageSize);
+		}else{
+			 list1 = sqlDao.getListfromMysqlLike(involve_person,(pageIndex - 1) * pageSize, pageSize);
+		}
+	
+				
+		/*		for (Involve_Person involve_Person2 : list1) {
+	
+			String SuspectName = involve_Person2.getSuspectName();//获得线索嫌疑人的id
+			String[] split = SuspectName.split(",");
+
+		}*/
+		
+/*		  for(int i=0;i<list1.size();i++){
+			  Involve_Person Ip=  list.get(0);
+			  String names= Ip.getSuspectName();
+			  String[] split = names.split(" ");
+
+				String name = split[0];//姓名
+				String phone = split[1];//手机
+				String eml = split[2];//邮箱
+
+		  }*/
+			int total = sqlDao.getcountfromMysqlLike(involve_person);
+			num = total / pageSize;
+			if (total % pageSize != 0) {
+				num++;
+			}
+
+			List<Integer> pageList = new ArrayList<Integer>();
+			if (num < 5) {
+				for (int i = 1; i <= num; i++) {
+					pageList.add(i);
+				}
+			} else {
+				if (pageIndex <= 5) {
+					for (int i = 1; i <= 5; i++) {
+						pageList.add(i);
+					}
+				} else {
+					if (pageIndex + 2 <= num) {
+						pageList.add(pageIndex - 2);
+						pageList.add(pageIndex - 1);
+						pageList.add(pageIndex);
+						pageList.add(pageIndex + 1);
+						pageList.add(pageIndex + 2);
+					} else if (pageIndex + 1 <= num) {
+						pageList.add(pageIndex - 3);
+						pageList.add(pageIndex - 2);
+						pageList.add(pageIndex - 1);
+						pageList.add(pageIndex);
+						pageList.add(pageIndex + 1);
+					} else {
+						pageList.add(pageIndex - 4);
+						pageList.add(pageIndex - 3);
+						pageList.add(pageIndex - 2);
+						pageList.add(pageIndex - 1);
+						pageList.add(pageIndex);
+					}
+
+				}
+			}
+		
+			map.put("list", list1);//返回所有的线索信息
+			map.put("totalNum", total);
+			map.put("totalPages", num);
+			map.put("nowPage", pageIndex);
+			map.put("pageList", pageList);
+		return "cluelist";
+	}
+	//删除线索
+	@RequestMapping(value = "/deleteclue.php")
+	public void deleteclue(HttpServletRequest request, Map<String, Object> map, HttpSession session,
+			HttpServletResponse response) throws SecurityException, IllegalArgumentException, NoSuchMethodException,
+			IllegalAccessException, InvocationTargetException {
+		String id  = request.getParameter("id");
+		Involve_Person involve_person = new Involve_Person();
+		involve_person.setId(Integer.parseInt(id)); //获取线索id 去删除线索
+		
+		Evidence evidence = new Evidence();
+		evidence.setSpersonID(Integer.parseInt(id));//获取线索id 去数据表删除对于数据
+		List<Evidence> listfromMysql = sqlDao.getListfromMysql(evidence);//取数据表查对应线索的数据然后删除hdfs上的文件
+		sqlDao.deletefromMysql(involve_person);
+		sqlDao.deletefromMysql(evidence);
+		if(listfromMysql.size()>0){
+			for(int i = 0;i<listfromMysql.size();i++){
+				Evidence evidence1 = listfromMysql.get(i);
+			String DirPath = evidence1.getDirPath();
+			String evName = evidence1.getEvName();
+			
+			final String hdfsPath = "/tmp/"+evName+DirPath;
+			System.out.println("hdfs路径+++++++++++++"+hdfsPath);
+			
+			String mkdir = "hadoop fs -rm -R " + hdfsPath;
+			Process process;
+
+			try {
+				process = Runtime.getRuntime().exec(mkdir);
+				process.waitFor();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			}
+		}
+		
+
+		PrintWriter pw = null;
+		try {
+			pw = response.getWriter();
+			pw.write("{\"res\":\"succ\"}");
+			pw.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (pw != null) {
+				pw.close();
+			}
+		}
+	}
+	
+	//编辑线索
+	@RequestMapping(value = "/editclue.php")
+	public void editclue(HttpServletRequest request, Map<String, Object> map, HttpServletResponse response,
+			HttpSession session) throws SecurityException, IllegalArgumentException, NoSuchMethodException,
+			IllegalAccessException, InvocationTargetException {
+		String id = request.getParameter("id");
+		String name = request.getParameter("name");
+		String phone = request.getParameter("phone");
+		String emali = request.getParameter("emali");
+		String region = request.getParameter("region");
+		String threadType = request.getParameter("threadType");
+		String susItem = request.getParameter("susItem");
+		Involve_Person involve_person = new Involve_Person();
+		
+		involve_person.setId(Integer.parseInt(id));
+		involve_person.setName(name);
+		involve_person.setPhone(phone);
+		involve_person.setEmail(emali);
+		involve_person.setRegion(region);
+		involve_person.setThreadType(threadType);
+		involve_person.setSusItem(susItem);
+		sqlDao.updateToMysql(involve_person);
+		String res = "succ";
+
+			
+		PrintWriter pw = null;
+
+		try {
+			pw = response.getWriter();
+			pw.write("{\"res\":\"" + res + "\"}");
+			pw.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (pw != null) {
+				pw.close();
+			}
+		}
+	}
+	
+	//关联案件
+	@RequestMapping(value = "/admin/addcluecase.php")
+	public void addclue(HttpServletRequest request, Map<String, Object> map, HttpServletResponse response,
+			HttpSession session) throws SecurityException, IllegalArgumentException, NoSuchMethodException,
+			IllegalAccessException, InvocationTargetException {
+		response.setContentType("textml; charset=UTF-8");
+		String caseIDstr = request.getParameter("caseID");// 案件id
+		String evIDstr = request.getParameter("evID");// 数据id
+		int evID = Integer.parseInt(evIDstr);
+		String[] split = caseIDstr.split(",");
+		String res = "succ";
+		for (String string : split) {
+			System.out.println(string);
+			int caseID = Integer.parseInt(string);
+			Evidence evidence = new Evidence();
+			evidence.setSpersonID(evID);
+			List<Evidence> listfromMysql = sqlDao.getListfromMysql(evidence);
+			if(listfromMysql.size()>0){
+				for(int i=0;i<listfromMysql.size();i++){		
+					Evidence evidence2 = listfromMysql.get(i);
+					evidence2.setCaseID(caseID);
+					Evidence evidence3 = new Evidence();
+					evidence3.setCaseID(caseID);
+					evidence3.setUUID(evidence2.getUUID());
+					List<Evidence> listfromMysql2 = sqlDao.getListfromMysql(evidence3);
+					if(listfromMysql2.size()==0){
+						sqlDao.setBeanToMysql(evidence2);
+
+					}
+				}
+		
+			}
+		}
+		
+		PrintWriter pw = null;
+
+/*		try {
+			pw = response.getWriter();
+			
+			pw.write("{\"res\":\"" + res + "\"}");
+			pw.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (pw != null) {
+				pw.close();
+			}
+		}*/
+	}
+	
+	
+	// 查询证据列表
+		@RequestMapping(value = "/admin/clueevidencelist.php")
+		public String getEvidencelist(HttpServletRequest request, Map<String, Object> map, HttpSession session,
+				HttpServletResponse response) throws SecurityException, IllegalArgumentException, NoSuchMethodException,
+				IllegalAccessException, InvocationTargetException {
+
+			String pageno = request.getParameter("pageno");
+
+			String evid = request.getParameter("clueid");
+
+			int pageIndex = 1;
+			int pageSize = 10;
+			int num = 0;
+
+			if (!StringUtils.isEmpty(pageno)) {
+				pageIndex = Integer.parseInt(pageno);
+			}
+			Involve_Person ip=null;
+
+			if (evid != null && !"".equals(evid)) {
+				
+				Involve_Person Person = new Involve_Person();
+				Person.setId(Integer.parseInt(evid));
+				List<Involve_Person> Person1 = sqlDao.getListfromMysql(Person);
+				ip=Person1.get(0);
+			}
+
+			Evidence evidence = new Evidence();
+			evidence.setSpersonID(Integer.parseInt(evid));
+			List<Evidence> listfromMysql1 = new ArrayList<Evidence>();
+			
+			List<Evidence> listfromMysql = sqlDao.getListfromMysql(evidence);
+			for(int i=0;i<listfromMysql.size();i++){
+				Evidence evidence3 = listfromMysql.get(i);
+				int flag = 0;
+				for (int j=0;j<listfromMysql1.size();j++) {
+					
+					if(evidence3.getUUID().equals(listfromMysql1.get(j).getUUID())){
+						flag = 1;
+					}
+				
+					
+				}	if(flag==0){
+					listfromMysql1.add(evidence3);
+				}
+			}
+
+			int total = listfromMysql1.size();
+			num = total / pageSize;
+			if (total % pageSize != 0) {
+				num++;
+			}
+
+			List<Integer> pageList = new ArrayList<Integer>();
+			if (num < 5) {
+				for (int i = 1; i <= num; i++) {
+					pageList.add(i);
+				}
+			} else {
+				if (pageIndex <= 5) {
+					for (int i = 1; i <= 5; i++) {
+						pageList.add(i);
+					}
+				} else {
+					if (pageIndex + 2 <= num) {
+						pageList.add(pageIndex - 2);
+						pageList.add(pageIndex - 1);
+						pageList.add(pageIndex);
+						pageList.add(pageIndex + 1);
+						pageList.add(pageIndex + 2);
+					} else if (pageIndex + 1 <= num) {
+						pageList.add(pageIndex - 3);
+						pageList.add(pageIndex - 2);
+						pageList.add(pageIndex - 1);
+						pageList.add(pageIndex);
+						pageList.add(pageIndex + 1);
+					} else {
+						pageList.add(pageIndex - 4);
+						pageList.add(pageIndex - 3);
+						pageList.add(pageIndex - 2);
+						pageList.add(pageIndex - 1);
+						pageList.add(pageIndex);
+					}
+				}
+			}
+
+			map.put("result", ip);
+			map.put("logs", listfromMysql1);
+			map.put("totalNum", total);
+			map.put("totalPages", num);
+			map.put("nowPage", pageIndex);
+			map.put("pageList", pageList);
+
+
+			return "elue_evidence";
+		}
+	
+}

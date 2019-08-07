@@ -1,0 +1,127 @@
+package com.xl.cloud.util;
+
+import java.io.File;
+
+public class TrimIllegalChar {
+	public String trim(String str){
+		if(str.contains("!")){
+			str=str.replace("!", "21");
+		}
+		if(str.contains("#")){
+			str=str.replace("#", "23");
+		}
+		if(str.contains("$")){
+			str=str.replace("$", "24");
+		}
+		if(str.contains("&")){
+			str=str.replace("&", "26");
+		}
+		if(str.contains("'")){
+			str=str.replace("'", "27");
+		}
+		if(str.contains("(")){
+			str=str.replace("(", "28");
+		}
+		if(str.contains(")")){
+			str=str.replace(")", "29");
+		}
+		if(str.contains("*")){
+			str=str.replace("*", "2A");
+		}
+		
+		if(str.contains(" ")){
+			str=str.replace(" ", "20");
+		}
+		if(str.contains("+")){
+			str=str.replace("+", "2B");
+		}
+		if(str.contains(",")){
+			str=str.replace(",", "2C");
+		}
+		if(str.contains(":")){
+			str=str.replace(":", "3A");
+		}
+		if(str.contains(";")){
+			str=str.replace(";", "3B");
+		}
+		
+		if(str.contains("=")){
+			str=str.replace("=", "3D");
+		}
+		if(str.contains("?")){
+			str=str.replace("?", "3F");
+		}
+		if(str.contains("[")){
+			str=str.replace("[", "5B");
+		}
+		
+		if(str.contains("]")){
+			str=str.replace("]", "5D");
+		}
+		if(str.contains("\\")){
+			str=str.replace("\\", File.separator);
+		}
+		if(str.contains("%")){
+			str=str.replace("%", "25");
+		}
+		if(str.contains("{")){
+			str=str.replace("{", "7B");
+		}
+		if(str.contains("}")){
+			str=str.replace("}", "7D");
+		}
+		if(str.contains("|")){
+			str=str.replace("|", "7C");
+		}
+		if(str.contains("~")){
+			str=str.replace("~", "7E");
+		}
+		if(str.contains("`")){
+			str=str.replace("`", "60");
+		}
+		if(str.contains("^")){
+			str=str.replace("^", "5E");
+		}
+		
+		if(str.contains("�")){
+			str=str.replace("�", "5Q");
+		}
+		if(str.contains("ˬ")){
+			str=str.replace("ˬ", "5W");
+		}
+		if(str.contains("�")){
+			str=str.replace("�", "5R");
+		}
+		
+		return str;
+		
+	}
+	
+	public boolean stripNonCharCodepoints(char[] input) {
+		char ch;
+		for (int i = 0; i < input.length; i++) {
+			ch = input[i];
+			// Strip all non-characters
+			// http://unicode.org/cldr/utility/list-unicodeset.jsp?a=[:Noncharacter_Code_Point=True:]
+			// and non-printable control characters except tabulator, new line
+			// and carriage return
+			if (ch % 0x10000 == 0xffff || // 0xffff - 0x10ffff range step
+					ch % 0x10000 == 0xfffe || // 0xfffe - 0x10fffe range
+					ch == 0xfdd0 || ch == 0xfdef)//
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static void main(String[] args) {
+		String test="hdfs://172.16.102.120:8020/tmp/case02_SZ/emaildata/case02_SZ/annchen@otsbjs.com.cn/垃圾邮件/亚马逊 向您推荐 _我是落花生的女儿_ 和其它商品.eml";
+		String test1 = "/emaildata/1957/1957e6d12d345e/Re  SC NO 786_1-5688-FLX-20165 ----- Canadian Flaxseed -- 20 fcls confirmation - 500 Mts[Involving remittance inf...y attention to the safety of property]_5688B - Peggy Zhang (peggy@marinacommodities.com) - 2016-08-09 0408.eml";
+		String test2 = "/emaildata/1957/1957e6d12d345e/Re  S1872 - Balance 9 containers - - David Chen (david@bona-agro.com) - 2016-07-28 2242.eml";
+		TrimIllegalChar tir=new TrimIllegalChar();
+		System.out.println(tir.stripNonCharCodepoints(test.toCharArray()));
+		System.out.println(tir.trim(test2));
+		
+	}
+}

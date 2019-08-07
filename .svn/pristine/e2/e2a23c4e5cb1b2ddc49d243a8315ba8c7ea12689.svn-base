@@ -1,0 +1,211 @@
+<%@ page language="java" contentType="text/html; charset=utf-8"
+	pageEncoding="utf-8"%>
+<%
+	String path = request.getContextPath();
+	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
+			+ path + "/";
+%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title></title>
+<link href="<%=basePath%>template/css/cloud-admin.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/responsive.css">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/app.css">
+<style>
+.alcenter {
+	text-align: center;
+}
+
+.inline {
+	display: inline-block;
+}
+
+.form-inline .form-control {
+	width: auto;
+}
+
+.clabel {
+	margin-right: 14px;
+}
+
+.control-label{
+	padding-right: 18px;
+}
+.col-lg-3{
+	width: 30%;
+}
+.col-lg-5{
+	padding-left: 0px;
+}
+
+.col-md-12 {
+	padding: 0px;
+}
+.im_flag {
+	color: red;
+	font-size: 18px;
+	position: absolute;
+	margin-left: -10px;
+}
+.form-control1 {
+    width: 30%;
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.428571429;
+    color: #555555;
+    vertical-align: middle;
+    background-color: #ffffff;
+    background-image: none;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+</style>
+</head>
+<body>
+	<jsp:include page="common.jsp"></jsp:include>
+	<div class="bg-light lter b-b wrapper-md">
+  		<h1 class="m-n h4">新建标签</h1>
+	</div>
+
+	<div class="wrapper-md">
+		<div class="col-md-12" style="margin-bottom:27px;">
+			<div class="row">
+				<div class="panel panel-default">
+					<div class="panel-heading">标签信息</div>
+					<div class="panel-body">
+						<%-- <form class="bs-example form-horizontal" 
+						action="<%=basePath%>addLabel.php" method="post" id="form1">
+							<div class="form-group">
+								<label class="col-lg-3 control-label">标签名称</label>
+								<div class="col-lg-5">
+									<input class="form-control" placeholder="请输入标签名" type="text" id="label" name="label">
+									<!-- <span class="help-block m-b-none">Example block-level help text here.</span> -->
+								</div>
+								<div class="col-md-12" style="text-align: center;margin-bottom: 50px;margin-top: 25px;">
+									<a href="<%=basePath %>label_list.php" type="button" class="btn w-xs btn-info" style="width: 135px;" onclick="addLabel()">提交</a>
+								</div>
+							</div>
+						</form> --%>
+						
+						<form class="bs-example form-horizontal"
+							action="<%=basePath%>addLabel.php" method="post">
+							<div class="form-group">
+								<label class="col-lg-3 control-label">标签名称</label>
+								<div class="col-lg-5">
+									<input class="form-control" placeholder="请输入标签名" type="text"
+										id="label2" name="label2" onblur="validateCaselabel()"">
+										<span id="addevlabel" class="empty" style="color:red"></span>
+								</div>
+							</div>
+							
+							<div class="form-group" style="margin-top: 54px;">
+								<div class="col-lg-offset-5 col-lg-5">
+									<button type="submit" class="btn w-xs btn-info"
+										style="margin-right: 30px;" onclick="return inputSubmit()">提交</button>
+									<a href="<%=basePath%>admin/label_list.php" class="btn w-xs btn-info" style="margin-right: 30px;" onclick="return">取消</a>
+								</div>
+							</div>
+
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="<%=basePath%>template/js/jquery/jquery-2.0.3.min.js"></script>
+	<script src="<%=basePath%>template/js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+	<script src="<%=basePath%>template/bootstrap-dist/js/bootstrap.min.js"></script>
+	<script type="text/javascript">
+var flag=0;
+	function validateCaselabel(){
+		var evlabel=$("#label2").val().trim();
+		if(evlabel != null && evlabel != "") {
+			$.ajax({
+				type: "POST",
+				url: "<%=basePath %>admin/checkCaseLable.php",
+				dataType : "json",
+				data : {
+					"labellinfonum" : evlabel
+				},							    
+				success : function(data) {
+					if(data.res=="exist"){
+						$("#addevlabel").text("*案件标签已存在!请重新输入");
+						$("#label2").val("");
+					}else if(evlabel.length > 50){
+						$("#addevlabel").text("*标签长度超过最大长度50");
+						flag=0;
+					}else{
+						flag=1;
+					}
+				},						
+				error : function(data) {
+					alert("网络异常，请重试!");
+				}
+			});
+			$("#addevlabel").text("");	
+		}
+		else{
+			$("#addevlabel").text("");	
+			
+			flag=0;
+		}
+		<%-- if(evlabel==null || evlabel==""){
+			$("#addevlabel").text("*您的案件标签有误");	
+			document.getElementsByTagName('input')[0].style.border = '1px solid red';
+			return false;
+		}else{
+			document.getElementsByTagName('input')[0].style.border = '1px solid #CFDADD';
+		}
+		if(evlabel.length > 50){
+			$("#addevlabel").text("*您的案件标签有误");
+			return false;
+		}
+		$.ajax({
+			type: "POST",
+			url: "<%=basePath %>admin/checkCaseLable.php",
+			dataType : "json",
+			data : {
+				"labellinfonum" : evlabel
+			},							    
+			success : function(data) {
+				if(data.res=="exist"){
+					$("#addevlabel").text("*案件标签已存在!请重新输入");
+					$("#label2").val("");
+				}
+			},						
+			error : function(data) {
+				alert("网络异常，请重试!");
+				return false;
+			}
+		});
+		$("#addevlabel").text(""); --%>
+	}	
+	
+	function inputSubmit() {
+		if(flag==1){
+			return true;
+		}else{
+			alert("请填写添加信息！");
+			return false;
+		}
+		
+	}
+</script>
+			<!-- footer -->
+    		<div style=" text-align:center; width:100%; background-color: #f0f3f4;padding-top: 17px;padding-bottom:47px;">
+			<%-- <img style=" margin-top:20px;" src="<%=basePath%>template/img/footer.png"> --%>
+			<img  src="<%=basePath%>template/img/left.png"><span style="color: #999;font-size:12px;margin: 0 12px;">  由勋立云计算提供技术支持  版本号: V1.1.1082  </span><img src="<%=basePath%>template/img/left2.png">
+			</div>
+</body>
+</html>

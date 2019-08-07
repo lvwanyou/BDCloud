@@ -1,0 +1,510 @@
+<%@ page language="java" contentType="text/html; charset=utf-8"
+	pageEncoding="utf-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%
+	String path = request.getContextPath();
+	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
+			+ path + "/";
+%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title></title>
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/color_me.css">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/easyui.css" />
+<link href="<%=basePath%>template/css/cloud-admin.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/responsive.css">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/app.css">
+
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/font-awesome/css/font-awesome.min.css">
+
+<script src="<%=basePath%>template/js/jquery/jquery-2.0.3.min.js"></script>
+<script type="text/javascript" src="<%=basePath%>template/js/jquery.easyui.min.js"></script> 
+<script src="<%=basePath%>template/js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+<script src="<%=basePath%>template/bootstrap-dist/js/bootstrap.min.js"></script>
+
+
+
+<%-- <link href="<%=basePath%>template/css/cloud-admin.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/responsive.css">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/app.css">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/easyui.css" />
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/easyui2.css" />
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/color_me.css" />
+<script type="text/javascript" src="<%=basePath%>template/js/jquery/jquery-2.0.3.min.js"></script>
+<script type="text/javascript" src="<%=basePath%>template/js/jquery.easyui.min.js"></script> --%>
+
+<style>
+.easyui-progressbar {
+	padding: 1px;
+}
+/*   .easyui-progressbar-value{  
+        background : yellow;  
+    }   */
+.col-md-12 {
+	padding: 0px;
+}
+
+th, .alcenter {
+	text-align: center;
+}
+
+.wrap{  
+	width: 150px;   
+	white-space: nowrap; 
+	text-overflow: ellipsis;
+	overflow: hidden; 
+} 
+</style>
+</head>
+<body>
+	<jsp:include page="common.jsp"></jsp:include>
+	<div class="bg-light lter b-b wrapper-md">
+		<h1 class="m-n h4">线索详情页</h1>
+	</div>
+	<%-- <div class="" style="padding-left: 20px; padding-top: 15px;">
+		<a href="<%=basePath%>admin/cluelist.php" class="btn w-xs btn-info" style="margin-right: 30px;" onclick="return">返回上一级</a>
+	</div> --%>
+	<div class="wrapper-md">
+		<div class="col-md-12" style="margin-bottom:27px;">
+			<div class="panel panel-default">
+				<div class="panel-heading">线索基本信息</div>
+				<div class="panel-body" style="padding: 0px;">
+					<table id="datatable" class="table table-striped table-hover br04" style="text-align: center; margin-bottom: 0px;">
+						<thead>
+							<tr>
+								<th>线索编号</th>
+								<th>线索类型</th>
+								<th>线索接收时间</th>
+								<th>作案时间</th>
+								<th>线索来源方式</th>
+								<th>作案区域</th>
+								<!-- <th>线索内容</th> -->
+								<th>创建时间</th>
+								<th>创建人</th>
+								<th>分局</th>
+								<th>线索状态</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>${involve_Personlist.threadNum }</td>
+								<td>${involve_Personlist.threadType }</td>
+								<td>${involve_Personlist.threadAcceptDate }</td>
+								<td>${involve_Personlist.crimeDate }</td>
+								<td>${involve_Personlist.threadSource }</td>
+								<td>${involve_Personlist.region }</td>
+								<%-- <td>${involve_Personlist.susItem }</td> --%>
+								<td>${involve_Personlist.createdTime }</td>
+								<td>${involve_Personlist.reportPerson }</td>
+								<td>${involve_Personlist.substation }</td>
+								<td id="clueDisposalS">${involve_Personlist.disposal }</td>
+								<td id="clueIds2" style="display: none;">${involve_Personlist.id }</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			
+			<div class="panel-body" >
+			<div class="panel-heading">线索内容</div>
+				    <div class="form-group">
+                        
+                        <div class="col-lg-12">
+                            <textarea class="form-control" rows="4" readonly name="susItem" id="susItem">${involve_Personlist.susItem }</textarea>
+                        </div>
+                    </div>
+			</div>
+			<div class="panel panel-default" >
+				<div class="panel-heading">涉案信息</div>
+					
+					<div class="panel-body" style="padding: 0 0 15px;">
+					<div class="form-group" style="margin-top: 15px;">
+                         <label class="col-lg-3 control-label mgAdd" style="text-align: center;width: 120px;">涉嫌单位</label>
+                         <div class="col-lg-11">
+								<table class="table table-striped table-hover br04" style="table-layout: fixed;">
+									<thead>
+										<tr>
+											<th style="text-align: left;">单位名称</th>
+											<th style="text-align: left;">地址</th>
+											<th style="text-align: left;">海关号</th>
+										</tr>
+									</thead>
+									<tbody>
+											<c:forEach items="${suspectUnit3}" var="suspectUnit3Item">
+												<tr>
+													<td>${suspectUnit3Item.name }</td>
+													<td>${suspectUnit3Item.address }</td>
+													<td>${suspectUnit3Item.customsRegistrationNumber }</td>
+												</tr>
+											</c:forEach>
+									</tbody>
+								</table>
+                         </div>
+                    </div>
+                    
+                    <div class="form-group">
+                         <label class="col-lg-3 control-label mgAdd" style="text-align: center;width: 120px;">涉嫌人员</label>
+                         <div class="col-lg-11">
+								<table class="table table-striped table-hover br04" style="border: 1 #DCDCDC solid; ">
+									<thead>
+									
+										<tr>
+											<th style="text-align: left;">嫌疑人姓名</th>
+											<th style="text-align: left;">手机号码</th>
+											<th style="text-align: left;">电子邮箱</th>
+											<th style="text-align: left;">身份证</th>
+											<th style="text-align: left;">通讯地址</th>
+										</tr>
+									</thead>
+									<tbody>
+									
+										<c:forEach items="${suspectInfoList}" var="suspectItem">
+									
+											<tr>
+												<td>${suspectItem.suspectName }</td>
+												<td>${suspectItem.suspectPhone }</td>
+												<td>${suspectItem.suspectMail }</td>
+												<td>${suspectItem.suspectName }</td>
+												<td>${suspectItem.suspectHomeAddress }</td>
+												<td id="roleNamess" style="display: none;">${roless}</td>
+											</tr>
+									
+										</c:forEach>
+										
+									</tbody>
+								</table>
+                         </div>
+                    </div>
+			</div>
+			</div>
+			
+			<div class="panel panel-default">
+				<div class="panel-heading">线索处置</div>
+				<div class="panel-body" style="padding: 0 0 15px;">
+					<div class="form-group" style="width: 70%;margin: auto; margin-top: 15px;overflow:hidden;">
+                         <label class="col-lg-3 control-label mgAdd" style="text-align: center;width: 120px;line-height:22px;">线索处置</label>
+                         <div class="col-lg-9">
+								<!-- <input type="checkbox" name="checkboxs" style="margin-top:0px;vertical-align:middle;" onclick="test0(this)"><label>暂存归档</label>&nbsp;&nbsp;&nbsp;
+								<input type="checkbox" name="checkboxs" style="margin-top:0px;vertical-align:middle;" onclick="test1(this)"><label for="js-cl2"  class="js-bia2">积累归档</label>&nbsp;&nbsp;&nbsp;&nbsp;
+								<input type="checkbox" name="checkboxs" style="margin-top:0px;vertical-align:middle;" onclick="test2(this)"><label for="js-cl3"  class="js-bia3">线索经营</label>&nbsp;&nbsp;&nbsp;&nbsp;
+								<input type="checkbox" name="checkboxs" style="margin-top:0px;vertical-align:middle;" onclick="test3(this)"><label for="js-cl4"  class="js-bia4">线索转出</label> -->
+                         
+                         		<input type="radio" name="radioParam" style="margin-top:0px;vertical-align:middle;" value="暂存归档" onclick="test0(this)"/><label>暂存归档</label>&nbsp;&nbsp;&nbsp;
+                         		<input type="radio" name="radioParam" style="margin-top:0px;vertical-align:middle;" value="积累归档" onclick="test1(this)"/><label>积累归档</label>&nbsp;&nbsp;&nbsp;
+                         		<input type="radio" name="radioParam" style="margin-top:0px;vertical-align:middle;" value="线索经营" onclick="test2(this)"/><label>线索经营</label>&nbsp;&nbsp;&nbsp;
+                         		<input type="radio" name="radioParam" style="margin-top:0px;vertical-align:middle;" value="线索转出" onclick="test3(this)"/><label>线索转出</label>&nbsp;&nbsp;&nbsp;&nbsp;
+                         		
+                         		
+                         		<span style="margin-left: 15px;">线索处置:<label id="clueChuzhi"></label></span>
+                         </div>
+                         <input type="hidden" id="paramHidden" name="paramHidden"/>
+                    </div>
+                    
+                    <div id="twoDivIfShow">
+                    <div class="form-group" style="width: 70%;margin: auto; margin-top: 15px; margin-bottom: 15px;overflow:hidden;display: none;" id="zhuanchudan">
+                      <form id="importForm4" action="<%=basePath%>UploadOfClue.php?clueDetailsId=${involve_Personlist.id }" method="post" enctype="multipart/form-data">
+                         <label class="col-lg-3 control-label mgAdd" style="text-align: center;width: 120px;line-height:22px;">处理单</label>
+                         <div class="col-lg-9">
+							<input class="form-control" type="file" id="file4" name="file4" value=""
+										style="opacity: 0; filter: alpha(opacity = 0); width: 38%; padding-top: 12px; cursor: pointer; position: absolute;"
+										onchange="setFilePath4();" /> 
+										<input class="form-control" id="filePath4" name="filePath4" type="text" style="width: 38%;">
+										<span>转出单: <a href="#" id="fileNameChuLiDAN"></a></span>
+										
+										<span style="display:inline;" id="sizetishi0" ></span>
+										
+										<input type="hidden" id="case-num" name="case-num" type="text">
+										<input type="hidden" id="evidup" name="evidup" value=""  >
+                         </div>
+                       </form>
+                    </div>
+                    
+                    <div class="form-group" id="zhuanchu" style="width: 70%;margin: auto;overflow:hidden;margin-top:10px;display: none;" id="zhuanchu">
+                         <label class="col-lg-3 control-label mgAdd" style="text-align: center;width: 120px;line-height:22px;">转出</label>
+                         <div class="col-lg-9">
+								<input id="fenju" type="radio" style="margin-top:0px;vertical-align:middle;" name="fenjuAndOther1" onclick="fenju(this)" value="分局"/>分局
+                    			<input id="other" type="radio" style="margin-left: 18px;margin-top:0px;vertical-align:middle;" name="fenjuAndOther1" onclick="other(this)" value="其他"/>其他
+                    			<input class="form-control" type="text" style="width: 38%;display:inline-block;display: none;" id="otherText22">&nbsp;&nbsp;&nbsp;
+                    			
+                    			
+                    			
+                    			<!-- 科室树形菜单 -->
+                    			<div style="height: 350px;margin-top: 18px;display: none;" id="shuxingcaidan">
+									<div class="br13 b08" style="float: left; width: 50%; height: 100%;">
+										<table title="" class="easyui-treegrid c26 br21"
+											style="width: 100%; height: 100%; float: left; font-size: 16px;text-align: center;"
+											id="caseTreeGrid_ds"
+											data-options="
+													<!--  url: '<%=basePath%>json.php',-->
+													<!-- url: '<%=basePath%>admin/initUserTree.php',-->
+													lines: true,
+													checkbox: true,
+													idField: 'id',						 
+													animate:'true',
+													treeField: 'text',
+													onClickCell:onClickCells_ds,
+													loader:myloader,
+													fitColumns:false,
+													autoScroll: true ,
+											">
+											<thead class="b30 c26 br21" style="font-size: 20px;text-align: center; display: none;">
+												<tr>
+													<th data-options="field:'text'" style="width: 40%;">
+														<span class="c27" style="font-size: 14px"></span>
+													</th>
+													<th data-options="field:'pri'" style="width: 20%;">
+														<span class="c27" style="font-size: 14px"></span>
+													</th>
+													<th data-options="field:'sec'" style="display: none;">
+														<span class="c27" style="font-size: 14px"></span>
+													</th>
+												</tr>
+											</thead>
+										</table>
+									</div>
+									<span style="margin-left: 50px;">转出分局 :<span id="fenjuTextss"></span></span>
+						</div>
+                       </div>
+                    </div>
+                   </div> 
+				</div>
+			</div>
+			
+			
+			<div class="panel panel-default" style="display: none;" id="shenpi">
+				<div class="panel-heading">线索审批</div>
+				<div class="panel-body" style="padding: 0 0 15px;">
+					<div class="form-group" style="width: 70%;margin: auto; margin-top: 15px;overflow:hidden;">
+                         <label class="col-lg-3 control-label mgAdd" style="text-align: center;width: 120px;">备注:</label>
+                         <div class="col-lg-6">
+								<textarea id="addcomment" name="addcomment" class="form-control"
+                                          rows="5" maxlength="140" placeholder="140字以内"></textarea>
+                         </div>
+                    </div>
+                    
+                    <div class="form-group" style="width: 70%;margin: auto; margin-top: 15px;">
+                         <label class="col-lg-3 control-label mgAdd" style="text-align: center;width: 120px;">  </label>
+                         <div class="col-lg-6">
+								<input id="agree" type="radio" name="ifagrees" value="同意"/>同意
+                    			<input id="disagree" type="radio" name="ifagrees" value="不同意"/>不同意
+                         </div>
+                    </div>
+				</div>
+			</div>
+			
+			<div class="form-group" style="margin-top: 54px;">
+                 <div class="col-lg-offset-5 col-lg-5">
+                       <button type="button" class="btn w-xs btn-info" style="margin-right: 30px;" onclick="addChuzhiAndShenpiInfo();">提交</button>
+                       <!-- <button type="button" class="btn w-xs btn-default" style="margin-right: 30px;">返回</button> -->
+                       <a href="<%=basePath %>admin/cluelist.php" class="btn w-xs btn-default" style="margin-right: 30px;" onclick="return">返回</a>
+                 </div>
+            </div>
+		</div>
+	</div>
+<jsp:include page="footer2.jsp"></jsp:include>
+<script type="text/javascript">
+//科室树形      oEle[i].nextSbiling
+function myloader(param,success,error){
+    $.ajax({
+        url:"<%=basePath %>admin/initUserTree.php",
+        data:{
+        },
+        type:"get",
+        dataType:"json",
+        success: function(data){
+            success(data); 
+            $(".tree-checkbox").click(function() {
+            	var checkClass = $(this).attr("class");
+            	var id = $(this).parent().parent().parent().attr("node-id");
+            	if(checkClass=='tree-checkbox tree-checkbox0'){
+            		
+            		var name = $(this).parent().find(".tree-title").text();
+//            		var pri = $(this).parent().parent().parent().find(".datagrid-cell-c1-pri").text();
+//            		var sec = $(this).parent().parent().parent().find(".datagrid-cell-c1-sec").text();
+					var names = name + ","; 
+					
+//					var subnames = names.substring(0,names.length-1);
+					
+            		$("#fenjuTextss").append('<span id="'+id+'"><span>'+names+'</span></span>');
+            		uidArr.push(id);
+            	}else {
+            		if($("#"+id)){
+            			$("#"+id).remove();
+            			uidArr.remove(id);
+            		}
+            	}
+	   	 	});
+        }
+    });
+}
+function onClickCells_ds(field,row){
+	
+}
+
+
+$(function ifRoleNames(){
+	var clueDisposalS = document.getElementById('clueDisposalS').innerText;
+	var roleNames = document.getElementById('roleNamess').innerText;
+	if(clueDisposalS == "未处置" || roleNames == "科长"){
+		$("#shenpi").hide();
+	}else{
+		$("#shenpi").show();
+	}
+}); 
+
+var roleNames = "";
+function test0(obj){
+//	roleNames = document.getElementById('roleNamess').innerText;
+//	alert(clueDisposalS);
+	 if(obj.checked){
+		var chuzhi = $("input[name='radioParam']:checked").val();
+		$("#clueChuzhi").html(chuzhi);
+	    $("#zhuanchudan").hide();
+	    $("#zhuanchu").hide();
+	 }
+}
+
+function test1(obj){
+//	 roleNames = document.getElementById('roleNamess').innerText;
+	 if(obj.checked){
+		 var chuzhi = $("input[name='radioParam']:checked").val();
+			$("#clueChuzhi").html(chuzhi);
+	    $("#zhuanchudan").show();
+	    $("#zhuanchu").hide();
+	 }else{
+	   	$("#zhuanchudan").hide();
+	 }
+}
+
+function test2(obj){
+	var chuzhi = $("input[name='radioParam']:checked").val();
+	$("#clueChuzhi").html(chuzhi);
+//	 roleNames = document.getElementById('roleNamess').innerText;
+	 if(obj.checked){
+	    $("#zhuanchudan").show();
+	    $("#zhuanchu").hide();
+	 }else{
+	   	$("#zhuanchudan").hide();
+	 }
+}
+
+function test3(obj){
+	var chuzhi = $("input[name='radioParam']:checked").val();
+	$("#clueChuzhi").html(chuzhi);
+//	 roleNames = document.getElementById('roleNamess').innerText;
+	 if(obj.checked){
+		 $("#zhuanchudan").show();
+	     $("#zhuanchu").show();
+	     $("#otherText22").hide();
+	 }else{
+		 $("#zhuanchudan").hide();
+	   	 $("#zhuanchu").hide();
+	 }
+}
+
+function fenju(obj){
+	 if(obj.checked){
+		 $("#shuxingcaidan").show();
+		 $("#otherText22").hide();
+	 }else{
+		 $("#otherText22").show();
+	 }
+}
+
+function other(obj){
+	 if(obj.checked){
+		 $("#otherText22").show();
+		 $("#shuxingcaidan").hide();
+	 }else{
+		 $("#otherText22").hide();
+	 }
+}
+
+$('input[name=checkboxs]').click(function(){
+	 $(this).attr('checked','checked').siblings().removeAttr('checked');
+	});
+	
+//处理单上传方法
+function addEvidence3(obj){	
+	
+//	var test =$("input[name='radioParam']").val();
+//	$("#paramHidden").val(test);
+
+	
+	
+	/* if($("#filePath4").val()==''){    $("input[type='radioParam']:checked").val();
+		alert("请选择文件！");
+		return false;
+	} */
+//	var ddlr=$("#evType").val();
+//	 var evName=$("#addevName").val().trim();
+	/* if(evName==null || evName==""){
+		$("#addevNamelabel").text("*数据名称不能为空！");
+		return false;
+	}
+	if(evName.length > 50){
+		$("#addevNamelabel").text("*数据名称长度不能超过50！");
+		return false;
+	}
+	$("#addevNamelabel").text("");
+	$("#loadingDiv").show();
+	$("#importForm4").ajaxForm(options2);
+	var casenum1= $("#case-num1").text(); */
+//	$("#importForm4").submit();
+}
+
+function addChuzhiAndShenpiInfo() {
+	var clueIds2 = document.getElementById('clueIds2').innerText;
+	//线索处置
+	var chuzhi = $("input[name='radioParam']:checked").val();
+	$("#clueChuzhi").html(chuzhi);
+	/* if(chuzhi == "积累归档" || chuzhi == "线索经营" || chuzhi == "线索转出") {
+		addEvidence3(obj);
+	} */
+	//同意或不同意
+	var ifAgrees =$("input[name='ifagrees']:checked").val();
+	//转出下      分局和其他
+	var fenjuAndOther =$("input[name='fenjuAndOther1']:checked").val();
+	alert(fenjuAndOther);
+	var departs21 = document.getElementById('fenjuTextss').innerText;
+	var otherText22 = $('#otherText22').val();
+	alert("otherText22=="+otherText22);
+	var shenpi = $("#addcomment").val();           			//审批意见
+	
+	<%-- $.ajax({
+		type : "POST",
+		url : "<%=basePath%>admin/clueHandleAndShenpi.php",
+		data : {
+			"clueIds2" : clueIds2,
+			"chuzhi" : chuzhi,								//四个被勾选的   处置类型
+			
+			"fenjuAndOther" : fenjuAndOther,				//分局    和      其他 
+			"departs21" : departs21,                        //分局下   被勾选的分局名称
+			"otherText22" : otherText22,					//输入的其他内容
+			
+			"ifAgrees" : ifAgrees,							//同意      不同意
+			"shenpi" : shenpi								//审批内容
+		},
+		dataType : "json",
+		async: true,
+		success : function(data) {
+			alert("成功！");
+			window.location.href = "<%=basePath %>admin/cluelist.php";
+		},
+	}); --%>
+}
+function setFilePath4() {
+	var filepath = $("#file4").val();
+	var fileName22 = filepath.substring(filepath.lastIndexOf("\\")+1);
+	$("#filePath4").val(fileName22);   //
+	$("#fileNameChuLiDAN").html(fileName22);
+}
+</script>
+</body>
+</html>

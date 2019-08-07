@@ -1,0 +1,191 @@
+
+/*字体颜色*/
+.c01{color:#31aef2;}
+.c02{color:#fff;}
+.c03{color:#ccc;}
+.c04{color:#000;}
+.c05{color:#747474;}
+.c06{color:#333;}
+.c07{color:#666;}
+.c08{color:#999;}
+.c09{color:#3992d0;}
+.c10 {color:#475e9c ;}/*a标签字体颜色*/
+.c11{color:red;}
+.c12{color:58666e;}
+.c13{color:#23527c;}
+.c14{color:#555;}
+.c15{color:#f30;}
+.c16{color:#f60;}
+.c17{color:#48a5f4;}
+.c18{color:#23527c;}
+.c19{color:#406182;}/*表格头部颜色*/
+.c20{color:#58666e;}
+.c21{color:#BFA6A6;}
+
+
+/*背景颜色*/
+.b01{background-color:#f55050;}	/*红*/
+.b02{background-color:#1abd9d;}  /*绿*/
+.b03{background-color:#6ce0c7;}
+.b04{background-color:#3499db;}  /*蓝*/
+.b05{background-color:#465E9D;}  
+.b06{background-color:#475e9c;}  
+.b07{background-color:#5e87b0;}
+
+
+.b08{background-color:#f6f8f8;} /*底色*/
+
+.b09{background-color:#9B58B5;}  /*紫*/
+
+.b10{background-color: #337ab7;}
+.b11{background-color: #efe1cd;}/*标签背景色*/
+.b12{background-color: #fadbd5;}
+.b13{background-color: #d5e4ef;}
+.b14{background-color: #d2e7e1;}
+.b15{background-color: #faf6d7;}
+.b16{background-color: #9fbad5;}
+.b17{background-color: #c3deed;}
+.b18{background-color: #d7d7ed;}
+.b19{background-color:#fafafa;}
+.b20{background-color:#f0f3f4;}
+.b21{background-color:#ddd;}
+.b22{background-color:#fff;}
+.b23{background-color:#475E9C;}
+/*线条颜色*/
+.br01{border-color:#4eb9f3;}
+.br02{border-color: #337ab7;}
+.br03{border-color: #ccc;}
+.br04{border-bottom:1px solid #ddd;}
+.br004{border:1px solid #ddd;}
+
+/*标签颜色*/
+.br05{border: 1px solid #ef9f8e;}
+
+.br06{border:1px solid #9fbad5;}
+.br07{border:1px solid #9fc5bc;}
+.br08{border:1px solid #cdc174;}
+.br09{border:1px solid #8bbcd2;}
+.br10{border:1px solid #aaaad2;}
+.br11{border:1px solid #efba84;}
+
+.br12{border-color: #eaeff0;}
+
+
+
+
+
+.demo ul li:nth-child(2n){
+	background:#f0f3f4;
+}
+.modal-header {
+	border-bottom-color: #EEEEEE;
+	background-color: #FAFAFA;
+}
+.red_num{
+	color:#fff;
+	background-color:red;
+}
+
+
+/* 标签 */
+.span-1 {
+	display: inline-block;
+	padding-left: 25px;
+	padding-right: 25px;
+	margin-top: 20px;
+	margin-right: 20px;
+	width: auto;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 2px 12px 2px 2px;
+
+}
+
+.span-2 {
+	padding-left: 25px;
+	padding-right: 25px;
+	display: inline-block;
+	margin-top: 20px;
+	margin-right: 20px;
+	width: auto;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 2px 12px 2px 2px;
+}
+
+.span-3 {
+	padding-left: 25px;
+	padding-right: 25px;
+	display: inline-block;
+	margin-top: 20px;
+	margin-right: 20px;
+	width: auto;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 2px 12px 2px 2px;
+}
+
+.span-4 {
+	padding-left: 25px;
+	padding-right: 25px;
+	display: inline-block;
+	margin-top: 20px;
+	margin-right: 20px;
+	width: auto;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 2px 12px 2px 2px;
+}
+
+.span-5 {
+	padding-left: 25px;
+	padding-right: 25px;
+	display: inline-block;
+	margin-top: 20px;
+	margin-right: 20px;
+	width: auto;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 2px 12px 2px 2px;
+}
+
+.span-6 {
+	padding-left: 25px;
+	padding-right: 25px;
+	display: inline-block;
+	margin-top: 20px;
+	margin-right: 20px;
+	width: auto;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 2px 12px 2px 2px;
+}
+
+.span-7 {
+	padding-left: 25px;
+	padding-right: 25px;
+	display: inline-block;
+	margin-top: 20px;
+	margin-right: 20px;
+	width: auto;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 2px 12px 2px 2px;
+}
+
+select{border-color:#cfdadd !important;}
+input {border-color: #cfdadd;}
+.form-control {border: 1px solid #cfdadd;}
+.hover {background-color: red;}
+.fade_suc span,.fade_fas span,.fade_poi span{color:#fff;}
+.easyui-progressbar{  
+       background-color: #ffe48d;
+   	   color: #000000; 
+ }

@@ -1,0 +1,34 @@
+package com.xl.cloud.bean;
+
+public class LabelData {
+	private String labelName;
+	private String labelCaseNum;
+	private String labelSupectNum;
+	private String labelDataNum;
+	public String getLabelName() {
+		return labelName;
+	}
+	public void setLabelName(String labelName) {
+		this.labelName = labelName;
+	}
+	public String getLabelCaseNum() {
+		return labelCaseNum;
+	}
+	public void setLabelCaseNum(String labelCaseNum) {
+		this.labelCaseNum = labelCaseNum;
+	}
+	public String getLabelSupectNum() {
+		return labelSupectNum;
+	}
+	public void setLabelSupectNum(String labelSupectNum) {
+		this.labelSupectNum = labelSupectNum;
+	}
+	public String getLabelDataNum() {
+		return labelDataNum;
+	}
+	public void setLabelDataNum(String labelDataNum) {
+		this.labelDataNum = labelDataNum;
+	}
+	
+	
+}

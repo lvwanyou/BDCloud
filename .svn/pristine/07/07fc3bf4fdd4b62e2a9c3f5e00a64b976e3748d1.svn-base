@@ -1,0 +1,169 @@
+package com.xl.cloud.action;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.xl.cloud.bean.CaseType;
+import com.xl.cloud.bean.Caseinfo;
+import com.xl.cloud.bean.Evidence;
+import com.xl.cloud.bean.PictureInfo;
+import com.xl.cloud.bean.Section;
+import com.xl.cloud.dao.SqlDao;
+import com.xl.cloud.util.JsonUtil;
+
+@Controller
+public class NoCaseDataAction {
+	private SqlDao sqlDao = new SqlDao();
+	public SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	final Logger logger = Logger.getLogger(BuildCollection.class);
+	
+	@RequestMapping(value = "/noCaseData/importevidence_NoCase.php")
+	public String importevidenceNoCase(HttpServletRequest request, Map<String, Object> map, HttpSession session,
+			HttpServletResponse response) throws SecurityException, IllegalArgumentException, NoSuchMethodException,
+			IllegalAccessException, InvocationTargetException {
+		return "importevidence_NoCase";
+	}
+	@RequestMapping(value = "/noCaseData/addevidence_NoCase.php")
+	public String addevidenceNoCase(HttpServletRequest request, Map<String, Object> map, HttpSession session,
+			HttpServletResponse response) throws SecurityException, IllegalArgumentException, NoSuchMethodException,
+			IllegalAccessException, InvocationTargetException {
+		return "addevidence_NoCase";
+	}	
+	@RequestMapping(value = "/noCaseData/evidence_adding_noCase.php")
+	public String evidence_adding_noCase(HttpServletRequest request, Map<String, Object> map, HttpSession session,
+			HttpServletResponse response) throws SecurityException, IllegalArgumentException, NoSuchMethodException,
+			IllegalAccessException, InvocationTargetException {
+		return "evidence_adding_noCase";
+	}
+	/**
+	 * 无案件数据-数据列表
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
+	@RequestMapping(value = "/noCaseData/showEvidence.php")
+	public void showEvidence(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+			throws IOException {
+		response.setContentType("textml; charset=UTF-8");
+		Map<String, Object> map = new HashMap<String, Object>();
+		//String dirName = request.getParameter("dirName");// 文价名称
+		String pageIndexstr = request.getParameter("pageIndex");// 页数
+		int pageIndex =Integer.parseInt(pageIndexstr);// 页数
+		Evidence evidence = new Evidence();
+		/*if (dirName != null || !"".equals(dirName)) {
+			pictureInfo.setDirName(dirName);
+		}*/
+		evidence.setCaseID(0);
+		int count = sqlDao.getcountfromMysql(evidence);
+		List<Evidence> evidenceList = sqlDao.getListfromMysql(evidence, (count/10 -pageIndex+1) * 10, 10);
+		List<Evidence> evidenceList2 = new ArrayList<Evidence>();
+		for (int i=evidenceList.size()-1;i>=0;i--) {
+			evidenceList2.add(evidenceList.get(i));
+		}
+		map.put("evidenceList", evidenceList2);
+		map.put("count", count);
+		// getListfromMysqlLike(pictureInfo);
+		PrintWriter writer = null;
+		try {
+			writer = response.getWriter();
+			writer.write(JsonUtil.map2json(map));
+			writer.flush();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (writer != null) {
+				writer.close();
+			}
+		}
+	}
+	/**
+	 * 无案件数据-关联案件
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
+	@RequestMapping(value = "/noCaseData/addCase.php")
+	public void addCase(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+			throws IOException {
+		response.setContentType("textml; charset=UTF-8");
+		Map<String, Object> map = new HashMap<String, Object>();
+		String caseIDstr = request.getParameter("caseID");// 案件id
+		String evIDstr = request.getParameter("evID");// 数据id
+		int evID = Integer.parseInt(evIDstr);
+		int caseID = Integer.parseInt(caseIDstr);
+		Evidence evidence = new Evidence();
+		evidence.setId(evID);
+		List<Evidence> listfromMysql = sqlDao.getListfromMysql(evidence);
+		Evidence evidence2 = listfromMysql.get(0);
+		evidence2.setCaseID(caseID);
+		sqlDao.updateToMysql(evidence2);
+	}
+	
+	/**
+	 * 无案件数据-上传完成修改数据
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
+		@RequestMapping(value = "/noCaseData/getevidencelist.php")
+		public String getevidencelist(HttpServletRequest request, Map<String, Object> map, HttpSession session,
+				HttpServletResponse response) throws SecurityException, IllegalArgumentException, NoSuchMethodException,
+				IllegalAccessException, InvocationTargetException {
+				//String type=request.getParameter("type");
+				//String sum=request.getParameter("sum");
+			String uploadNum = request.getParameter("uploadNum");
+			if(uploadNum != null && !"".equals(uploadNum)) {
+				String getId = session.getAttribute("eviTempID").toString();
+				System.out.println("获取到的Id:\t"+getId);
+				
+				String successNum = request.getParameter("successNum");
+				String errorNum = request.getParameter("errorNum");
+				String evSize = request.getParameter("evSize");
+				System.out.println("uploadNum:\t"+uploadNum);
+				System.out.println("successNum:\t"+successNum);
+				System.out.println("errorNum:\t"+errorNum);
+				System.out.println("evSize:\t"+evSize);
+				Evidence evidence = new Evidence();
+				evidence.setId(Integer.parseInt(getId));
+				List<Evidence> listfromMysql = sqlDao.getListfromMysql(evidence);
+				Evidence evidence2 = listfromMysql.get(0);
+				
+				evidence2.setUploadNum(uploadNum);
+				evidence2.setSuccessNum(successNum);
+				evidence2.setErrorNum(errorNum);
+				evidence2.setEvSize(evSize);
+				sqlDao.updateToMysql(evidence2);
+				//actionLog((String) session.getAttribute("userName"),"编辑","案件管理");
+			}
+			return "addevidence_NoCase";
+		}
+	
+}
+
+
+
+
+
+
+

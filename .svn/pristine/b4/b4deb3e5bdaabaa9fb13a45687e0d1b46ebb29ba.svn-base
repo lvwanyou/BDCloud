@@ -1,0 +1,1167 @@
+<%@ page language="java" contentType="text/html; charset=utf-8"
+	pageEncoding="utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%
+	String path = request.getContextPath();
+	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
+			+ path + "/";
+%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title></title>
+<link href="<%=basePath%>template/css/cloud-admin.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/responsive.css">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/app.css">
+<%-- <link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/easyui.css" />
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/easyui2.css" /> --%>
+
+<script src="<%=basePath%>template/js/jquery/jquery-2.0.3.min.js"></script>
+<script src="<%=basePath%>template/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript">
+	$(document).ready( function(){
+		var div_height = $("#wrapper-md-ds").height()-40;
+		//alert(div_height);
+		$("#ds_div").css("height", div_height+"px");
+		
+		getAllDepartments();
+	});
+	
+	function getAllDepartments(){
+		$.ajax({
+			type: "POST",
+			url: "<%=basePath %>admin/getAllDepartments.php",
+			dataType : "json",
+			data : {},						
+			success : function(data) {
+				jQuery.each(data,function(i,item){
+					$("#addpartment").append('<option>'+item.departmentName+'</option>');
+					$("#editpartment").append('<option>'+item.departmentName+'</option>');
+				});
+				$("#addpartment").append('<option></option>');
+				$("#editpartment").append('<option></option>');
+				getAllSections(1);
+				getAllSections(2);
+			},						
+			error : function(data) {
+			}
+		});
+	}
+	
+	function getAllSections(type){
+		var department="";
+		if(type == 1){
+			department=$("#addpartment").val();
+			$("#addsection").empty();
+		}else{
+			department=$("#editpartment").val();
+			$("#editsection").empty();
+		}
+		
+		if(department==""){
+			if(type==1){
+				$("#addsection").append('<option></option>');
+			}else{
+				$("#editsection").append('<option></option>');
+			}
+		}else{
+			$.ajax({
+				type: "POST",
+				url: "<%=basePath %>admin/getAllSections.php",
+				dataType : "json",
+				data : {"department":department},						
+				success : function(data) {
+					jQuery.each(data,function(i,item){
+						if(type==1){
+							$("#addsection").append('<option>'+item.sectionName+'</option>');
+						}else{
+							$("#editsection").append('<option>'+item.sectionName+'</option>');
+						}
+					});
+				},						
+				error : function(data) {
+				}
+			});
+		}
+	}
+	//折叠
+	function testOfSearch(obj){
+	  var div1=document.getElementById("searchOfForm");
+	  if(div1.style.display=="block"){
+	    div1.style.display="none";
+	    obj.src="<%=basePath %>template/img/downXia.png";
+	  }else{
+	    div1.style.display="block";
+	    obj.src="<%=basePath %>template/img/addevidence.png";
+	  }
+	}
+</script>
+<script type="text/javascript" src="<%=basePath%>template/js/jquery.easyui.min.js"></script>
+<style>
+
+ul {
+	list-style: none;
+}
+
+a {
+	text-decoration: none;
+}
+
+.tintage {
+	background-color: #dee9f4 ;
+}
+.find_nav {
+	background-color: #f9f9f9;
+	position: relative;
+	top: 0;
+	z-index: 99;
+	border-bottom: 1px solid #ddd;
+	display: -moz-box;
+	display: -webkit-box;
+	display: box;
+	
+}
+
+.ui-autocomplete{
+	z-index:999999 !important;
+	height:100px;
+	overflow:scroll;
+}
+
+.find_nav_left {
+	height: 46px;
+	position: relative;
+	overflow: hidden;
+	-moz-box-flex: 1;
+	-webkit-box-flex: 1;
+	box-flex: 1;
+}
+
+.find_nav_list {
+	position: absolute;
+	/* */
+	left: 0;
+	width:100%;
+}
+
+.find_nav_list ul {
+	position: relative;
+	white-space: nowrap;
+	font-size: 0;
+}
+
+.find_nav_list ul li {
+	display: inline-block;
+	padding: 0 13px;
+}
+
+.find_nav_list ul li a {
+	display: block;
+	width: 100%;
+	height: 100%;
+	line-height: 46px;
+	font-size: 14px;
+	text-align: center;
+	color: #666;
+}
+
+.find_nav_cur a {
+	color: #48a5f4 !important;
+}
+
+.sideline {
+	display: block;
+	position: absolute;
+	border: 0;
+	height: 2px;
+	background-color: #48a5f4;
+	left: 0;
+	top: 43px;
+	pointer-events: none;
+}
+
+.alcenter {
+	text-align: center;
+}
+
+.inline {
+	display: inline-block;
+}
+
+.form-inline .form-control {
+	/*width:auto;*/
+	max-width: 391px;
+	width: 391px;
+}
+.clabel {
+	margin-right:14px;
+}
+.row{
+	margin-left: 0px;
+}
+.panel-header, .datagrid-header{
+	display: none;
+}
+.datagrid-body::-webkit-scrollbar{
+			width: 10px;
+			height: 10px;
+			background-color: #F5F5F5;
+		}
+		.datagrid-body::-webkit-scrollbar-track  
+		{  
+		    background-color: #F5F5F5;  
+		}
+		.datagrid-body::-webkit-scrollbar-thumb  
+		{  
+		    background-color: #3992d0;  
+		}
+		.datagrid-header td
+		{
+		    border:none;
+		}
+		.panel{
+		margin-bottom: 20px;
+		text-align: inherit;
+		border: 1px solid #dee5e7;
+	}
+	.panel-body{
+		padding: 15px;
+		border: none;
+		font-size: 14px;
+	}
+	.panel-header{
+		padding:0;
+		border-width:0;
+		border-top-width:1px;
+	}
+	.datagrid-header-row{
+		width:100%;
+	}
+	.datagrid-body td{
+		background-color: #fff;
+		height:100%;
+		border-width: 0 0 0 0;
+	}
+	.datagrid-wrap.panel-body{
+		background-color: #fff;
+	}
+	.panel.datagrid.easyui-fluid{
+		overflow: hidden;
+		text-align: left;
+		border: 0;
+		margin: 0;
+	}
+	.col-md-2 .panel-body{
+		padding: 0 0 0 0;
+	}
+	.col-md-2 .panel{
+		border-bottom: none;
+	}
+	#table-modal_adduser .form-group, #table-modal_edituser .form-group{
+		width: 50%;
+		float: left;
+	}
+	#table-modal_adduser .form-group .control-label, #table-modal_edituser .form-group .control-label {
+		padding-top: 7px;
+		padding-right: 0px;
+	}
+	#table-modal_adduser .form-group .col-lg-8, #table-modal_edituser .form-group .col-lg-8{
+		padding-left: 0px;
+	}
+	.btnA {
+		color: #475E9C;
+	}
+	a.btnA:hover, a.btnA:focus {
+		color: #384b7e;
+	}
+	.tree-title{
+		cursor: pointer;
+		padding:0 8px;
+	}
+	/* .tree-title{color:#666;font-size:14px;height:30px;line-height:30px;}
+	.tree-checkbox0,.tree-hit,.tree-checkbox1,.tree-checkbox2{margin-top:5px;} */
+	.tree-title{color:#666;font-size:14px;height:30px;line-height:30px;}
+	
+</style>
+</head>
+<body>
+	<jsp:include page="common.jsp"></jsp:include>
+	<div class="bg-light lter b-b wrapper-md">
+  		<h1 class="m-n h4">线索列表</h1>
+	</div>
+
+	<div id="wrapper-md" class="wrapper-md" style="height:500px;padding-bottom: 20px;">
+		<div class="col-md-12" style="margin-bottom:27px;">
+				        <div class="find_nav">
+				            <div class="find_nav_left">
+				                <div class="find_nav_list">
+				                    <ul style="padding: 0px;">
+				                        <li><a href="javascript:void(0)" onclick="d1()">涉嫌人员</a></li>
+				                        <li><a href="javascript:void(0)" id="leng" onclick="d2()">涉嫌单位</a></li>
+				                        <li class="sideline"></li>
+				                    </ul>
+				                </div>
+				            </div>
+     			  		 </div>
+     	 <div id="d1" style="width:100%;">	
+			<div class="row">
+				<div class="panel panel-default">
+
+					<%-- <div class="panel-heading">线索人员<span style="float: right;"><img src="<%=basePath %>template/img/addevidence.png" onclick="testOfSearch(this)"></span></div> --%>
+				
+					<div class="panel-body" id="searchOfForm" style="display: block;">
+						<form class="form-inline" id="searchForm" method="post" action="<%=basePath %>admin/cluelist.php" >
+							<input type="hidden" name="pageno" id="pageno"/>
+							<div class="form-group">
+								<label class="clabel">涉嫌人员:</label>
+								<input type="text" value="" style="display: none;" />
+								<input type="text" id="name" name="name" class="form-control" placeholder="请输入..." onkeydown="onKeyDown(event)" style="width: 238px;"/>
+							</div>&nbsp;&nbsp;&nbsp;
+							<div class="form-group">
+								<label class="clabel">所属地区:</label>
+								<input type="text" value="" style="display: none;" />
+								<input type="text" id="regions" name="regions" class="form-control" placeholder="请输入..." onkeydown="onKeyDown(event)" style="width: 238px;"/>
+							</div>&nbsp;&nbsp;&nbsp;
+							<div class="form-group">
+									<label for="" class="clabel">案件日期:</label>
+									<input id="startDate" name="startDate" value="${createdTime }" class="form-control" placeholder="请输入起始时间" type="text"
+										style="width: 168px; margin-left: -4px;" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'endDate\')||\'new Date()\'}'});" onkeydown="onKeyDown(event)"/>
+							</div>
+							<div class="form-group">
+									<label for="" class="clabel">&nbsp;&nbsp;&nbsp;至</label>
+									<input id="endDate" name="endDate" value="${endTime }" class="form-control" placeholder="请输入结束时间" type="text"
+										style="width: 168px;" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'startDate\')}',maxDate:new Date()});" onkeydown="onKeyDown(event)"/>
+							</div>
+							  <!-- <input class="btn btn-info"  value="搜索" name="rfFrame" style="width: 75px;"  /> -->
+							  <button type="button" class="btn btn-info"
+								style="width: 75px; height: 30px; background-color: #475E9C;color: #fff;" onclick="searchUser('1')">搜索</button>
+							<!-- <button type="button" class="btn btn-info"
+								style="width: 75px; height: 30px; background-color: #475E9C;color: #fff;" onclick="searchUser('1')">搜索</button> -->
+						</form>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="panel panel-default">
+					<div id="loadDiv_user" style="text-align: center;margin-top: 10px;position: absolute;left:50%;z-index:99;display: none;">
+				 		<img alt="" src="<%=basePath%>template/img/loading3.gif">
+					</div>
+					<div class="panel-heading">搜索结果</div>
+					<div class="panel-body" style="padding: 0 0 15px;">
+						<table id="datatable" class="table table-striped table-hover" style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+							<thead>
+								<tr>
+									<th class="alcenter">涉嫌人员</th>
+									<th class="alcenter">所在地区</th>
+									<th class="alcenter">手机号</th>
+									<th class="alcenter">电子邮箱</th>
+									<th class="alcenter">线索类型</th>
+									<th class="alcenter">涉嫌事项</th>
+									<th class="alcenter">创建时间</th>
+									<th class="alcenter">上报人</th>
+									<th class="alcenter">数据列表</th>
+									<th class="alcenter">案件</th>
+									<th class="alcenter">编辑</th>
+									<th class="alcenter">删除</th>
+								</tr>
+							</thead>
+							<tbody id="tbcont">
+								 <c:forEach items="${list }" var="item">
+								 	<tr>
+										<td style="color:#58666e;text-align:left">${item.name }</td>
+										<td style="color:#58666e;text-align:left">${item.region }</td>
+										<td style="color:#58666e;text-align:left">${item.phone }</td>
+										<td style="color:#58666e;text-align:left">${item.email }</td>
+										<td style="color:#58666e;text-align:left">${item.threadType }</td>
+										<td style="color:#58666e;text-align:left">${item.susItem }</td>
+										<td style="color:#58666e;text-align:left">${item.createTime }</td>
+										<td style="text-align:left">${item.reportPerson }</td>
+										<td style="text-align:left"><a href="#" class="btnA" data-toggle="modal" onclick="getid('${item.id }');">查看</a></td>
+										<td style="text-align:left"><a href="#" class="btnA" data-toggle="modal" data-target="#myModal" onclick="addCase('${item.id }')">关联案件</a></td>
+										<td style="text-align:left"> <a href="#" class="btnA" data-toggle="modal" data-target="#table-modal_edituser" onclick="return setEditInfo('${item.id }','${item.name }','${item.phone }','${item.email }','${item.region }','${item.threadType }','${item.susItem }',)">编辑</a></td>
+										<td style="text-align:left"><a href="#" class="btnA" data-toggle="modal" onclick=" deleteid('${item.id }')">删除</a></td>
+									</tr>
+								 </c:forEach>
+							</tbody>
+						</table>
+ 						<div class="alcenter" style="font-size: 14px">
+							<div class="pagecount inline" style="height: 29px;">
+								<span>共<span id="totalSpan"></span>条，当前<span id="currSpan"></span>页</span>
+							</div>
+							<div class="pagebar inline"
+								style="position: absolute; right: 10px; height: 29px;">
+								<ul id="pageUL" class="pagination pagination-sm" style="margin: 0;">
+								
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			</div>
+			
+			
+			
+		<div id="d2" style="width:100%;">	
+			<div class="row">
+				<div class="panel panel-default">
+
+					<div class="panel-body" id="searchOfForm" style="display: block;">
+						<form class="form-inline" id="searchForm2" method="post" action="<%=basePath %>admin/unitlist.php" >
+							<input type="hidden" name="pageno" id="pageno"/>
+							<div class="form-group">
+								<label class="clabel">涉嫌单位:</label>
+								<input type="text" value="" style="display: none;" />
+								<input type="text" id="name2" name="name2" class="form-control" placeholder="请输入..." onkeydown="onKeyDown(event)" style="width: 238px;"/>
+							</div>&nbsp;&nbsp;&nbsp;
+							<div class="form-group">
+								<label class="clabel">所属地区:</label>
+								<input type="text" value="" style="display: none;" />
+								<input type="text" id="regionss" name="regionss" class="form-control" placeholder="请输入..." onkeydown="onKeyDown(event)" style="width: 238px;"/>
+							</div>&nbsp;&nbsp;&nbsp;
+							<div class="form-group">
+									<label for="" class="clabel">案件日期:</label>
+									<input id="startDate2" name="startDate2" value="${createdTime }" class="form-control" placeholder="请输入起始时间" type="text"
+										style="width: 168px; margin-left: -4px;" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'endDate\')||\'new Date()\'}'});" onkeydown="onKeyDown(event)"/>
+							</div>
+							<div class="form-group">
+									<label for="" class="clabel">&nbsp;&nbsp;&nbsp;至</label>
+									<input id="endDate2" name="endDate2" value="${endTime }" class="form-control" placeholder="请输入结束时间" type="text"
+										style="width: 168px;" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'startDate\')}',maxDate:new Date()});" onkeydown="onKeyDown(event)"/>
+							</div>
+							<!--   <input class="btn btn-info" type="submit" value="搜索" name="rfFrame" style="width: 75px;"  /> -->
+							 <button type="button" class="btn btn-info"
+								style="width: 75px; height: 30px; background-color: #475E9C;color: #fff;" onclick="searchunitlist('1');">搜索</button>
+						</form>
+					
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="panel panel-default">
+					<div id="loadDiv_user" style="text-align: center;margin-top: 10px;position: absolute;left:50%;z-index:99;display: none;">
+				 		<img alt="" src="<%=basePath%>template/img/loading3.gif">
+					</div>
+					<div class="panel-heading">搜索结果</div>
+					<div class="panel-body" style="padding: 0 0 15px;">
+						<table id="datatable" class="table table-striped table-hover"
+							style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+							<thead>
+								<tr>
+									<th class="alcenter">涉嫌单位</th>
+									<th class="alcenter">所在地区</th>
+							<!-- 		<th class="alcenter">手机号</th>
+									<th class="alcenter">电子邮箱</th> -->
+									<th class="alcenter">线索类型</th>
+									<th class="alcenter">涉嫌事项</th>
+									<th class="alcenter">创建时间</th>
+									<th class="alcenter">上报人</th>
+									<th class="alcenter">数据列表</th>
+									<th class="alcenter">案件</th>
+									<th class="alcenter">编辑</th>
+									<th class="alcenter">删除</th>
+
+								</tr>
+							</thead>
+							<tbody id="tbcont3">
+								
+							</tbody>
+						</table>
+ 						<div class="alcenter" style="font-size: 14px">
+							<div class="pagecount inline" style="height: 29px;">
+								<span>共<span id="totalSpan3"></span>条，当前<span id="currSpan3"></span>页</span>
+							</div>
+							<div class="pagebar inline"
+								style="position: absolute; right: 10px; height: 29px;">
+								<ul id="pageUL3" class="pagination pagination-sm" style="margin: 0;">
+						
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			</div>
+		</div>
+	</div>
+
+		<!-- 编辑用户成功弹框 -->
+		<div class="modal fade" id="table-modal_editUser_success" tabindex="-1" role="dialog"
+			aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog" style="width: 476px;">
+				<div class="modal-content">
+					<input type="hidden" name="editUser_successes" id="editUser_successes"> 
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-hidden="true"><img alt="" src="<%=basePath %>template/img/close.png"></button>
+						<h3 class="modal-title" id="myModalLabel" style="color: #58666e;border-left: none;">编辑用户</h3>
+					</div>
+					<div class="modal-body">编辑用户成功！</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-info" data-dismiss="modal">确定</button>
+					</div> 
+				</div>
+			</div>
+		</div>
+		
+				<!-- 编辑单位成功弹框 -->
+		<div class="modal fade" id="table-modal_editUser_success2" tabindex="-1" role="dialog"
+			aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog" style="width: 476px;">
+				<div class="modal-content">
+					<input type="hidden" name="editUser_successes" id="editUser_successes"> 
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-hidden="true"><img alt="" src="<%=basePath %>template/img/close.png"></button>
+						<h3 class="modal-title" id="myModalLabel" style="color: #58666e;border-left: none;">编辑单位</h3>
+					</div>
+					<div class="modal-body">编辑单位成功！</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-info" data-dismiss="modal">确定</button>
+					</div> 
+				</div>
+			</div>
+		</div>
+		
+		<div class="modal fade" id="table-modal_edituser">							
+		<div class="modal-dialog" style="margin-top: 7%;width: 55%;height: 100%;">
+		  <div class="modal-content modal-table">
+			<div class="modal-header">
+			  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			  <h4 class="modal-title" style="font-size: 22px;">编辑线索</h4>
+			</div>
+			<div class="modal-body" style="width: 100%;height:420px;" >	
+				<div class="_modal-content" style="margin:15px;">	
+					<p id="mistake_edit" style="text-align:center;color: #de3c3c;font-size:14px;padding-left:25px;margin-bottom:0;" ></p>
+					<input type="hidden" name="editId" id="editId">
+					<div class="form-group">
+						<label class="col-lg-3 control-label">涉嫌人员</label>
+						<div class="col-lg-8">
+							<input class="form-control" type="text" id="names" name="name" onblur="validateobj(this,'用户名')">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-lg-3 control-label">手机号</label>
+						<div class="col-lg-8">
+							<input class="form-control" type="text" id="phone" name="editpoliceno" onblur="validateobj(this,'警号')">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-lg-3 control-label">电子邮箱</label>
+						<div class="col-lg-8">
+							<input class="form-control" type="text" id="emali" name="editcardno" onblur="validateobj(this,'身份证号')">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="col-lg-3 control-label">线索类型</label>
+						<div class="col-lg-8">
+							<input class="form-control" type="text" id="threadType" name="edittelephone">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-lg-3 control-label">涉嫌事项</label>
+						<div class="col-lg-8">
+							<input class="form-control" type="text" id="susItem" name="editphone">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-lg-3 control-label">所在地区</label>
+						<div class="col-lg-8">
+							<input class="form-control" type="text" id="region" name="editemail">
+						</div>
+					</div>
+
+					<div class="form-group" style="width: 100%;margin-top: 54px;">
+						<div class="col-lg-offset-4 col-lg-5">
+							<button type="button" class="btn w-xs btn-info" style="margin-right: 30px;" onclick="editUser()">确定</button>
+							<button type="reset" class="btn w-xs btn-default" data-dismiss="modal">取消</button>
+						</div>
+					</div>									
+			 	</div>
+			</div>
+		  </div>
+		</div>
+	  </div>
+	  
+	  
+	  <div class="modal fade" id="table-modal_edituser2">							
+		<div class="modal-dialog" style="margin-top: 7%;width: 55%;height: 100%;">
+		  <div class="modal-content modal-table">
+			<div class="modal-header">
+			  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			  <h4 class="modal-title" style="font-size: 22px;">编辑涉嫌单位</h4>
+			</div>
+			<div class="modal-body" style="width: 100%;height:420px;" >	
+				<div class="_modal-content" style="margin:15px;">	
+					<p id="mistake_edit2" style="text-align:center;color: #de3c3c;font-size:14px;padding-left:25px;margin-bottom:0;"></p>
+					<input type="hidden" name="editId2" id="editId2">
+					<div class="form-group">
+						<label class="col-lg-3 control-label">涉嫌单位</label>
+						<div class="col-lg-8">
+							<input class="form-control" type="text" id="names2" name="name2" onblur="validateobj(this,'用户名')" style="width: 260px;">
+						</div>
+					</div>
+			
+					<!-- <div class="form-group">
+						<label class="col-lg-3 control-label">线索类型</label>
+						<div class="col-lg-8">
+							<input class="form-control" type="text" id="threadType2" name="edittelephone">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-lg-3 control-label">涉嫌事项</label>
+						<div class="col-lg-8">
+							<input class="form-control" type="text" id="susItem2" name="editphone">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-lg-3 control-label">所在地区</label>
+						<div class="col-lg-8">
+							<input class="form-control" type="text" id="region2" name="editemail">
+						</div>
+					</div> -->
+
+					<div class="form-group" style="width: 100%;margin-top: 54px;">
+						<div class="col-lg-offset-4 col-lg-5">
+							<button type="button" class="btn w-xs btn-info" style="margin-right: 30px;" onclick="editUser2()">确定</button>
+							<button type="reset" class="btn w-xs btn-default" data-dismiss="modal">取消</button>
+						</div>
+					</div>									
+			 	</div>
+			</div>
+		  </div>
+		</div>
+	  </div>
+ 	<div class="modal right fade" id="myModal"  tabindex="-1" style="width:100%;height: 100%;margin: auto;">
+		<div class="panel panel-default" style="width:50%;height: 80%;margin:3% auto;" >
+			<div class="panel-heading">更改案件</div>
+	 			<div class="panel-body" style="width:100%;height: 100%;">
+	 					<div class="panel-body" style="width:100%">
+							<input id="caseinfo" name="caseinfo" class="form-control" placeholder="搜索案件名称/案件编号" type="text" style="float:left;width:52%;" onkeyup="showcase()"/>
+							<button type='button' class="btn btn-info" style="width: 70px;margin-left: 10px;height: 34px" onclick="showcase()">搜索</button>
+						</div>
+						<!-- <div class="panel-body" style="width:100%" >
+							<span style="float: left;">已选案件：</span> <div id="spans1" style="margin-left: 65px;margin-top: -9px;"></div>
+						</div> -->
+						<div class="panel-body" style="height: 65%;overflow-y: scroll;">		
+								<table id="datatable" class="table table-striped table-hover" style="border: 1px solid #DDDDDD;">
+									<tbody id="tbcont2">
+										
+									</tbody>
+								</table>		
+						</div>
+						<button type='button' class="btn btn-info" style="width: 70px;height: 30px;margin-left: 45%;margin-top: 3%" onclick="checkCase();">关联</button>
+				</div>
+    	</div>
+</div>
+	<!-- footer -->
+    		<div style=" text-align:center; width:100%; background-color: #f0f3f4;padding-top: 17px;padding-bottom:47px;">
+			<%-- <img style=" margin-top:20px;" src="<%=basePath%>template/img/footer.png"> --%>
+			<img  src="<%=basePath%>template/img/left.png"><span style="color: #999;font-size:12px;margin: 0 12px;">  由勋立云计算提供技术支持  版本号: V1.1.1082  </span><img src="<%=basePath%>template/img/left2.png">
+			</div>
+</body>
+<script src="<%=basePath%>template/js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+<script src="<%=basePath%>template/bootstrap-dist/js/bootstrap.min.js"></script>
+<script src="<%=basePath%>template/js/cutover/js.js"></script>
+<script type="text/javascript">
+  	$(function () {
+  		$("#d2").hide();
+  		searchUser(1);
+    })
+   var types = "1";
+	function d1() {
+		
+		types= "1";
+		$("#d1").show();
+		$("#d2").hide();
+		searchUser(1);
+		
+	}
+
+	function d2() {
+		types = "2";
+		$("#d1").hide();
+		$("#d2").show();
+		searchunitlist(1);
+	}
+	
+	
+	//获取线索id 去数据表查
+	var evID="";
+	function addCase(clueID){
+		evID=clueID;
+	} 
+	//分页
+/* 	function subForm(pageno){
+		$("#pageno").val(pageno);
+		$("#searchForm").submit();
+	}
+	*/
+/* 	function ord(){
+		
+	} 
+	function ord2(){
+		//searchunitlist(1);
+		
+		document.getElementById("leng").click();
+	}  */
+	
+	
+	
+//查询人员
+	function searchUser(pageno){
+		//var uname = $("#uname").val();
+	//	var userprevilige = $("#userprevilige").val();
+		//var pageno = $("#pageno").val();
+		
+		var name = $("#name").val();
+		var region = $("#regions").val();
+		var startDate = $("#startDate").val();
+		var endDate = $("#endDate").val();
+		$.ajax({
+			type: "POST",
+			url: "<%=basePath %>admin/cluelistss.php",
+			dataType : "json",
+			data : {
+ 				"name" : name,
+				"region" : region,
+				"startDate" : startDate,
+				"endDate":endDate,
+				"pageno":pageno
+			},							    
+			success : function(data) {
+
+				var len = data.resData.length;
+				var i = 0;
+				var res = data.resData;
+				var result = "";
+				var tmp;
+				var totalPages = data.totalPages;
+				var nowPage = data.nowPage;
+				var totalNum = data.totalNum;
+				$("#totalSpan").text(totalNum);
+				$("#currSpan").text(nowPage+"/"+totalPages);
+				$("#tbcont").empty();
+				for(i = 0; i < len; i++)
+				{
+					$("#tbcont").append('<tr><td>'+res[i].name+'</td>'+
+										'<td>'+res[i].region+'</td>'+
+										'<td>'+res[i].phone+'</td>'+
+										'<td>'+res[i].email+'</td>'+
+										'<td>'+res[i].threadType+'</td>'+
+										'<td>'+res[i].susItem+'</td>'+
+										'<td>'+res[i].createdTime+'</td>'+
+										'<td>'+res[i].reportPerson+'</td>'+
+										'<td><a href="#" class="btnA" data-toggle="modal" onclick="getid(\''+res[i].id+'\');">查看</a></td>'+
+										'<td><a href="#" class="btnA" data-toggle="modal" data-target="#myModal" onclick="addCase(\''+res[i].id+'\')">关联案件</a></td>'+
+										'<td><a href="#" class="btnA" data-toggle="modal" data-target="#table-modal_edituser" onclick="return setEditInfo(\''+res[i].id+'\',\''+res[i].name+'\',\''+res[i].phone+'\',\''+res[i].email+'\',\''+res[i].region+'\',\''+res[i].threadType+'\',\''+res[i].susItem+'\')">编辑</a></td>'+
+										'<td><a href="#" class="btnA" data-toggle="modal" onclick=" deleteid(\''+res[i].id+'\')">删除</a></td>'+
+										'</tr>');
+				}
+				$("#pageUL").html("");
+				var tmp = "";
+				if(parseInt(nowPage) == 1)
+					tmp += "<li><a href=\"#\" onclick=\"searchUser('" + (parseInt(nowPage)) + "')\">&lt;</a></li>";
+				else
+					tmp += "<li><a href=\"#\" onclick=\"searchUser('" + (parseInt(nowPage) - 1) + "')\">&lt;</a></li>";
+				
+				var at = Math.floor((parseInt(nowPage)-1)/9);
+				at = at*9;
+				var full = at + 9;
+				var max;
+				if(full > totalPages)
+					max = totalPages;
+				else
+					max = full;
+				var p = 0;
+				for(p = at + 1; p <= max; p++){
+					if(p == nowPage)
+						tmp += "<li><a href=\"#\" class=\"active\" onclick=\"searchUser('"+p+"')\">"+p+"</a></li>";
+					else
+						tmp += "<li><a href=\"#\" onclick=\"searchUser('"+p+"')\">"+p+"</a></li>";
+				}
+					
+				if(nowPage == totalPages)
+					tmp += "<li><a href=\"#\" onclick=\"searchUser('" + (parseInt(nowPage)) + "')\">&gt;</a></li>";
+				else
+					tmp += "<li><a href=\"#\" onclick=\"searchUser('" + (parseInt(nowPage) + 1) + "')\">&gt;</a></li>";
+				$("#pageUL").html(tmp);
+			},
+			error : function(data) {
+				$("#loadDiv_user").hide();
+				alert("查询失败，请重试!");
+			}
+		});
+	}
+	
+	
+	function searchunitlist(pageno){
+		var name = $("#name2").val();
+		var region = $("#regionss").val();
+		var startDate = $("#startDate2").val();
+	
+		var endDate = $("#endDate2").val();
+		$.ajax({
+			type: "POST",
+			url: "<%=basePath %>admin/unitlist.php",
+			dataType : "json",
+			data : {
+				"name" : name,
+				"region" : region,
+				"startDate" : startDate,
+				"endDate":endDate,
+				"pageno":pageno
+			},							    
+			success : function(data) {
+				var len = data.resData.length;
+
+				var i = 0;
+				var res2 = data.resData;
+				var result = "";
+				var tmp;
+				var totalPages = data.totalPages;
+				var nowPage = data.nowPage;
+				var totalNum = data.totalNum;
+				$("#totalSpan3").text(totalNum);
+				$("#currSpan3").text(nowPage+"/"+totalPages);
+				$("#tbcont3").empty();
+				for(i = 0; i < len; i++)
+				{
+					$("#tbcont3").append('<tr><td>'+res2[i].susUnit+'</td>'+
+										'<td>'+res2[i].region+'</td>'+
+										'<td>'+res2[i].threadType+'</td>'+
+										'<td>'+res2[i].susItem+'</td>'+
+										'<td>'+res2[i].createdTime+'</td>'+
+										'<td>'+res2[i].reportPerson+'</td>'+
+										'<td><a href="#" class="btnA" data-toggle="modal" onclick="getid2(\''+res2[i].id+'\');">查看</a></td>'+
+										'<td><a href="#" class="btnA" data-toggle="modal" data-target="#myModal" onclick="addCase(\''+res2[i].id+'\')">关联案件</a></td>'+
+										'<td><a href="#" class="btnA" data-toggle="modal" data-target="#table-modal_edituser2" onclick="return setEditInfo2(\''+res2[i].id+'\',\''+res2[i].susUnit+'\',\''+res2[i].region+'\',\''+res2[i].threadType+'\',\''+res2[i].susItem+'\')">编辑</a></td>'+
+										'<td><a href="#" class="btnA" data-toggle="modal" onclick=" deleteid2(\''+res2[i].id+'\')">删除</a></td>'+
+										'</tr>');
+				}
+				$("#pageUL3").html("");
+				var tmp = "";
+				if(parseInt(nowPage) == 1)
+					tmp += "<li><a href=\"#\" onclick=\"searchunitlist('" + (parseInt(nowPage)) + "')\">&lt;</a></li>";
+				else
+					tmp += "<li><a href=\"#\" onclick=\"searchunitlist('" + (parseInt(nowPage) - 1) + "')\">&lt;</a></li>";
+				
+				var at = Math.floor((parseInt(nowPage)-1)/9);
+				at = at*9;
+				var full = at + 9;
+				var max;
+				if(full > totalPages)
+					max = totalPages;
+				else
+					max = full;
+				var p = 0;
+				for(p = at + 1; p <= max; p++){
+					if(p == nowPage)
+						tmp += "<li><a href=\"#\" class=\"active\" onclick=\"searchunitlist('"+p+"')\">"+p+"</a></li>";
+					else
+						tmp += "<li><a href=\"#\" onclick=\"searchunitlist('"+p+"')\">"+p+"</a></li>";
+				}
+					
+				if(nowPage == totalPages)
+					tmp += "<li><a href=\"#\" onclick=\"searchunitlist('" + (parseInt(nowPage)) + "')\">&gt;</a></li>";
+				else
+					tmp += "<li><a href=\"#\" onclick=\"searchunitlist('" + (parseInt(nowPage) + 1) + "')\">&gt;</a></li>";
+				$("#pageUL3").html(tmp);
+			},
+			error : function(data) {
+				$("#loadDiv_user").hide();
+				alert("查询失败，请重试!");
+			}
+		});
+	}
+
+	
+	
+	
+	//删除线索
+	function deleteid(id){
+		if(confirm("确认删除该条线索吗")){
+			$.ajax({
+				type:"post", 
+		        url:"<%=basePath%>deleteclue.php",
+		        dataType:"json",
+		        data:{
+		           "id":id         
+		        },
+		        success: function(data){
+		        	//alert(JSON.stringify(data));
+		        	if(data.res=="succ"){
+		        		alert("删除成功");
+			       		//location.reload();
+		        		searchUser(1);
+		        	}
+		  
+		        },
+		     	error: function(data) {
+		    		alert("删除失败");
+		    		//alert(JSON.stringify(data));
+				} 
+		   	 });
+			}else{
+				return false;
+			}
+	}
+	
+	function deleteid2(id){
+		if(confirm("确认删除该条线索吗")){
+			$.ajax({
+				type:"post", 
+		        url:"<%=basePath%>deleteunit.php",
+		        dataType:"json",
+		        data:{
+		           "id":id         
+		        },
+		        success: function(data){
+		        	//alert(JSON.stringify(data));
+		        	if(data.res=="succ"){
+		        		alert("删除成功");
+			       		//location.reload();
+		        		searchunitlist(1);
+		        	}
+		  
+		        },
+		     	error: function(data) {
+		    		alert("删除失败");
+		    		//alert(JSON.stringify(data));
+				} 
+		   	 });
+			}else{
+				return false;
+			}
+	}
+	
+	//编辑线索
+	function setEditInfo(id,name,phone,emali,region,threadType,susItem){
+		$("#editId").val(id);
+		$("#names").val(name);
+		$("#phone").val(phone);
+		$("#emali").val(emali);
+		$("#region").val(region);
+		$("#threadType").val(threadType);
+		$("#susItem").val(susItem);
+
+		return true;
+	}
+	//编辑线索
+	function editUser(){
+		var editId = $("#editId").val();
+		var name=$("#names").val();
+		var phone=$("#phone").val();
+		var emali=$("#emali").val();
+		var region = $("#region").val();
+		var threadType = $("#threadType").val();
+		var susItem = $("#susItem").val();
+		
+		if(name==null || name==""){
+			$("#mistake_edit").html("姓名不能为空！");
+			return false;
+		}
+		if(phone==null || phone==""){
+			$("#mistake_edit").html("手机号不能为空！");
+			return false;
+		}
+		if(threadType==null || threadType==""){
+			$("#mistake_edit").html("线索类型不能为空！");
+			return false;
+		}
+		if(susItem==null || susItem==""){
+			$("#mistake_edit").html("涉嫌事项不能为空！");
+			return false;
+		}
+
+		$.ajax({
+			type: "POST",
+			url: "<%=basePath %>editclue.php",
+			dataType : "json",
+			data : {
+				"id": editId,
+				"name" : name,
+				"phone" : phone,
+				"emali" : emali,
+				"region" : region,
+				"threadType": threadType,
+				"susItem": susItem,
+			},							    
+			success : function(data) {
+				$('#table-modal_edituser').modal('hide');
+				if (data.res == "succ") {
+					searchUser(1);
+					$('#table-modal_editUser_success').modal('show');
+					
+					//searchUser(1);
+//					alert("编辑用户成功");
+//					window.location.reload();
+					//searchUser(1);
+				}
+			},						
+			error : function(data) {
+				alert("编辑用户失败，请重试!");
+			}
+		});     
+	}
+	
+	
+	
+	//编辑单位
+	function setEditInfo2(id,name,region,threadType,susItem){
+		$("#editId2").val(id);
+		$("#names2").val(name);
+	
+		$("#region2").val(region);
+		$("#threadType2").val(threadType);
+		$("#susItem2").val(susItem);
+
+		return true;
+	}
+	//编辑单位
+	function editUser2(){
+		var editId = $("#editId2").val();
+		var name=$("#names2").val();
+
+		var region = $("#region2").val();
+		var threadType = $("#threadType2").val();
+		var susItem = $("#susItem2").val();
+		
+		if(name==null || name==""){
+			$("#mistake_edit").html("姓名不能为空！");
+			return false;
+		}
+		if(threadType==null || threadType==""){
+			$("#mistake_edit").html("线索类型不能为空！");
+			return false;
+		}
+		if(susItem==null || susItem==""){
+			$("#mistake_edit").html("涉嫌事项不能为空！");
+			return false;
+		}
+
+		$.ajax({
+			type: "POST",
+			url: "<%=basePath %>editunit.php",
+			dataType : "json",
+			data : {
+				"id": editId,
+				"name" : name,
+				"region" : region,
+				"threadType": threadType,
+				"susItem": susItem,
+			},							    
+			success : function(data) {
+				$('#table-modal_edituser2').modal('hide');
+				if (data.res == "succ") {
+					searchunitlist(1);
+					$('#table-modal_editUser_success2').modal('show');
+					
+					//searchUser(1);
+//					alert("编辑用户成功");
+//					window.location.reload();
+					//searchUser(1);
+				}
+			},						
+			error : function(data) {
+				alert("编辑用户失败，请重试!");
+			}
+		});     
+	}
+	
+	
+	//关联案件
+	 window.onload = showcase();
+	 function showcase(){
+	 	var casenumorname = document.getElementById("caseinfo").value;
+	 	//alert(casenumorname);
+	 	$.ajax({
+	 		type : "POST",
+	 		url : "<%=basePath%>admin/getCaseOfEmail.php",
+	 		data : {
+	 			"casenumorname":casenumorname
+	 		},
+	 		dataType : "json",
+	 		async: true,
+	 		success : function(data) {
+	 			$("#tbcont2").empty();
+	 			var htmlhead='<tr>'+
+	 				'<td class="td_left"></td>'+
+	 				'<td class="td_left">案件编号</td>'+
+	 				'<td class="td_right">案件名称</td>'+
+	 			'</tr>';
+	 			$("#tbcont2").append(htmlhead);	
+	 			$.each(data,function(i,item){
+	 				var htmlhead2='<tr data-toggle="modal">';
+	 				var html = '<tr>'+
+	 					'<td class="td_left"><input id="caselist'+i+'" type="checkbox" name="ids" value="'+item.id+'" onclick="showChoose(this.id);" />'+
+	 						'<td class="td_left">'+item.caseNum+'</td>'+
+	 						'<td class="td_right" id="">'+item.caseName+'</td>'+
+	 					'</tr>';
+	 				$("#tbcont2").append(html);					
+	 			});
+	 		},
+	 		error: function(XMLHttpRequest, textStatus, errorThrown) {
+	 		}
+	 	});
+	 }
+	 
+
+	//关联案件后提交
+	 function checkCase(obj){
+		    var CaseInfo = document.getElementsByName("ids");
+		    var caseidStr ="";
+		    for(i=0;i<CaseInfo.length;i++){
+		        if(CaseInfo[i].checked){
+		            if(caseidStr==""){
+		            	caseidStr=CaseInfo[i].value;
+		            }else{
+		            	caseidStr=caseidStr+","+CaseInfo[i].value;
+		            }
+		        }
+		    }
+		    $.ajax({
+				type : "POST",
+				url : "<%=basePath%>admin/addcluecase.php",
+				data : {
+					"types":types,
+					"caseID":caseidStr,
+					"evID":evID
+				},
+				dataType : "json",
+				async: true,
+				success : function(data) {
+ 					if(data.res="succ"){
+						alert("关联成功");
+						  $("#myModal").modal("hide");
+					}/* else if(data.res="erro"){
+						alert("已关联该案件");
+						
+					} 
+					
+					  $("#myModal").modal("hide"); */
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+					//alert("失败");
+				}
+			});
+		}
+	//跳转至数据列表界面
+	 function getid(clueid){
+			//var evid = $("#id_right").text();
+			window.location.href = "<%=basePath %>admin/clueevidencelist.php?clueid="+clueid;
+		}
+	
+		//跳转至数据列表界面
+	 function getid2(clueid){
+			//var evid = $("#id_right").text();
+			window.location.href = "<%=basePath %>admin/unitevidencelist.php?clueid="+clueid;
+		}
+</script>
+
+</html>

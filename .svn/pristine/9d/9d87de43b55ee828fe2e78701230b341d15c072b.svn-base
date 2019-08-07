@@ -1,0 +1,1782 @@
+package com.xl.cloud.action;
+
+import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.xl.cloud.bean.BankDetail;
+import com.xl.cloud.bean.BillDetail;
+import com.xl.cloud.bean.Caseinfo;
+import com.xl.cloud.bean.ContainerDetail;
+import com.xl.cloud.bean.CreditDetail;
+import com.xl.cloud.bean.EmlDetail;
+import com.xl.cloud.bean.FixedDetail;
+import com.xl.cloud.bean.IdentityDetail;
+import com.xl.cloud.bean.PassportDetail;
+import com.xl.cloud.bean.PaymentDetail;
+import com.xl.cloud.bean.PlateDetail;
+import com.xl.cloud.bean.PriceDetail;
+import com.xl.cloud.bean.QqDetail;
+import com.xl.cloud.bean.TeleDetail;
+import com.xl.cloud.bean.TransferDetail;
+import com.xl.cloud.bean.TransportDetail;
+import com.xl.cloud.bean.TwitterDetail;
+import com.xl.cloud.bean.WechatDetail;
+import com.xl.cloud.dao.SqlDao;
+import com.xl.cloud.util.JsonUtil;
+@Controller
+public class ExcavateData {
+
+	private SqlDao sqlDao = new SqlDao();
+	public SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	final Logger logger = Logger.getLogger(BuildCollection.class);
+	
+	   //数据挖掘电话号码查询
+		@RequestMapping(value = "/admin/phone_list.php")
+		public void getPhonelist(HttpServletRequest request, Map<String, Object> map, HttpSession session,
+				HttpServletResponse response) throws SecurityException, IllegalArgumentException, NoSuchMethodException,
+				IllegalAccessException, InvocationTargetException {
+
+			String pageno = request.getParameter("pageno");
+			String caseId = request.getParameter("caseId");
+			 String[] caseids = {""};
+			 if(caseId!=null && !"".equals(caseId)){
+					caseids=caseId.split(",");
+					
+			  }
+			 
+			int pageIndex = 1;
+			int pageSize = 10;
+			int num = 0;
+
+			if (!StringUtils.isEmpty(pageno)) {
+				pageIndex = Integer.parseInt(pageno);
+			}
+			TeleDetail telt = new TeleDetail();
+			
+			if (!StringUtils.isEmpty(caseId)) {
+				telt.setCaseId(caseId);
+			}
+			List<TeleDetail> logs =	new ArrayList<TeleDetail>();
+			if(caseids!=null && !"".equals(caseids)){
+		        	for(int i=0;i<caseids.length;i++){
+		        		String caseid = caseids[i];
+		        		telt.setCaseId(caseid);
+		        		List<TeleDetail> logs2 =	sqlDao.getOrderListfromMysqlLike(telt, (pageIndex - 1) * pageSize, pageSize, "id");
+		        		logs.addAll(logs2);
+		        	}
+			    }else{
+			    	logs = sqlDao.getOrderListfromMysqlLike(telt, (pageIndex - 1) * pageSize, pageSize, "id");
+			    	
+			    }
+			// System.out.println(logs.size());
+			int total = sqlDao.getcountfromMysqlLike(telt);
+			//身份证号查询
+			IdentityDetail identityDetail =  new IdentityDetail();
+			int sfztotal = sqlDao.getcountfromMysqlLike(identityDetail);
+			//固定电话查询
+			FixedDetail fixedDetail =  new FixedDetail();
+			int gddhtotal = sqlDao.getcountfromMysqlLike(fixedDetail);
+			//银行卡号查询
+			BankDetail bankDetail =  new BankDetail();
+			int yhtotal = sqlDao.getcountfromMysqlLike(bankDetail);
+			//邮箱账号查询
+			EmlDetail emlDetail =  new EmlDetail();
+			int yxtotal = sqlDao.getcountfromMysqlLike(emlDetail);
+			//车牌信息查询
+			PlateDetail plateDetail =  new PlateDetail();
+			int cptotal = sqlDao.getcountfromMysqlLike(plateDetail);
+			//护照信息查询
+			PassportDetail passportDetail =  new PassportDetail();
+			int hztotal = sqlDao.getcountfromMysqlLike(passportDetail);
+			//信用证信息查询
+			CreditDetail creditDetail =  new CreditDetail();
+			int xyztotal = sqlDao.getcountfromMysqlLike(creditDetail);
+			//集装箱信息查询
+			ContainerDetail containerDetail =  new ContainerDetail();
+			int jzxtotal = sqlDao.getcountfromMysqlLike(containerDetail);
+			//运输车号信息查询
+			TransportDetail transportDetail =  new TransportDetail();
+			int ysctotal = sqlDao.getcountfromMysqlLike(transportDetail);
+			//电汇信息查询
+			TransferDetail transferDetail =  new TransferDetail();
+			int dhtotal = sqlDao.getcountfromMysqlLike(transferDetail);
+			
+			//QQ信息查询
+			QqDetail qqDetail =  new QqDetail();
+			int qqtotal = sqlDao.getcountfromMysqlLike(qqDetail);
+			//微信信息查询
+			WechatDetail wechatDetail =  new WechatDetail();
+			int wxtotal = sqlDao.getcountfromMysqlLike(wechatDetail);
+			//推特信息查询
+			TwitterDetail twitterDetail =  new TwitterDetail();
+			int tttotal = sqlDao.getcountfromMysqlLike(twitterDetail);
+			//价格信息查询
+			PriceDetail priceDetail =  new PriceDetail();
+			int jgtotal = sqlDao.getcountfromMysqlLike(priceDetail);
+			//支付宝信息查询
+			PaymentDetail paymentDetail =  new PaymentDetail();
+			int zfbtotal = sqlDao.getcountfromMysqlLike(paymentDetail);
+			//发票信息查询
+			BillDetail billDetail =  new BillDetail();
+			int fptotal = sqlDao.getcountfromMysqlLike(billDetail);
+			
+			num = total / pageSize;
+			if (total % pageSize != 0) {
+				num++;
+			}
+			List<Integer> pageList = new ArrayList<Integer>();
+			if (num < 5) {
+				for (int i = 1; i <= num; i++) {
+					pageList.add(i);
+				}
+			} else {
+				if (pageIndex <= 5) {
+					for (int i = 1; i <= 5; i++) {
+						pageList.add(i);
+					}
+				} else {
+					if (pageIndex + 2 <= num) {
+						pageList.add(pageIndex - 2);
+						pageList.add(pageIndex - 1);
+						pageList.add(pageIndex);
+						pageList.add(pageIndex + 1);
+						pageList.add(pageIndex + 2);
+					} else if (pageIndex + 1 <= num) {
+						pageList.add(pageIndex - 3);
+						pageList.add(pageIndex - 2);
+						pageList.add(pageIndex - 1);
+						pageList.add(pageIndex);
+						pageList.add(pageIndex + 1);
+					} else {
+						pageList.add(pageIndex - 4);
+						pageList.add(pageIndex - 3);
+						pageList.add(pageIndex - 2);
+						pageList.add(pageIndex - 1);
+						pageList.add(pageIndex);
+					}
+				}
+			}
+
+			map.put("logs", logs);
+			map.put("totalNum", total);
+			map.put("sfztotal", sfztotal);
+			map.put("gddhtotal", gddhtotal);
+			map.put("yhtotal", yhtotal);
+			map.put("dhtotal", dhtotal);
+			map.put("ysctotal", ysctotal);
+			map.put("yxtotal", yxtotal);
+			map.put("jzxtotal", jzxtotal);
+			map.put("xyztotal", xyztotal);
+			map.put("cptotal", cptotal);
+			map.put("hztotal", hztotal);
+			
+			map.put("qqtotal", qqtotal);
+			map.put("wxtotal", wxtotal);
+			map.put("tttotal", tttotal);
+			map.put("jgtotal", jgtotal);
+			map.put("zfbtotal", zfbtotal);
+			map.put("fptotal", fptotal);
+			
+			map.put("totalPages", num);
+			map.put("nowPage", pageIndex);
+			map.put("pageList", pageList);
+
+			PrintWriter writer = null;
+			try {
+				writer = response.getWriter();
+				writer.write(JsonUtil.map2json(map));
+				writer.flush();
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				if (writer != null) {
+					writer.close();
+				}
+			}
+		}
+		
+		   //数据挖掘身份证号码查询
+				@RequestMapping(value = "/admin/sfz_list.php")
+				public void getsfzlist(HttpServletRequest request, Map<String, Object> map, HttpSession session,
+						HttpServletResponse response) throws SecurityException, IllegalArgumentException, NoSuchMethodException,
+						IllegalAccessException, InvocationTargetException {
+
+					String pageno = request.getParameter("pageno");
+					String caseId = request.getParameter("caseId");
+					 String[] caseids = {""};
+					 if(caseId!=null && !"".equals(caseId)){
+							caseids=caseId.split(",");
+							
+					  }
+					 
+					int pageIndex = 1;
+					int pageSize = 10;
+					int num = 0;
+
+					if (!StringUtils.isEmpty(pageno)) {
+						pageIndex = Integer.parseInt(pageno);
+					}
+					IdentityDetail telt = new IdentityDetail();
+					
+					if (!StringUtils.isEmpty(caseId)) {
+						telt.setCaseId(caseId);
+					}
+					List<IdentityDetail> logs =	new ArrayList<IdentityDetail>();
+					if(caseids!=null && !"".equals(caseids)){
+				        	for(int i=0;i<caseids.length;i++){
+				        		String caseid = caseids[i];
+				        		telt.setCaseId(caseid);
+				        		List<IdentityDetail> logs2 =	sqlDao.getOrderListfromMysqlLike(telt, (pageIndex - 1) * pageSize, pageSize, "id");
+				        		logs.addAll(logs2);
+				        	}
+					    }else{
+					    	logs = sqlDao.getOrderListfromMysqlLike(telt, (pageIndex - 1) * pageSize, pageSize, "id");
+					    	
+					    }
+					// System.out.println(logs.size());
+					int total = sqlDao.getcountfromMysqlLike(telt);
+					num = total / pageSize;
+					if (total % pageSize != 0) {
+						num++;
+					}
+					List<Integer> pageList = new ArrayList<Integer>();
+					if (num < 5) {
+						for (int i = 1; i <= num; i++) {
+							pageList.add(i);
+						}
+					} else {
+						if (pageIndex <= 5) {
+							for (int i = 1; i <= 5; i++) {
+								pageList.add(i);
+							}
+						} else {
+							if (pageIndex + 2 <= num) {
+								pageList.add(pageIndex - 2);
+								pageList.add(pageIndex - 1);
+								pageList.add(pageIndex);
+								pageList.add(pageIndex + 1);
+								pageList.add(pageIndex + 2);
+							} else if (pageIndex + 1 <= num) {
+								pageList.add(pageIndex - 3);
+								pageList.add(pageIndex - 2);
+								pageList.add(pageIndex - 1);
+								pageList.add(pageIndex);
+								pageList.add(pageIndex + 1);
+							} else {
+								pageList.add(pageIndex - 4);
+								pageList.add(pageIndex - 3);
+								pageList.add(pageIndex - 2);
+								pageList.add(pageIndex - 1);
+								pageList.add(pageIndex);
+							}
+						}
+					}
+
+					map.put("logs", logs);
+					map.put("totalNum", total);
+					map.put("totalPages", num);
+					map.put("nowPage", pageIndex);
+					map.put("pageList", pageList);
+
+					PrintWriter writer = null;
+					try {
+						writer = response.getWriter();
+						writer.write(JsonUtil.map2json(map));
+						writer.flush();
+					} catch (Exception e) {
+						e.printStackTrace();
+					} finally {
+						if (writer != null) {
+							writer.close();
+						}
+					}
+				}
+				
+				
+				 //数据挖掘运输车号码查询
+				@RequestMapping(value = "/admin/ys_list.php")
+				public void getyslist(HttpServletRequest request, Map<String, Object> map, HttpSession session,
+						HttpServletResponse response) throws SecurityException, IllegalArgumentException, NoSuchMethodException,
+						IllegalAccessException, InvocationTargetException {
+
+					String pageno = request.getParameter("pageno");
+					String caseId = request.getParameter("caseId");
+					 String[] caseids = {""};
+					 if(caseId!=null && !"".equals(caseId)){
+							caseids=caseId.split(",");
+							
+					  }
+					 
+					int pageIndex = 1;
+					int pageSize = 10;
+					int num = 0;
+
+					if (!StringUtils.isEmpty(pageno)) {
+						pageIndex = Integer.parseInt(pageno);
+					}
+					TransportDetail telt = new TransportDetail();
+					
+					if (!StringUtils.isEmpty(caseId)) {
+						telt.setCaseId(caseId);
+					}
+					List<TransportDetail> logs =	new ArrayList<TransportDetail>();
+					if(caseids!=null && !"".equals(caseids)){
+				        	for(int i=0;i<caseids.length;i++){
+				        		String caseid = caseids[i];
+				        		telt.setCaseId(caseid);
+				        		List<TransportDetail> logs2 =	sqlDao.getOrderListfromMysqlLike(telt, (pageIndex - 1) * pageSize, pageSize, "id");
+				        		logs.addAll(logs2);
+				        	}
+					    }else{
+					    	logs = sqlDao.getOrderListfromMysqlLike(telt, (pageIndex - 1) * pageSize, pageSize, "id");
+					    	
+					    }
+					// System.out.println(logs.size());
+					int total = sqlDao.getcountfromMysqlLike(telt);
+					num = total / pageSize;
+					if (total % pageSize != 0) {
+						num++;
+					}
+					List<Integer> pageList = new ArrayList<Integer>();
+					if (num < 5) {
+						for (int i = 1; i <= num; i++) {
+							pageList.add(i);
+						}
+					} else {
+						if (pageIndex <= 5) {
+							for (int i = 1; i <= 5; i++) {
+								pageList.add(i);
+							}
+						} else {
+							if (pageIndex + 2 <= num) {
+								pageList.add(pageIndex - 2);
+								pageList.add(pageIndex - 1);
+								pageList.add(pageIndex);
+								pageList.add(pageIndex + 1);
+								pageList.add(pageIndex + 2);
+							} else if (pageIndex + 1 <= num) {
+								pageList.add(pageIndex - 3);
+								pageList.add(pageIndex - 2);
+								pageList.add(pageIndex - 1);
+								pageList.add(pageIndex);
+								pageList.add(pageIndex + 1);
+							} else {
+								pageList.add(pageIndex - 4);
+								pageList.add(pageIndex - 3);
+								pageList.add(pageIndex - 2);
+								pageList.add(pageIndex - 1);
+								pageList.add(pageIndex);
+							}
+						}
+					}
+
+					map.put("logs", logs);
+					map.put("totalNum", total);
+					map.put("totalPages", num);
+					map.put("nowPage", pageIndex);
+					map.put("pageList", pageList);
+
+					PrintWriter writer = null;
+					try {
+						writer = response.getWriter();
+						writer.write(JsonUtil.map2json(map));
+						writer.flush();
+					} catch (Exception e) {
+						e.printStackTrace();
+					} finally {
+						if (writer != null) {
+							writer.close();
+						}
+					}
+				}
+						
+						 //数据挖掘电汇号码查询
+						@RequestMapping(value = "/admin/dh_list.php")
+						public void getdhlist(HttpServletRequest request, Map<String, Object> map, HttpSession session,
+								HttpServletResponse response) throws SecurityException, IllegalArgumentException, NoSuchMethodException,
+								IllegalAccessException, InvocationTargetException {
+
+							String pageno = request.getParameter("pageno");
+							String caseId = request.getParameter("caseId");
+							 String[] caseids = {""};
+							 if(caseId!=null && !"".equals(caseId)){
+									caseids=caseId.split(",");
+									
+							  }
+							 
+							int pageIndex = 1;
+							int pageSize = 10;
+							int num = 0;
+
+							if (!StringUtils.isEmpty(pageno)) {
+								pageIndex = Integer.parseInt(pageno);
+							}
+							TransferDetail telt = new TransferDetail();
+							
+							if (!StringUtils.isEmpty(caseId)) {
+								telt.setCaseId(caseId);
+							}
+							List<TransferDetail> logs =	new ArrayList<TransferDetail>();
+							if(caseids!=null && !"".equals(caseids)){
+						        	for(int i=0;i<caseids.length;i++){
+						        		String caseid = caseids[i];
+						        		telt.setCaseId(caseid);
+						        		List<TransferDetail> logs2 =	sqlDao.getOrderListfromMysqlLike(telt, (pageIndex - 1) * pageSize, pageSize, "id");
+						        		logs.addAll(logs2);
+						        	}
+							    }else{
+							    	logs = sqlDao.getOrderListfromMysqlLike(telt, (pageIndex - 1) * pageSize, pageSize, "id");
+							    	
+							    }
+							// System.out.println(logs.size());
+							int total = sqlDao.getcountfromMysqlLike(telt);
+							num = total / pageSize;
+							if (total % pageSize != 0) {
+								num++;
+							}
+							List<Integer> pageList = new ArrayList<Integer>();
+							if (num < 5) {
+								for (int i = 1; i <= num; i++) {
+									pageList.add(i);
+								}
+							} else {
+								if (pageIndex <= 5) {
+									for (int i = 1; i <= 5; i++) {
+										pageList.add(i);
+									}
+								} else {
+									if (pageIndex + 2 <= num) {
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+										pageList.add(pageIndex + 1);
+										pageList.add(pageIndex + 2);
+									} else if (pageIndex + 1 <= num) {
+										pageList.add(pageIndex - 3);
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+										pageList.add(pageIndex + 1);
+									} else {
+										pageList.add(pageIndex - 4);
+										pageList.add(pageIndex - 3);
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+									}
+								}
+							}
+
+							map.put("logs", logs);
+							map.put("totalNum", total);
+							map.put("totalPages", num);
+							map.put("nowPage", pageIndex);
+							map.put("pageList", pageList);
+
+							PrintWriter writer = null;
+							try {
+								writer = response.getWriter();
+								writer.write(JsonUtil.map2json(map));
+								writer.flush();
+							} catch (Exception e) {
+								e.printStackTrace();
+							} finally {
+								if (writer != null) {
+									writer.close();
+								}
+							}
+						}
+						
+						 //数据挖掘车牌号码查询
+						@RequestMapping(value = "/admin/cp_list.php")
+						public void getcplist(HttpServletRequest request, Map<String, Object> map, HttpSession session,
+								HttpServletResponse response) throws SecurityException, IllegalArgumentException, NoSuchMethodException,
+								IllegalAccessException, InvocationTargetException {
+
+							String pageno = request.getParameter("pageno");
+							String caseId = request.getParameter("caseId");
+							 String[] caseids = {""};
+							 if(caseId!=null && !"".equals(caseId)){
+									caseids=caseId.split(",");
+									
+							  }
+							 
+							int pageIndex = 1;
+							int pageSize = 10;
+							int num = 0;
+
+							if (!StringUtils.isEmpty(pageno)) {
+								pageIndex = Integer.parseInt(pageno);
+							}
+							PlateDetail telt = new PlateDetail();
+							
+							if (!StringUtils.isEmpty(caseId)) {
+								telt.setCaseId(caseId);
+							}
+							List<PlateDetail> logs =	new ArrayList<PlateDetail>();
+							if(caseids!=null && !"".equals(caseids)){
+						        	for(int i=0;i<caseids.length;i++){
+						        		String caseid = caseids[i];
+						        		telt.setCaseId(caseid);
+						        		List<PlateDetail> logs2 =	sqlDao.getOrderListfromMysqlLike(telt, (pageIndex - 1) * pageSize, pageSize, "id");
+						        		logs.addAll(logs2);
+						        	}
+							    }else{
+							    	logs = sqlDao.getOrderListfromMysqlLike(telt, (pageIndex - 1) * pageSize, pageSize, "id");
+							    	
+							    }
+							// System.out.println(logs.size());
+							int total = sqlDao.getcountfromMysqlLike(telt);
+							num = total / pageSize;
+							if (total % pageSize != 0) {
+								num++;
+							}
+							List<Integer> pageList = new ArrayList<Integer>();
+							if (num < 5) {
+								for (int i = 1; i <= num; i++) {
+									pageList.add(i);
+								}
+							} else {
+								if (pageIndex <= 5) {
+									for (int i = 1; i <= 5; i++) {
+										pageList.add(i);
+									}
+								} else {
+									if (pageIndex + 2 <= num) {
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+										pageList.add(pageIndex + 1);
+										pageList.add(pageIndex + 2);
+									} else if (pageIndex + 1 <= num) {
+										pageList.add(pageIndex - 3);
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+										pageList.add(pageIndex + 1);
+									} else {
+										pageList.add(pageIndex - 4);
+										pageList.add(pageIndex - 3);
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+									}
+								}
+							}
+
+							map.put("logs", logs);
+							map.put("totalNum", total);
+							map.put("totalPages", num);
+							map.put("nowPage", pageIndex);
+							map.put("pageList", pageList);
+
+							PrintWriter writer = null;
+							try {
+								writer = response.getWriter();
+								writer.write(JsonUtil.map2json(map));
+								writer.flush();
+							} catch (Exception e) {
+								e.printStackTrace();
+							} finally {
+								if (writer != null) {
+									writer.close();
+								}
+							}
+						}
+						
+						 //数据挖掘护照号码查询
+						@RequestMapping(value = "/admin/hz_list.php")
+						public void gethzlist(HttpServletRequest request, Map<String, Object> map, HttpSession session,
+								HttpServletResponse response) throws SecurityException, IllegalArgumentException, NoSuchMethodException,
+								IllegalAccessException, InvocationTargetException {
+
+							String pageno = request.getParameter("pageno");
+							String caseId = request.getParameter("caseId");
+							 String[] caseids = {""};
+							 if(caseId!=null && !"".equals(caseId)){
+									caseids=caseId.split(",");
+									
+							  }
+							 
+							int pageIndex = 1;
+							int pageSize = 10;
+							int num = 0;
+
+							if (!StringUtils.isEmpty(pageno)) {
+								pageIndex = Integer.parseInt(pageno);
+							}
+							PassportDetail telt = new PassportDetail();
+							
+							if (!StringUtils.isEmpty(caseId)) {
+								telt.setCaseId(caseId);
+							}
+							List<PassportDetail> logs =	new ArrayList<PassportDetail>();
+							if(caseids!=null && !"".equals(caseids)){
+						        	for(int i=0;i<caseids.length;i++){
+						        		String caseid = caseids[i];
+						        		telt.setCaseId(caseid);
+						        		List<PassportDetail> logs2 =	sqlDao.getOrderListfromMysqlLike(telt, (pageIndex - 1) * pageSize, pageSize, "id");
+						        		logs.addAll(logs2);
+						        	}
+							    }else{
+							    	logs = sqlDao.getOrderListfromMysqlLike(telt, (pageIndex - 1) * pageSize, pageSize, "id");
+							    	
+							    }
+							// System.out.println(logs.size());
+							int total = sqlDao.getcountfromMysqlLike(telt);
+							num = total / pageSize;
+							if (total % pageSize != 0) {
+								num++;
+							}
+							List<Integer> pageList = new ArrayList<Integer>();
+							if (num < 5) {
+								for (int i = 1; i <= num; i++) {
+									pageList.add(i);
+								}
+							} else {
+								if (pageIndex <= 5) {
+									for (int i = 1; i <= 5; i++) {
+										pageList.add(i);
+									}
+								} else {
+									if (pageIndex + 2 <= num) {
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+										pageList.add(pageIndex + 1);
+										pageList.add(pageIndex + 2);
+									} else if (pageIndex + 1 <= num) {
+										pageList.add(pageIndex - 3);
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+										pageList.add(pageIndex + 1);
+									} else {
+										pageList.add(pageIndex - 4);
+										pageList.add(pageIndex - 3);
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+									}
+								}
+							}
+
+							map.put("logs", logs);
+							map.put("totalNum", total);
+							map.put("totalPages", num);
+							map.put("nowPage", pageIndex);
+							map.put("pageList", pageList);
+
+							PrintWriter writer = null;
+							try {
+								writer = response.getWriter();
+								writer.write(JsonUtil.map2json(map));
+								writer.flush();
+							} catch (Exception e) {
+								e.printStackTrace();
+							} finally {
+								if (writer != null) {
+									writer.close();
+								}
+							}
+						}
+						
+						 //数据挖掘固定号码查询
+						@RequestMapping(value = "/admin/gddh_list.php")
+						public void getgddhlist(HttpServletRequest request, Map<String, Object> map, HttpSession session,
+								HttpServletResponse response) throws SecurityException, IllegalArgumentException, NoSuchMethodException,
+								IllegalAccessException, InvocationTargetException {
+
+							String pageno = request.getParameter("pageno");
+							String caseId = request.getParameter("caseId");
+							 String[] caseids = {""};
+							 if(caseId!=null && !"".equals(caseId)){
+									caseids=caseId.split(",");
+									
+							  }
+							 
+							int pageIndex = 1;
+							int pageSize = 10;
+							int num = 0;
+
+							if (!StringUtils.isEmpty(pageno)) {
+								pageIndex = Integer.parseInt(pageno);
+							}
+							FixedDetail telt = new FixedDetail();
+							
+							if (!StringUtils.isEmpty(caseId)) {
+								telt.setCaseId(caseId);
+							}
+							List<FixedDetail> logs =	new ArrayList<FixedDetail>();
+							if(caseids!=null && !"".equals(caseids)){
+						        	for(int i=0;i<caseids.length;i++){
+						        		String caseid = caseids[i];
+						        		telt.setCaseId(caseid);
+						        		List<FixedDetail> logs2 =	sqlDao.getOrderListfromMysqlLike(telt, (pageIndex - 1) * pageSize, pageSize, "id");
+						        		logs.addAll(logs2);
+						        	}
+							    }else{
+							    	logs = sqlDao.getOrderListfromMysqlLike(telt, (pageIndex - 1) * pageSize, pageSize, "id");
+							    	
+							    }
+							// System.out.println(logs.size());
+							int total = sqlDao.getcountfromMysqlLike(telt);
+							num = total / pageSize;
+							if (total % pageSize != 0) {
+								num++;
+							}
+							List<Integer> pageList = new ArrayList<Integer>();
+							if (num < 5) {
+								for (int i = 1; i <= num; i++) {
+									pageList.add(i);
+								}
+							} else {
+								if (pageIndex <= 5) {
+									for (int i = 1; i <= 5; i++) {
+										pageList.add(i);
+									}
+								} else {
+									if (pageIndex + 2 <= num) {
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+										pageList.add(pageIndex + 1);
+										pageList.add(pageIndex + 2);
+									} else if (pageIndex + 1 <= num) {
+										pageList.add(pageIndex - 3);
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+										pageList.add(pageIndex + 1);
+									} else {
+										pageList.add(pageIndex - 4);
+										pageList.add(pageIndex - 3);
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+									}
+								}
+							}
+
+							map.put("logs", logs);
+							map.put("totalNum", total);
+							map.put("totalPages", num);
+							map.put("nowPage", pageIndex);
+							map.put("pageList", pageList);
+
+							PrintWriter writer = null;
+							try {
+								writer = response.getWriter();
+								writer.write(JsonUtil.map2json(map));
+								writer.flush();
+							} catch (Exception e) {
+								e.printStackTrace();
+							} finally {
+								if (writer != null) {
+									writer.close();
+								}
+							}
+						}
+						
+						
+						 //数据挖掘邮箱查询
+						@RequestMapping(value = "/admin/yx_list.php")
+						public void getyxlist(HttpServletRequest request, Map<String, Object> map, HttpSession session,
+								HttpServletResponse response) throws SecurityException, IllegalArgumentException, NoSuchMethodException,
+								IllegalAccessException, InvocationTargetException {
+
+							String pageno = request.getParameter("pageno");
+							String caseId = request.getParameter("caseId");
+							 String[] caseids = {""};
+							 if(caseId!=null && !"".equals(caseId)){
+									caseids=caseId.split(",");
+									
+							  }
+							 
+							int pageIndex = 1;
+							int pageSize = 10;
+							int num = 0;
+
+							if (!StringUtils.isEmpty(pageno)) {
+								pageIndex = Integer.parseInt(pageno);
+							}
+							EmlDetail telt = new EmlDetail();
+							
+							if (!StringUtils.isEmpty(caseId)) {
+								telt.setCaseId(caseId);
+							}
+							List<EmlDetail> logs =	new ArrayList<EmlDetail>();
+							if(caseids!=null && !"".equals(caseids)){
+						        	for(int i=0;i<caseids.length;i++){
+						        		String caseid = caseids[i];
+						        		telt.setCaseId(caseid);
+						        		List<EmlDetail> logs2 =	sqlDao.getOrderListfromMysqlLike(telt, (pageIndex - 1) * pageSize, pageSize, "id");
+						        		logs.addAll(logs2);
+						        	}
+							    }else{
+							    	logs = sqlDao.getOrderListfromMysqlLike(telt, (pageIndex - 1) * pageSize, pageSize, "id");
+							    	
+							    }
+							// System.out.println(logs.size());
+							int total = sqlDao.getcountfromMysqlLike(telt);
+							num = total / pageSize;
+							if (total % pageSize != 0) {
+								num++;
+							}
+							List<Integer> pageList = new ArrayList<Integer>();
+							if (num < 5) {
+								for (int i = 1; i <= num; i++) {
+									pageList.add(i);
+								}
+							} else {
+								if (pageIndex <= 5) {
+									for (int i = 1; i <= 5; i++) {
+										pageList.add(i);
+									}
+								} else {
+									if (pageIndex + 2 <= num) {
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+										pageList.add(pageIndex + 1);
+										pageList.add(pageIndex + 2);
+									} else if (pageIndex + 1 <= num) {
+										pageList.add(pageIndex - 3);
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+										pageList.add(pageIndex + 1);
+									} else {
+										pageList.add(pageIndex - 4);
+										pageList.add(pageIndex - 3);
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+									}
+								}
+							}
+
+							map.put("logs", logs);
+							map.put("totalNum", total);
+							map.put("totalPages", num);
+							map.put("nowPage", pageIndex);
+							map.put("pageList", pageList);
+
+							PrintWriter writer = null;
+							try {
+								writer = response.getWriter();
+								writer.write(JsonUtil.map2json(map));
+								writer.flush();
+							} catch (Exception e) {
+								e.printStackTrace();
+							} finally {
+								if (writer != null) {
+									writer.close();
+								}
+							}
+						}
+						
+						
+						
+						 //数据挖掘信用证查询
+						@RequestMapping(value = "/admin/xyz_list.php")
+						public void getxyzlist(HttpServletRequest request, Map<String, Object> map, HttpSession session,
+								HttpServletResponse response) throws SecurityException, IllegalArgumentException, NoSuchMethodException,
+								IllegalAccessException, InvocationTargetException {
+
+							String pageno = request.getParameter("pageno");
+							String caseId = request.getParameter("caseId");
+							 String[] caseids = {""};
+							 if(caseId!=null && !"".equals(caseId)){
+									caseids=caseId.split(",");
+									
+							  }
+							 
+							int pageIndex = 1;
+							int pageSize = 10;
+							int num = 0;
+
+							if (!StringUtils.isEmpty(pageno)) {
+								pageIndex = Integer.parseInt(pageno);
+							}
+							CreditDetail telt = new CreditDetail();
+							
+							if (!StringUtils.isEmpty(caseId)) {
+								telt.setCaseId(caseId);
+							}
+							List<CreditDetail> logs =	new ArrayList<CreditDetail>();
+							if(caseids!=null && !"".equals(caseids)){
+						        	for(int i=0;i<caseids.length;i++){
+						        		String caseid = caseids[i];
+						        		telt.setCaseId(caseid);
+						        		List<CreditDetail> logs2 =	sqlDao.getOrderListfromMysqlLike(telt, (pageIndex - 1) * pageSize, pageSize, "id");
+						        		logs.addAll(logs2);
+						        	}
+							    }else{
+							    	logs = sqlDao.getOrderListfromMysqlLike(telt, (pageIndex - 1) * pageSize, pageSize, "id");
+							    	
+							    }
+							// System.out.println(logs.size());
+							int total = sqlDao.getcountfromMysqlLike(telt);
+							num = total / pageSize;
+							if (total % pageSize != 0) {
+								num++;
+							}
+							List<Integer> pageList = new ArrayList<Integer>();
+							if (num < 5) {
+								for (int i = 1; i <= num; i++) {
+									pageList.add(i);
+								}
+							} else {
+								if (pageIndex <= 5) {
+									for (int i = 1; i <= 5; i++) {
+										pageList.add(i);
+									}
+								} else {
+									if (pageIndex + 2 <= num) {
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+										pageList.add(pageIndex + 1);
+										pageList.add(pageIndex + 2);
+									} else if (pageIndex + 1 <= num) {
+										pageList.add(pageIndex - 3);
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+										pageList.add(pageIndex + 1);
+									} else {
+										pageList.add(pageIndex - 4);
+										pageList.add(pageIndex - 3);
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+									}
+								}
+							}
+
+							map.put("logs", logs);
+							map.put("totalNum", total);
+							map.put("totalPages", num);
+							map.put("nowPage", pageIndex);
+							map.put("pageList", pageList);
+
+							PrintWriter writer = null;
+							try {
+								writer = response.getWriter();
+								writer.write(JsonUtil.map2json(map));
+								writer.flush();
+							} catch (Exception e) {
+								e.printStackTrace();
+							} finally {
+								if (writer != null) {
+									writer.close();
+								}
+							}
+						}
+						
+						
+						
+						 //数据挖掘集装箱号查询
+						@RequestMapping(value = "/admin/jzx_list.php")
+						public void getjzxlist(HttpServletRequest request, Map<String, Object> map, HttpSession session,
+								HttpServletResponse response) throws SecurityException, IllegalArgumentException, NoSuchMethodException,
+								IllegalAccessException, InvocationTargetException {
+
+							String pageno = request.getParameter("pageno");
+							String caseId = request.getParameter("caseId");
+							 String[] caseids = {""};
+							 if(caseId!=null && !"".equals(caseId)){
+									caseids=caseId.split(",");
+									
+							  }
+							 
+							int pageIndex = 1;
+							int pageSize = 10;
+							int num = 0;
+
+							if (!StringUtils.isEmpty(pageno)) {
+								pageIndex = Integer.parseInt(pageno);
+							}
+							ContainerDetail telt = new ContainerDetail();
+							
+							if (!StringUtils.isEmpty(caseId)) {
+								telt.setCaseId(caseId);
+							}
+							List<ContainerDetail> logs =	new ArrayList<ContainerDetail>();
+							if(caseids!=null && !"".equals(caseids)){
+						        	for(int i=0;i<caseids.length;i++){
+						        		String caseid = caseids[i];
+						        		telt.setCaseId(caseid);
+						        		List<ContainerDetail> logs2 =	sqlDao.getOrderListfromMysqlLike(telt, (pageIndex - 1) * pageSize, pageSize, "id");
+						        		logs.addAll(logs2);
+						        	}
+							    }else{
+							    	logs = sqlDao.getOrderListfromMysqlLike(telt, (pageIndex - 1) * pageSize, pageSize, "id");
+							    	
+							    }
+							// System.out.println(logs.size());
+							int total = sqlDao.getcountfromMysqlLike(telt);
+							num = total / pageSize;
+							if (total % pageSize != 0) {
+								num++;
+							}
+							List<Integer> pageList = new ArrayList<Integer>();
+							if (num < 5) {
+								for (int i = 1; i <= num; i++) {
+									pageList.add(i);
+								}
+							} else {
+								if (pageIndex <= 5) {
+									for (int i = 1; i <= 5; i++) {
+										pageList.add(i);
+									}
+								} else {
+									if (pageIndex + 2 <= num) {
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+										pageList.add(pageIndex + 1);
+										pageList.add(pageIndex + 2);
+									} else if (pageIndex + 1 <= num) {
+										pageList.add(pageIndex - 3);
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+										pageList.add(pageIndex + 1);
+									} else {
+										pageList.add(pageIndex - 4);
+										pageList.add(pageIndex - 3);
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+									}
+								}
+							}
+
+							map.put("logs", logs);
+							map.put("totalNum", total);
+							map.put("totalPages", num);
+							map.put("nowPage", pageIndex);
+							map.put("pageList", pageList);
+
+							PrintWriter writer = null;
+							try {
+								writer = response.getWriter();
+								writer.write(JsonUtil.map2json(map));
+								writer.flush();
+							} catch (Exception e) {
+								e.printStackTrace();
+							} finally {
+								if (writer != null) {
+									writer.close();
+								}
+							}
+						}
+						
+						
+						
+						 //数据挖掘银行卡号查询
+						@RequestMapping(value = "/admin/yhk_list.php")
+						public void getyhklist(HttpServletRequest request, Map<String, Object> map, HttpSession session,
+								HttpServletResponse response) throws SecurityException, IllegalArgumentException, NoSuchMethodException,
+								IllegalAccessException, InvocationTargetException {
+
+							String pageno = request.getParameter("pageno");
+							String caseId = request.getParameter("caseId");
+							 String[] caseids = {""};
+							 if(caseId!=null && !"".equals(caseId)){
+									caseids=caseId.split(",");
+									
+							  }
+							 
+							int pageIndex = 1;
+							int pageSize = 10;
+							int num = 0;
+
+							if (!StringUtils.isEmpty(pageno)) {
+								pageIndex = Integer.parseInt(pageno);
+							}
+							BankDetail telt = new BankDetail();
+							
+							if (!StringUtils.isEmpty(caseId)) {
+								telt.setCaseId(caseId);
+							}
+							List<BankDetail> logs =	new ArrayList<BankDetail>();
+							if(caseids!=null && !"".equals(caseids)){
+						        	for(int i=0;i<caseids.length;i++){
+						        		String caseid = caseids[i];
+						        		telt.setCaseId(caseid);
+						        		List<BankDetail> logs2 =	sqlDao.getOrderListfromMysqlLike(telt, (pageIndex - 1) * pageSize, pageSize, "id");
+						        		logs.addAll(logs2);
+						        	}
+							    }else{
+							    	logs = sqlDao.getOrderListfromMysqlLike(telt, (pageIndex - 1) * pageSize, pageSize, "id");
+							    	
+							    }
+							// System.out.println(logs.size());
+							int total = sqlDao.getcountfromMysqlLike(telt);
+							num = total / pageSize;
+							if (total % pageSize != 0) {
+								num++;
+							}
+							List<Integer> pageList = new ArrayList<Integer>();
+							if (num < 5) {
+								for (int i = 1; i <= num; i++) {
+									pageList.add(i);
+								}
+							} else {
+								if (pageIndex <= 5) {
+									for (int i = 1; i <= 5; i++) {
+										pageList.add(i);
+									}
+								} else {
+									if (pageIndex + 2 <= num) {
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+										pageList.add(pageIndex + 1);
+										pageList.add(pageIndex + 2);
+									} else if (pageIndex + 1 <= num) {
+										pageList.add(pageIndex - 3);
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+										pageList.add(pageIndex + 1);
+									} else {
+										pageList.add(pageIndex - 4);
+										pageList.add(pageIndex - 3);
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+									}
+								}
+							}
+
+							map.put("logs", logs);
+							map.put("totalNum", total);
+							map.put("totalPages", num);
+							map.put("nowPage", pageIndex);
+							map.put("pageList", pageList);
+
+							PrintWriter writer = null;
+							try {
+								writer = response.getWriter();
+								writer.write(JsonUtil.map2json(map));
+								writer.flush();
+							} catch (Exception e) {
+								e.printStackTrace();
+							} finally {
+								if (writer != null) {
+									writer.close();
+								}
+							}
+						}
+						
+						
+						 //数据挖掘QQ号查询
+						@RequestMapping(value = "/admin/qq_list.php")
+						public void getqqlist(HttpServletRequest request, Map<String, Object> map, HttpSession session,
+								HttpServletResponse response) throws SecurityException, IllegalArgumentException, NoSuchMethodException,
+								IllegalAccessException, InvocationTargetException {
+
+							String pageno = request.getParameter("pageno");
+							String caseId = request.getParameter("caseId");
+							 String[] caseids = {""};
+							 if(caseId!=null && !"".equals(caseId)){
+									caseids=caseId.split(",");
+									
+							  }
+							 
+							int pageIndex = 1;
+							int pageSize = 10;
+							int num = 0;
+
+							if (!StringUtils.isEmpty(pageno)) {
+								pageIndex = Integer.parseInt(pageno);
+							}
+							QqDetail telt = new QqDetail();
+							
+							if (!StringUtils.isEmpty(caseId)) {
+								telt.setCaseId(caseId);
+							}
+							List<QqDetail> logs =	new ArrayList<QqDetail>();
+							if(caseids!=null && !"".equals(caseids)){
+						        	for(int i=0;i<caseids.length;i++){
+						        		String caseid = caseids[i];
+						        		telt.setCaseId(caseid);
+						        		List<QqDetail> logs2 =	sqlDao.getOrderListfromMysqlLike(telt, (pageIndex - 1) * pageSize, pageSize, "id");
+						        		logs.addAll(logs2);
+						        	}
+							    }else{
+							    	logs = sqlDao.getOrderListfromMysqlLike(telt, (pageIndex - 1) * pageSize, pageSize, "id");
+							    	
+							    }
+							// System.out.println(logs.size());
+							int total = sqlDao.getcountfromMysqlLike(telt);
+							num = total / pageSize;
+							if (total % pageSize != 0) {
+								num++;
+							}
+							List<Integer> pageList = new ArrayList<Integer>();
+							if (num < 5) {
+								for (int i = 1; i <= num; i++) {
+									pageList.add(i);
+								}
+							} else {
+								if (pageIndex <= 5) {
+									for (int i = 1; i <= 5; i++) {
+										pageList.add(i);
+									}
+								} else {
+									if (pageIndex + 2 <= num) {
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+										pageList.add(pageIndex + 1);
+										pageList.add(pageIndex + 2);
+									} else if (pageIndex + 1 <= num) {
+										pageList.add(pageIndex - 3);
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+										pageList.add(pageIndex + 1);
+									} else {
+										pageList.add(pageIndex - 4);
+										pageList.add(pageIndex - 3);
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+									}
+								}
+							}
+
+							map.put("logs", logs);
+							map.put("totalNum", total);
+							map.put("totalPages", num);
+							map.put("nowPage", pageIndex);
+							map.put("pageList", pageList);
+
+							PrintWriter writer = null;
+							try {
+								writer = response.getWriter();
+								writer.write(JsonUtil.map2json(map));
+								writer.flush();
+							} catch (Exception e) {
+								e.printStackTrace();
+							} finally {
+								if (writer != null) {
+									writer.close();
+								}
+							}
+						}
+						
+						
+						
+						 //数据挖掘微信号查询
+						@RequestMapping(value = "/admin/wx_list.php")
+						public void getwxlist(HttpServletRequest request, Map<String, Object> map, HttpSession session,
+								HttpServletResponse response) throws SecurityException, IllegalArgumentException, NoSuchMethodException,
+								IllegalAccessException, InvocationTargetException {
+
+							String pageno = request.getParameter("pageno");
+							String caseId = request.getParameter("caseId");
+							 String[] caseids = {""};
+							 if(caseId!=null && !"".equals(caseId)){
+									caseids=caseId.split(",");
+									
+							  }
+							 
+							int pageIndex = 1;
+							int pageSize = 10;
+							int num = 0;
+
+							if (!StringUtils.isEmpty(pageno)) {
+								pageIndex = Integer.parseInt(pageno);
+							}
+							WechatDetail telt = new WechatDetail();
+							
+							if (!StringUtils.isEmpty(caseId)) {
+								telt.setCaseId(caseId);
+							}
+							List<WechatDetail> logs =	new ArrayList<WechatDetail>();
+							if(caseids!=null && !"".equals(caseids)){
+						        	for(int i=0;i<caseids.length;i++){
+						        		String caseid = caseids[i];
+						        		telt.setCaseId(caseid);
+						        		List<WechatDetail> logs2 =	sqlDao.getOrderListfromMysqlLike(telt, (pageIndex - 1) * pageSize, pageSize, "id");
+						        		logs.addAll(logs2);
+						        	}
+							    }else{
+							    	logs = sqlDao.getOrderListfromMysqlLike(telt, (pageIndex - 1) * pageSize, pageSize, "id");
+							    	
+							    }
+							// System.out.println(logs.size());
+							int total = sqlDao.getcountfromMysqlLike(telt);
+							num = total / pageSize;
+							if (total % pageSize != 0) {
+								num++;
+							}
+							List<Integer> pageList = new ArrayList<Integer>();
+							if (num < 5) {
+								for (int i = 1; i <= num; i++) {
+									pageList.add(i);
+								}
+							} else {
+								if (pageIndex <= 5) {
+									for (int i = 1; i <= 5; i++) {
+										pageList.add(i);
+									}
+								} else {
+									if (pageIndex + 2 <= num) {
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+										pageList.add(pageIndex + 1);
+										pageList.add(pageIndex + 2);
+									} else if (pageIndex + 1 <= num) {
+										pageList.add(pageIndex - 3);
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+										pageList.add(pageIndex + 1);
+									} else {
+										pageList.add(pageIndex - 4);
+										pageList.add(pageIndex - 3);
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+									}
+								}
+							}
+
+							map.put("logs", logs);
+							map.put("totalNum", total);
+							map.put("totalPages", num);
+							map.put("nowPage", pageIndex);
+							map.put("pageList", pageList);
+
+							PrintWriter writer = null;
+							try {
+								writer = response.getWriter();
+								writer.write(JsonUtil.map2json(map));
+								writer.flush();
+							} catch (Exception e) {
+								e.printStackTrace();
+							} finally {
+								if (writer != null) {
+									writer.close();
+								}
+							}
+						}
+						
+						
+						
+						
+						 //数据挖掘支付宝号查询
+						@RequestMapping(value = "/admin/zfb_list.php")
+						public void getzfblist(HttpServletRequest request, Map<String, Object> map, HttpSession session,
+								HttpServletResponse response) throws SecurityException, IllegalArgumentException, NoSuchMethodException,
+								IllegalAccessException, InvocationTargetException {
+
+							String pageno = request.getParameter("pageno");
+							String caseId = request.getParameter("caseId");
+							 String[] caseids = {""};
+							 if(caseId!=null && !"".equals(caseId)){
+									caseids=caseId.split(",");
+									
+							  }
+							 
+							int pageIndex = 1;
+							int pageSize = 10;
+							int num = 0;
+
+							if (!StringUtils.isEmpty(pageno)) {
+								pageIndex = Integer.parseInt(pageno);
+							}
+							PaymentDetail telt = new PaymentDetail();
+							
+							if (!StringUtils.isEmpty(caseId)) {
+								telt.setCaseId(caseId);
+							}
+							List<PaymentDetail> logs =	new ArrayList<PaymentDetail>();
+							if(caseids!=null && !"".equals(caseids)){
+						        	for(int i=0;i<caseids.length;i++){
+						        		String caseid = caseids[i];
+						        		telt.setCaseId(caseid);
+						        		List<PaymentDetail> logs2 =	sqlDao.getOrderListfromMysqlLike(telt, (pageIndex - 1) * pageSize, pageSize, "id");
+						        		logs.addAll(logs2);
+						        	}
+							    }else{
+							    	logs = sqlDao.getOrderListfromMysqlLike(telt, (pageIndex - 1) * pageSize, pageSize, "id");
+							    	
+							    }
+							// System.out.println(logs.size());
+							int total = sqlDao.getcountfromMysqlLike(telt);
+							num = total / pageSize;
+							if (total % pageSize != 0) {
+								num++;
+							}
+							List<Integer> pageList = new ArrayList<Integer>();
+							if (num < 5) {
+								for (int i = 1; i <= num; i++) {
+									pageList.add(i);
+								}
+							} else {
+								if (pageIndex <= 5) {
+									for (int i = 1; i <= 5; i++) {
+										pageList.add(i);
+									}
+								} else {
+									if (pageIndex + 2 <= num) {
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+										pageList.add(pageIndex + 1);
+										pageList.add(pageIndex + 2);
+									} else if (pageIndex + 1 <= num) {
+										pageList.add(pageIndex - 3);
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+										pageList.add(pageIndex + 1);
+									} else {
+										pageList.add(pageIndex - 4);
+										pageList.add(pageIndex - 3);
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+									}
+								}
+							}
+
+							map.put("logs", logs);
+							map.put("totalNum", total);
+							map.put("totalPages", num);
+							map.put("nowPage", pageIndex);
+							map.put("pageList", pageList);
+
+							PrintWriter writer = null;
+							try {
+								writer = response.getWriter();
+								writer.write(JsonUtil.map2json(map));
+								writer.flush();
+							} catch (Exception e) {
+								e.printStackTrace();
+							} finally {
+								if (writer != null) {
+									writer.close();
+								}
+							}
+						}
+						
+						
+						
+						 //数据挖掘价格信息查询
+						@RequestMapping(value = "/admin/jg_list.php")
+						public void getjglist(HttpServletRequest request, Map<String, Object> map, HttpSession session,
+								HttpServletResponse response) throws SecurityException, IllegalArgumentException, NoSuchMethodException,
+								IllegalAccessException, InvocationTargetException {
+
+							String pageno = request.getParameter("pageno");
+							String caseId = request.getParameter("caseId");
+							 String[] caseids = {""};
+							 if(caseId!=null && !"".equals(caseId)){
+									caseids=caseId.split(",");
+									
+							  }
+							 
+							int pageIndex = 1;
+							int pageSize = 10;
+							int num = 0;
+
+							if (!StringUtils.isEmpty(pageno)) {
+								pageIndex = Integer.parseInt(pageno);
+							}
+							PriceDetail telt = new PriceDetail();
+							
+							if (!StringUtils.isEmpty(caseId)) {
+								telt.setCaseId(caseId);
+							}
+							List<PriceDetail> logs =	new ArrayList<PriceDetail>();
+							if(caseids!=null && !"".equals(caseids)){
+						        	for(int i=0;i<caseids.length;i++){
+						        		String caseid = caseids[i];
+						        		telt.setCaseId(caseid);
+						        		List<PriceDetail> logs2 =	sqlDao.getOrderListfromMysqlLike(telt, (pageIndex - 1) * pageSize, pageSize, "id");
+						        		logs.addAll(logs2);
+						        	}
+							    }else{
+							    	logs = sqlDao.getOrderListfromMysqlLike(telt, (pageIndex - 1) * pageSize, pageSize, "id");
+							    	
+							    }
+							// System.out.println(logs.size());
+							int total = sqlDao.getcountfromMysqlLike(telt);
+							num = total / pageSize;
+							if (total % pageSize != 0) {
+								num++;
+							}
+							List<Integer> pageList = new ArrayList<Integer>();
+							if (num < 5) {
+								for (int i = 1; i <= num; i++) {
+									pageList.add(i);
+								}
+							} else {
+								if (pageIndex <= 5) {
+									for (int i = 1; i <= 5; i++) {
+										pageList.add(i);
+									}
+								} else {
+									if (pageIndex + 2 <= num) {
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+										pageList.add(pageIndex + 1);
+										pageList.add(pageIndex + 2);
+									} else if (pageIndex + 1 <= num) {
+										pageList.add(pageIndex - 3);
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+										pageList.add(pageIndex + 1);
+									} else {
+										pageList.add(pageIndex - 4);
+										pageList.add(pageIndex - 3);
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+									}
+								}
+							}
+
+							map.put("logs", logs);
+							map.put("totalNum", total);
+							map.put("totalPages", num);
+							map.put("nowPage", pageIndex);
+							map.put("pageList", pageList);
+
+							PrintWriter writer = null;
+							try {
+								writer = response.getWriter();
+								writer.write(JsonUtil.map2json(map));
+								writer.flush();
+							} catch (Exception e) {
+								e.printStackTrace();
+							} finally {
+								if (writer != null) {
+									writer.close();
+								}
+							}
+						}
+						
+						
+						
+						
+						 //数据挖掘发票信息查询
+						@RequestMapping(value = "/admin/fp_list.php")
+						public void getfplist(HttpServletRequest request, Map<String, Object> map, HttpSession session,
+								HttpServletResponse response) throws SecurityException, IllegalArgumentException, NoSuchMethodException,
+								IllegalAccessException, InvocationTargetException {
+
+							String pageno = request.getParameter("pageno");
+							String caseId = request.getParameter("caseId");
+							 String[] caseids = {""};
+							 if(caseId!=null && !"".equals(caseId)){
+									caseids=caseId.split(",");
+									
+							  }
+							 
+							int pageIndex = 1;
+							int pageSize = 10;
+							int num = 0;
+
+							if (!StringUtils.isEmpty(pageno)) {
+								pageIndex = Integer.parseInt(pageno);
+							}
+							BillDetail telt = new BillDetail();
+							
+							if (!StringUtils.isEmpty(caseId)) {
+								telt.setCaseId(caseId);
+							}
+							List<BillDetail> logs =	new ArrayList<BillDetail>();
+							if(caseids!=null && !"".equals(caseids)){
+						        	for(int i=0;i<caseids.length;i++){
+						        		String caseid = caseids[i];
+						        		telt.setCaseId(caseid);
+						        		List<BillDetail> logs2 =	sqlDao.getOrderListfromMysqlLike(telt, (pageIndex - 1) * pageSize, pageSize, "id");
+						        		logs.addAll(logs2);
+						        	}
+							    }else{
+							    	logs = sqlDao.getOrderListfromMysqlLike(telt, (pageIndex - 1) * pageSize, pageSize, "id");
+							    	
+							    }
+							// System.out.println(logs.size());
+							int total = sqlDao.getcountfromMysqlLike(telt);
+							num = total / pageSize;
+							if (total % pageSize != 0) {
+								num++;
+							}
+							List<Integer> pageList = new ArrayList<Integer>();
+							if (num < 5) {
+								for (int i = 1; i <= num; i++) {
+									pageList.add(i);
+								}
+							} else {
+								if (pageIndex <= 5) {
+									for (int i = 1; i <= 5; i++) {
+										pageList.add(i);
+									}
+								} else {
+									if (pageIndex + 2 <= num) {
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+										pageList.add(pageIndex + 1);
+										pageList.add(pageIndex + 2);
+									} else if (pageIndex + 1 <= num) {
+										pageList.add(pageIndex - 3);
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+										pageList.add(pageIndex + 1);
+									} else {
+										pageList.add(pageIndex - 4);
+										pageList.add(pageIndex - 3);
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+									}
+								}
+							}
+
+							map.put("logs", logs);
+							map.put("totalNum", total);
+							map.put("totalPages", num);
+							map.put("nowPage", pageIndex);
+							map.put("pageList", pageList);
+
+							PrintWriter writer = null;
+							try {
+								writer = response.getWriter();
+								writer.write(JsonUtil.map2json(map));
+								writer.flush();
+							} catch (Exception e) {
+								e.printStackTrace();
+							} finally {
+								if (writer != null) {
+									writer.close();
+								}
+							}
+						}
+						
+						
+						//数据挖掘推特信息查询
+						@RequestMapping(value = "/admin/tt_list.php")
+						public void getttlist(HttpServletRequest request, Map<String, Object> map, HttpSession session,
+								HttpServletResponse response) throws SecurityException, IllegalArgumentException, NoSuchMethodException,
+								IllegalAccessException, InvocationTargetException {
+
+							String pageno = request.getParameter("pageno");
+							String caseId = request.getParameter("caseId");
+							 String[] caseids = {""};
+							 if(caseId!=null && !"".equals(caseId)){
+									caseids=caseId.split(",");
+									
+							  }
+							 
+							int pageIndex = 1;
+							int pageSize = 10;
+							int num = 0;
+
+							if (!StringUtils.isEmpty(pageno)) {
+								pageIndex = Integer.parseInt(pageno);
+							}
+							TwitterDetail telt = new TwitterDetail();
+							
+							if (!StringUtils.isEmpty(caseId)) {
+								telt.setCaseId(caseId);
+							}
+							List<TwitterDetail> logs =	new ArrayList<TwitterDetail>();
+							if(caseids!=null && !"".equals(caseids)){
+						        	for(int i=0;i<caseids.length;i++){
+						        		String caseid = caseids[i];
+						        		telt.setCaseId(caseid);
+						        		List<TwitterDetail> logs2 =	sqlDao.getOrderListfromMysqlLike(telt, (pageIndex - 1) * pageSize, pageSize, "id");
+						        		logs.addAll(logs2);
+						        	}
+							    }else{
+							    	logs = sqlDao.getOrderListfromMysqlLike(telt, (pageIndex - 1) * pageSize, pageSize, "id");
+							    	
+							    }
+							// System.out.println(logs.size());
+							int total = sqlDao.getcountfromMysqlLike(telt);
+							num = total / pageSize;
+							if (total % pageSize != 0) {
+								num++;
+							}
+							List<Integer> pageList = new ArrayList<Integer>();
+							if (num < 5) {
+								for (int i = 1; i <= num; i++) {
+									pageList.add(i);
+								}
+							} else {
+								if (pageIndex <= 5) {
+									for (int i = 1; i <= 5; i++) {
+										pageList.add(i);
+									}
+								} else {
+									if (pageIndex + 2 <= num) {
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+										pageList.add(pageIndex + 1);
+										pageList.add(pageIndex + 2);
+									} else if (pageIndex + 1 <= num) {
+										pageList.add(pageIndex - 3);
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+										pageList.add(pageIndex + 1);
+									} else {
+										pageList.add(pageIndex - 4);
+										pageList.add(pageIndex - 3);
+										pageList.add(pageIndex - 2);
+										pageList.add(pageIndex - 1);
+										pageList.add(pageIndex);
+									}
+								}
+							}
+
+							map.put("logs", logs);
+							map.put("totalNum", total);
+							map.put("totalPages", num);
+							map.put("nowPage", pageIndex);
+							map.put("pageList", pageList);
+
+							PrintWriter writer = null;
+							try {
+								writer = response.getWriter();
+								writer.write(JsonUtil.map2json(map));
+								writer.flush();
+							} catch (Exception e) {
+								e.printStackTrace();
+							} finally {
+								if (writer != null) {
+									writer.close();
+								}
+							}
+						}
+						
+
+}

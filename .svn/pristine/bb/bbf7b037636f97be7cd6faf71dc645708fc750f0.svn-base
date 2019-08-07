@@ -1,0 +1,187 @@
+package com.xl.cloud.action;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.log4j.Logger;
+import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.QueryStringQueryBuilder;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.xl.cloud.bean.Caseinfo;
+import com.xl.cloud.bean.ClueWarn;
+import com.xl.cloud.dao.SqlDao;
+import com.xl.cloud.util.EsClient;
+import com.xl.cloud.util.JsonUtil;
+
+
+@Controller
+public class ClueWarnAction {
+
+	private SqlDao sqlDao = new SqlDao();
+	public SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	final Logger logger = Logger.getLogger(BuildCollection.class);
+	
+
+	/**
+	 * 线索预警-建立索引后查询es
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
+	@RequestMapping(value = "/clueWarn/getEsClue.php")
+	public void showPictureInfo2(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+			throws IOException {
+		response.setContentType("textml; charset=UTF-8");
+		String emailKeyword = request.getParameter("emailKeyword");
+		String caseID = request.getParameter("caseID");
+		
+		Caseinfo caseinfo = new Caseinfo();
+		List<Caseinfo> listfromMysql = sqlDao.getListfromMysql(caseinfo);
+		Caseinfo caseinfo2 = listfromMysql.get(0);
+		String caseName = caseinfo2.getCaseName();
+		String mainParty = caseinfo2.getMainParty();
+		String[] split = mainParty.split("/");
+		for (String string : split) {
+			String[] split2 = string.split(" ");
+			String name = split2[0];
+			String phone = split2[1];
+			String email = split2[2];
+			/*
+			 * 匹配手机号
+			 * 
+			 * */
+			  //精确搜索
+			  BoolQueryBuilder mustQuery = QueryBuilders.boolQuery();
+			  mustQuery.must(QueryBuilders.matchAllQuery()); // 添加第1条must的条件 此处为匹配所有文档
+			  //caseid
+			  mustQuery.must(QueryBuilders.termsQuery("caseID",caseID));
+			  //关键词搜索
+			  QueryBuilder queryBuilder = QueryBuilders.queryStringQuery(phone)
+					  .defaultOperator(QueryStringQueryBuilder.Operator.AND);//不同关键词之间使用and关系
+			  mustQuery.must(queryBuilder);//添加第4条must的条件 关键词全文搜索筛选条件
+			  SearchRequestBuilder searchRequestBuilder = EsClient.getClient().prepareSearch("es").setTypes("email")
+					  .setQuery(mustQuery)
+					  .setFrom(0)//分页起始位置（跳过开始的n个）
+		              .setSize(1000);//本次返回的文档数量
+			  //排序 执行
+			  SearchResponse searchResponse = searchRequestBuilder
+					  .execute().actionGet();//执行搜索
+			  int totalHits = (int) searchResponse.getHits().getTotalHits();
+			  if(totalHits!=0){
+				  ClueWarn clueWarn = new ClueWarn();
+				  clueWarn.setCaseName(caseName);
+				  clueWarn.setClue(phone);
+				  clueWarn.setClueTime(dateFormat.format(new Date()));
+				  clueWarn.setNum(totalHits);
+				  clueWarn.setSuspectName(name);
+			  }
+				/*
+				 * 匹配邮箱
+				 * 
+				 * */
+			//精确搜索
+			  BoolQueryBuilder mustQuery2 = QueryBuilders.boolQuery();
+			  mustQuery2.must(QueryBuilders.matchAllQuery()); // 添加第1条must的条件 此处为匹配所有文档
+			  //caseid
+			  mustQuery2.must(QueryBuilders.termsQuery("caseID",caseID));
+			  //关键词搜索
+			  QueryBuilder queryBuilder2 = QueryBuilders.queryStringQuery(email)
+					  .defaultOperator(QueryStringQueryBuilder.Operator.AND);//不同关键词之间使用and关系
+			  mustQuery2.must(queryBuilder2);//添加第4条must的条件 关键词全文搜索筛选条件
+			  SearchRequestBuilder searchRequestBuilder2 = EsClient.getClient().prepareSearch("es").setTypes("email")
+					  .setQuery(mustQuery2)
+					  .setFrom(0)//分页起始位置（跳过开始的n个）
+		              .setSize(1000);//本次返回的文档数量
+			  //排序 执行
+			  SearchResponse searchResponse2 = searchRequestBuilder2
+					  .execute().actionGet();//执行搜索
+			  int totalHits2 = (int) searchResponse2.getHits().getTotalHits();
+			  if(totalHits2!=0){
+				  ClueWarn clueWarn = new ClueWarn();
+				  clueWarn.setCaseName(caseName);
+				  clueWarn.setClue(email);
+				  clueWarn.setClueTime(dateFormat.format(new Date()));
+				  clueWarn.setNum(totalHits2);
+				  clueWarn.setSuspectName(name);
+			  }
+		}
+		PrintWriter writer = null;
+		try {
+			writer = response.getWriter();
+			writer.write("");
+			writer.flush();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (writer != null) {
+				writer.close();
+			}
+		}
+	}
+	/**
+	 * 线索命中查询
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
+	@RequestMapping(value = "/clueWarn/getClue.php")
+	public void getClue(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+			throws IOException {
+		response.setContentType("textml; charset=UTF-8");
+		String caseId = request.getParameter("caseId");
+		
+		ClueWarn clueWarn = new ClueWarn();
+		if(caseId!=null && !"".equals(caseId)){
+			clueWarn.setCaseId(Integer.parseInt(caseId));
+		}
+		List<ClueWarn> clueWarnList = sqlDao.getListfromMysql(clueWarn);
+		PrintWriter writer = null;
+		try {
+			writer = response.getWriter();
+			 writer.write(JsonUtil.list2json(clueWarnList));
+			writer.flush();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (writer != null) {
+				writer.close();
+			}
+		}
+	}
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,625 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    
+<%
+	String path = request.getContextPath();
+	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
+			+ path + "/";
+%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+
+<link rel="stylesheet" type="text/css"
+	href="<%=basePath%>template/css/cloud-admin.css">
+<link rel="stylesheet" type="text/css"
+	href="<%=basePath%>template/css/themes/default.css" id="skin-switcher">
+<link rel="stylesheet" type="text/css"
+	href="<%=basePath%>template/css/responsive.css">
+<link rel="stylesheet" type="text/css"
+	href="<%=basePath%>template/css/bootstrap.css">
+<link rel="stylesheet" type="text/css"
+	href="<%=basePath%>template/css/app.css">
+
+
+<link href="<%=basePath%>template/css/shengshiqu/common.css"
+	rel="stylesheet" />
+<link href="<%=basePath%>template/css/shengshiqu/select2.css"
+	rel="stylesheet" />
+	<script src="<%=basePath%>template/My97DatePicker/WdatePicker.js"></script>
+</head>
+<style>
+.find_nav_left {
+	height: 46px;
+	position: relative;
+	overflow: hidden;
+}
+.find_nav_cur a {
+	color: #48a5f4 !important;
+}
+.find_nav_list ul {
+	position: relative;
+	white-space: nowrap;
+	font-size: 0;
+	margin-left: 0px;
+}
+
+.find_nav_list ul li {
+	display: inline-block;
+	padding: 0px 13px 0px 13px;
+}
+
+.find_nav_list ul li a {
+	
+	width: 100%;
+	height: 100%;
+	font-size: 16px;
+	text-align: center;
+	display:block;
+	line-height:50px;
+	line-width:100%; 
+}
+
+.sideline {
+	display: block;
+	position: absolute;
+	border: 0;
+	height: 10px;
+	background-color: #48a5f4;
+	left: 0;
+	top: 43px;
+	pointer-events: none;
+}
+
+
+
+</style>
+
+
+<script src="<%=basePath%>template/js/jquery/jquery-2.0.3.min.js"></script>
+	<script
+		src="<%=basePath%>template/js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+	<script src="<%=basePath%>template/bootstrap-dist/js/bootstrap.min.js"></script>
+
+	<script src="<%=basePath%>template/js/shengshiqu/jquery.js"></script>
+	<script type="text/javascript"
+		src="<%=basePath%>template/js/shengshiqu/area.js"></script>
+	<script type="text/javascript"
+		src="<%=basePath%>template/js/shengshiqu/location.js"></script>
+	<script src="<%=basePath%>template/js/shengshiqu/select2.js"></script>
+	<script
+		src="<%=basePath%>template/js/shengshiqu/select2_locale_zh-CN.js"></script>
+		<script src="<%=basePath%>template/js/cutover/js.js"></script>
+		 <!-- 引入 echarts.js -->
+   <script src="<%=basePath%>template/js/cutover/echarts.js"></script>
+
+<body>
+
+	<div class="bg-light lter b-b wrapper-md">
+		<h1 class="m-n h4">案件统计</h1>
+	</div>
+
+	<div class="wrapper-md" style="height: 100%;width: 100%">
+		
+			<div class="panel panel-default" style="height: 100%;width: 100%">
+			<br/>
+			<form class="form-inline" role="form" id="searchForm"
+						action="" method="post">
+						&nbsp;&nbsp;
+						<input type="hidden" name="pageno" id="pageno" />
+						<div class="form-group">
+							<label for="" class="clabel">日期范围:</label>
+									<input id="startDate" name="startDate" 
+											class="form-control" placeholder="请输入起始时间" type="text" style="width:150px;" onfocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy年MM月'});"/> 	
+											<label for="" class="clabel">&nbsp;&nbsp;至</label>
+									<input id="endDate" name="endDate" 
+										    class="form-control" placeholder="请输入结束时间" type="text" style="width:150px;" onfocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy年MM月'})"/>
+						</div>
+											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						
+						<button type="button" class="btn btn-info" style="width:80px;" onclick="getStatistics()">搜索</button>
+							
+								<!-- <a id="url13" href="#"><div class="btn btn-info" style="width:80px;"onclick="exportFile()">导出</div></a> -->
+					</form>
+					<br/>
+					
+    	<div class="panel panel-default" style="width: 760px;float: right;margin-right:50px">
+			<div class="panel-heading">案件类型图</div>
+			<div id="yuan" style="width: 760px;height:300px;"></div>
+		
+    	</div>
+    	<div class="panel panel-default" style="width: 760px;float: left; margin-left:50px">
+			<div class="panel-heading">案件趋势图</div>
+			<div id="list" style="width: 760px;height:300px;"></div>
+
+    	</div>
+    	
+    	<div class="panel-body">
+					<div>
+						<form class="form-inline" role="form" id="searchForm" action="" method="post">
+								<input type="hidden" name="pageno" id="pageno"/>
+													
+								<div class="form-group">&nbsp;&nbsp;
+									<label for="" class="clabel">案件名称:&nbsp;</label><input id="caseName" name="caseName" value=""
+										class="form-control" placeholder="请输入..." type="text" style="width:390px;"/>
+								</div>&nbsp;&nbsp;
+								<label for="" class="clabel">案件类型:</label><select
+										class="form-control" style="width: 390px; margin-left: 16px;"
+										id="select_type">
+										 <option>请选择案件类型</option>
+										<option>2</option>
+										<option>3</option>
+										<option>4</option>
+										<option>5</option>
+										<option>6</option> 
+									</select>
+								
+								<button type="button" class="btn btn-info" style="width:80px;" onclick="showCase(1)">搜索</button>
+								 <a id="url" href="#"><div class="btn btn-info" style="width:80px;"onclick="exportFile()">导出</div></a> 
+						</form>
+					</div>	
+		
+				<div class="col-md-10" style="width:100%;">
+				<div class="panel panel-default" style="margin-top: 20px;">
+					<div class="panel-body" style="padding: 0 0 15px;">
+						<table id="datatable" class="table table-striped table-hover"
+							style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+							<thead>
+								 <tr>
+							<th class="alcenter" id="case_type" name="case_type">案件类型</th>
+							<th class="alcenter" id="case_name" name="case_name">案件名称</th>
+							<th class="alcenter" id="case_number" name="case_number">案件编号</th>
+							<th class="alcenter" id="creat_date" name="creat_date">创建时间</th>
+							<th class="alcenter" id="operator" name="operator">操作人</th>
+							
+
+						</tr>
+							</thead>
+							<tbody id="tbcont20Count">
+							
+							</tbody>
+						</table>
+						<div class="alcenter" style="font-size: 14px">
+							<div class="pagecount inline col-md-offset-5" style="height: 29px;">
+								<span id="totCount"></span>
+							</div>
+							<div class="pagebar inline"
+								style="position: absolute; right: 30px; height: 29px;">
+								<ul class="pagination pagination-sm" style="margin: 0;">
+									<li id = "pages1Count"></li>
+									
+									<li id = "pagesCount"></li>	
+				            		
+									<li id = "pages2Count"></li>
+									</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+		<script type="text/javascript">
+		//导出案件记录
+		function exportFile(){
+			var caseName=document.getElementById('caseName').value;
+			var caseType=document.getElementById('select_type').value;
+			if(caseType=="请选择案件类型")
+				caseType="";
+				//确认导出
+				/* alert(caseType) */
+				if(1>0){
+				 	var rs = confirm("确定导出?");
+					if(rs) { 
+					
+					$("#url").attr("href","<%=basePath %>admin/Exporthd_case.php?caseName="+caseName+"&caseType="+caseType); 
+					
+					 } 
+				}else{
+					alert("没有导出的数据");
+				}
+			}
+window.onload=init();		
+function init(){
+	
+	flag=0;	
+	showCase(1);
+}
+/* 	window.onload = showCase(1); */
+function showCase(pageno){
+	var caseName=document.getElementById('caseName').value;
+	var caseType=document.getElementById('select_type').value;
+	//alert(caseType);
+	if(caseType=="请选择案件类型"){
+		
+		caseType="";
+	}
+
+			$.ajax({
+				type : "POST",
+				url : "<%=basePath%>searchCase_caseStatistics.php",
+				data : {
+					"pageno":pageno,
+					"caseName":caseName,
+					"caseType":caseType
+					
+				},
+				dataType : "json",
+				async: true,
+				success : function(data) {	
+					if(flag==0){
+						$("#select_type").empty();
+						var str="<option>请选择案件类型</option>";
+						$.each(data.caseTypeList,function(i,item){
+							//alert(item.typeName);
+							str+='<option>'+item.typeName+'</option>'
+							
+						})
+						$("#select_type").append(str);
+						flag=1;
+					}
+					var sizes=5;
+					var pagesum=data.totalNum;
+					var pagenum = pagesum / sizes;
+					var length=5;  //要显示的分页页数
+						
+					if(pagenum%1!=0){
+							pagenum=pagenum+(1-pagenum%1);
+					}
+					
+					
+					$("#pagesCount").empty();
+					
+					//用于删除之前显示的页数，动态添加时id名均设为order
+					for(var i=1;i<=length;i++)
+						  $("#order").remove();
+					
+					if(pagesum<sizes){
+						var html2 = '<li class="active" id="order"><a href="#" onclick="showCase(1)">1</a></li >';
+						$("#pagesCount").after(html2);	
+						
+						
+					}else{
+					
+					if(pageno<pagenum){
+						if(pageno+length-1<=pagenum){
+							var html2="";
+							if(pageno-2>0){
+								for(var i =pageno-2;i<=pageno+length-1-2;i++){	
+									if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="showCase('+i+')">'+i+'</a></li >';
+										else
+							
+											html2 += '<li id="order"><a href="#" onclick="showCase('+i+')">'+i+'</a></li >';  
+							   				   }
+								}
+							else{
+								for(var i =1;i<=length;i++){	
+									if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="showCase('+i+')">'+i+'</a></li >';
+										else
+							
+											html2 += '<li id="order"><a href="#" onclick="showCase('+i+')">'+i+'</a></li >';  
+							   				   }
+							}
+						//alert(html2);
+						$("#pagesCount").after(html2);
+					
+						}/* if */
+						else{
+							var html2="";
+							if(pagenum>=length){
+							for(var i =pageno-(length-1-pagenum+pageno);i<=pagenum;i++){	
+								 if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="showCase('+i+')">'+i+'</a></li >';
+								else
+									html2 += '<li id="order"><a href="#" onclick="showCase('+i+')">'+i+'</a></li >'; 
+								
+							   }
+							$("#pagesCount").after(html2);	
+							}
+							else{
+								
+								for(var i =1;i<=pagenum;i++){	
+									
+									  
+									 if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="showCase('+i+')">'+i+'</a></li >';
+									else
+										html2 += '<li id="order"><a href="#" onclick="showCase('+i+')">'+i+'</a></li >';
+								   }
+								$("#pagesCount").after(html2);	
+							}
+								
+						}
+					}
+					else{
+						if(pageno==pagenum){
+							var html2="";
+						
+							for(var i =pageno-length+1>0?pageno-length+1:1;i<=pagenum;i++){	
+							 if(i==pageno)
+								html2 += '<li class="active" id="order"><a href="#" onclick="showCase('+i+')">'+i+'</a></li >';
+							else
+								html2 += '<li id="order"><a href="#" onclick="showCase('+i+')">'+i+'</a></li >';
+						   }
+							$("#pagesCount").after(html2);
+						}/* if */
+					}
+				}
+
+					$("#totCount").empty();
+					$("#pages1Count").empty();
+					$("#pages2Count").empty();
+					var html3 ='<span >共'+pagesum+'条，当前'+pageno+'/'+pagenum+'页</span>';
+					$("#totCount").append(html3);
+					
+					var html5 = '<a href="#" onclick="showCase('+pageno+'-1<1?1:'+pageno+'-1)"><</a>';
+					$("#pages1Count").append(html5);
+					
+					var html4 = '<a href="#" onclick="showCase('+pageno+'+1>'+pagenum+'?'+pagenum+':'+pageno+'+1)">></a>';
+					$("#pages2Count").append(html4);
+					$("#tbcont20Count").empty();
+					
+					$.each(data.logs,function(i,item){
+						var trustee="";
+						if(item.trustee!=null&&item.trustee!=""){
+						 
+						     //trustee=item.trustee.split(",");
+						     for(i=0;i<item.trustee.split(",").length;i++){
+						    	 
+						    	 if(item.trustee.split(",")[i]!="")
+						    		 if(trustee==""){
+						    			
+						    			 trustee=item.trustee.split(",")[i];
+						    			 
+						    		 }
+						    		 else{
+						    			 trustee=trustee+","+item.trustee.split(",")[i];
+						    			 
+						    		 }
+						     }
+						          
+						}
+						var html01 = '+<tr>'+
+						'<th  class="alcenter" id="case_type" name="case_type">'+item.caseType+'</th>'+
+						'<th class="alcenter" id="case_name" name="case_name">'+item.caseName+'</th>'+
+						'<th class="alcenter" id="case_number" name="case_number">'+item.caseNum+'</th>'+
+						'<th class="alcenter" id="creat_date" name="creat_date">'+item.createdTime+'</th>'+
+						 '<th class="alcenter" id="operator" name="operator">'+trustee+'</th>'+ 
+					    '</tr>+';
+						$("#tbcont20Count").append(html01);	
+					}); 
+					/**
+					<th class="alcenter" id="case_type" name="case_type">案件类型</th>
+							<th class="alcenter" id="case_name" name="case_name">案件名称</th>
+							<th class="alcenter" id="case_number" name="case_number">案件编号</th>
+							<th class="alcenter" id="creat_date" name="creat_date">创建时间</th>
+							<th class="alcenter" id="operator" name="operator">操作人</th>
+					*/
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+					alert("失败");
+				}
+			});
+		}
+		//获取与案件类型和案件趋势有关的数据
+		window.onload = getStatistics();
+function getStatistics(){
+			var startDate=document.getElementById("startDate").value;
+			var endDate=document.getElementById("endDate").value;
+		//	alert(startDate);
+			$.ajax({
+				type : "POST",
+				url : "<%=basePath%>getStatistics.php",
+				data : {
+					"startTime":startDate,
+					"endTime":endDate
+					
+				},
+				dataType : "json",
+				async: true,
+				success : function(data) {
+					//alert("成功进入了");
+					typelist=data.types;
+					var datalist_type=[];
+					$.each(typelist,function(i,item){
+						//alert(item.type+"++++"+item.count);
+						if(item.type!="")
+						datalist_type.push({value:item.count, name:item.type+":"+((item.count/data.total_type)*100).toFixed(2)+"%"});
+						/*测试说不可能为空不显示 else
+							datalist_type.push({value:item.count, name:'其他'+":"+((item.count/data.total_type)*100).toFixed(2)+"%"}); */
+					})
+					//////////////////案件类型图数据绑定///////////////////////////////
+					// 基于准备好的dom，初始化echarts实例
+					var dom = document.getElementById('yuan');
+			      var myChart = echarts.init(dom);
+			         
+			        option = {
+			        		toolbox: {  
+	                	         //show: true,  
+	                	         itemSize: 20,  
+	                	         itemGap: 30,  
+	                	         right: 50,  
+	                	         feature: {  
+	                	             /* dataView: {show:true}, */  
+	                	             saveAsImage: { 
+	                	            	 name:"案件类型图",
+	                	                 //excludeComponents :['toolbox'],  
+	                	                 pixelRatio: 2  
+	                	             }  
+	                	         }  
+	                	}, 
+			        	    series : [
+			        	        {
+			        	            name: '访问来源',
+			        	            type: 'pie',
+			        	            radius: '55%',
+			        	            roseType: 'angle',
+			        	            data:datalist_type
+			        	        }
+			        	    ]
+			        	};
+
+			        // 使用刚指定的配置项和数据显示图表。
+			        myChart.setOption(option);
+			        
+	//////////////////案件类型图数据绑定——end//////////////////////////
+					///////////////////案件趋势图数据绑定////////////////////////////
+			        var month=["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
+					var datalist=[];
+					var max=0;//用于动态控制柱状图的最大案件数
+					max=data.jan;
+					
+					if(max/1<data.feb/1){
+						max=data.feb;
+						//alert(2);
+					}
+					if(max/1<data.mar/1){
+						max=data.mar;
+						//alert(3);
+					}
+					if(max/1<data.apr/1){
+						max=data.apr;
+						//alert(4);
+					}
+					if(max/1<data.may/1){
+						max=data.may;
+						//alert(5);
+					}
+					if(max/1<data.jun/1){
+						max=data.jun;
+						//alert(6);
+					}
+					if(max/1<data.jul/1){
+						max=data.jul;
+						//alert(7);
+					}
+					if(max/1<data.aug/1){
+						max=data.aug;
+						
+						//alert(8);
+						//alert(max);
+						//alert(max/1<data.sep/1);
+					}
+					if(max/1<data.sep/1){
+						max=data.sep;
+						//alert(9);
+					}
+					if(max/1<data.oct/1){
+						max=data.oct;
+						//alert(10);
+					}
+					if(max/1<data.nov/1){
+						max=data.nov;
+						//alert(11);
+					}
+					if(max/1<data.dec/1){
+						max=data.dec;
+						//alert(12);
+					}
+					
+					//max/1将max转换为数字类型，javascipt在这将max当作了字符类型
+					max=(10-max%10)+max/1+10;
+					//数据绑定，每个月的新增案件数
+					datalist.push(data.jan);datalist.push(data.feb);datalist.push(data.mar);
+					datalist.push(data.apr);datalist.push(data.may);datalist.push(data.jun);
+					datalist.push(data.jul);datalist.push(data.aug);datalist.push(data.sep);
+					datalist.push(data.oct);datalist.push(data.nov);datalist.push(data.dec);
+					 // 基于准备好的dom，初始化echarts图表
+	                var myChart2 = echarts.init(document.getElementById('list')); 
+	                var option = {
+	                		
+	                		
+	                		 title : {
+	                			 
+	                		        //text: '本年度案收结趋势图',
+	                		        //fontStyle:'italic'
+	                		        //subtext: '纯属虚构'
+	                		    },
+	                		    
+	                    tooltip: {
+	                        show: true
+	                    },
+	                    legend: {
+	                    	//itemGap:0,
+	                        data:['单位/件'],
+	                        x:'680px',
+	                     y:'40px'
+	                    },                 
+	                    xAxis : [
+	                        {
+	                            type : 'category',
+	                            data :month 
+	                        }
+	                    ],
+	                    yAxis:
+	                    	[
+	                    {
+	                        type: 'value',
+	                        //splitNumber:1,
+	                        splitNumber: 10,
+	                        min: 0,
+	                        max: max
+	                    }],
+	                    toolbox: {  
+	                        //show: true,  
+	                        itemSize: 20,  
+	                        itemGap: 30,  
+	                        right: 50,  
+	                        feature: {  
+	                            // dataView: {show:true},   
+	                            saveAsImage: { 
+	                           	 name:"案件趋势图",
+	                                //excludeComponents :['toolbox'],  
+	                                pixelRatio: 2  
+	                            }  
+	                        }  
+	               }, 
+
+	                    series : [
+	                              
+	                              
+	                        {
+	                        	type:'bar',
+	                            "name":"新增案件数",
+	                            "type":"bar",
+	                            "barGap":"5",
+	                            itemStyle: {normal: {color:'#6CE0C7'
+	            					}},
+	                            "data":datalist
+	                    
+	                        },
+	                    ],
+	                   
+	                };
+	       
+	                // 为echarts对象加载数据 
+	                myChart2.setOption(option); 
+	///////////////////案件趋势图数据绑定——end///////////////////////
+			        
+					
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+					alert("失败");
+				}
+			});
+		}
+		</script>
+		<div id="loadingDiv" aria-hidden="false" style="display: none;" class="bootbox modal fade in" tabindex="-1" role="dialog">
+            	<div class="modal-dialog" style="width: 180px;margin-top: 27%;">
+            		<div class="modal-content">
+            			<div class="modal-body">
+            				<div class="bootbox-body">
+            					<p class="msg">正在查询，请稍后...</p>
+                    			<div><img id="flashAdImg" src="<%=basePath %>template/img/loading.gif" alt="loading" height="16" width="114"></div>
+            				</div>
+            			</div>
+            		</div>
+            	</div>
+            </div>
+	</div>
+</body>
+</html>

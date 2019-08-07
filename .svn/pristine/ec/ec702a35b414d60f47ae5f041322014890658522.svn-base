@@ -1,0 +1,202 @@
+package com.xl.cloud.util.preview;
+
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.poi.hslf.model.TextRun;
+import org.apache.poi.hslf.usermodel.RichTextRun;
+import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFShape;
+import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
+import org.apache.poi.xslf.usermodel.XSLFTextRun;
+import org.apache.poi.xslf.usermodel.XSLFTextShape;
+import org.junit.Test;
+
+/**
+ * 
+ * @ClassName: PPTtoImage.java
+ * @Description: ppt转图片
+ * @version: v1.0.0
+ * @author: lebron·dong
+ * @date: 2017年8月13日 下午12:50:44
+ *
+ *        Modification History:
+ */
+public class PPTtoHtmlUtil {
+
+	@Test
+	public void test1() throws Exception {
+
+//		toImage2003("C:/Users/Administrator/Desktop/test.ppt");
+//		toImage2003("d:/Cache/36.PPT", "d:/Cache/36.html");
+		toImage2007("d:/Cache/2.PPTX", "d:/Cache/2.html");
+	}
+	
+	public static void pptToHtml(String sourcePath, String targetPath){
+		String ext=FilenameUtils.getExtension(sourcePath);
+		try {
+			if ("pptx".equalsIgnoreCase(ext)) {
+				toImage2007(sourcePath, targetPath);
+			}else if("ppt".equalsIgnoreCase(ext)){
+				toImage2003(sourcePath, targetPath);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+	private  static String prefix = "<!doctype html><html lang='en'><head><meta charset='UTF-8'>" 
+			+ "<title>预览</title></head><body>";
+	private  static String postfix = "</body></html>";
+	
+	/**
+	 * 转2007pptx
+	 * 
+	 * @param sourcePath
+	 * @throws Exception
+	 */
+	public static void toImage2007(String sourcePath, String targetPath) throws Exception {
+		String baseName=FilenameUtils.getBaseName(sourcePath);
+		String basePath=FilenameUtils.getFullPath(sourcePath);
+		
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(prefix);
+		FileInputStream is = new FileInputStream(sourcePath);
+		XMLSlideShow ppt = new XMLSlideShow(is);
+		is.close();
+
+		Dimension pgsize = ppt.getPageSize();
+		System.out.println(pgsize.width + "--" + pgsize.height);
+
+		for (int i = 0; i < ppt.getSlides().length; i++) {
+			try {
+				// 防止中文乱码
+				for (XSLFShape shape : ppt.getSlides()[i].getShapes()) {
+					if (shape instanceof XSLFTextShape) {
+						XSLFTextShape tsh = (XSLFTextShape) shape;
+						for (XSLFTextParagraph p : tsh) {
+							for (XSLFTextRun r : p) {
+								r.setFontFamily("宋体");
+							}
+						}
+					}
+				}
+				BufferedImage img = new BufferedImage(pgsize.width, pgsize.height, BufferedImage.TYPE_INT_RGB);
+				Graphics2D graphics = img.createGraphics();
+				// clear the drawing area
+				graphics.setPaint(Color.white);
+				graphics.fill(new Rectangle2D.Float(0, 0, pgsize.width, pgsize.height));
+				// render
+				ppt.getSlides()[i].draw(graphics);
+				// save the output
+				String filename = basePath+baseName + (i + 1) + ".jpg";
+				System.out.println(filename);
+				FileOutputStream out = new FileOutputStream(filename);
+				javax.imageio.ImageIO.write(img, "png", out);
+				out.close();
+				// 写入html中
+				buffer.append("<div align='center'><img src='").append("./")
+					.append(FilenameUtils.getName(filename))
+					.append("'></div>");
+			} catch (Exception e) {
+				System.out.println("第" + i + "张ppt转换出错");
+			}
+		}
+		buffer.append(postfix);
+		//FileUtils.write(new File(targetPath), buffer, "utf-8");
+		IOUtils.write(buffer, new FileOutputStream(new File(targetPath)),"utf-8");
+		System.out.println("7success");
+	}
+
+	/**
+	 * 转2003ppt
+	 * 
+	 * @param sourcePath
+	 */
+	public static void toImage2003(String sourcePath,String targetPath) {
+		String baseName=FilenameUtils.getBaseName(sourcePath);
+		String basePath=FilenameUtils.getFullPath(sourcePath);
+		
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(prefix);
+		try {
+			SlideShow ppt = new SlideShow(new FileInputStream(sourcePath));
+			Dimension pgsize = ppt.getPageSize();
+			for (int i = 0; i < ppt.getSlides().length; i++) {
+				// 防止中文乱码
+				TextRun[] truns = ppt.getSlides()[i].getTextRuns();
+				for (int indexTestRun = 0; indexTestRun < truns.length; indexTestRun++) {
+					RichTextRun[] rtruns = truns[indexTestRun].getRichTextRuns();
+					for (int indexRTR = 0; indexRTR < rtruns.length; indexRTR++) {
+						rtruns[indexRTR].setFontIndex(1);
+						rtruns[indexRTR].setFontName("宋体");
+					}
+				}
+
+				BufferedImage img = new BufferedImage(pgsize.width, pgsize.height, BufferedImage.TYPE_INT_RGB);
+				Graphics2D graphics = img.createGraphics();
+				// clear the drawing area
+				graphics.setPaint(Color.white);
+				graphics.fill(new Rectangle2D.Float(0, 0, pgsize.width, pgsize.height));
+				ppt.getSlides()[i].draw(graphics);
+				// 生成每一张照片
+				String filename = basePath+baseName + (i + 1) + ".jpg";
+				System.out.println(filename);
+				FileOutputStream out = new FileOutputStream(filename);
+				javax.imageio.ImageIO.write(img, "png", out);
+				out.close();
+				// resizeImage(filename, filename, width, height);
+				// 写入html中
+				buffer.append("<div align='center'><img src='").append("./")
+					.append(FilenameUtils.getName(filename))
+					.append("'></div>");
+			}
+			buffer.append(postfix);
+			IOUtils.write(buffer, new FileOutputStream(new File(targetPath)),"utf-8");
+			System.out.println("3success");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+	/***
+	 * 功能 :调整图片大小
+	 * 
+	 * @param srcImgPath
+	 *            原图片路径
+	 * @param distImgPath
+	 *            转换大小后图片路径
+	 * @param width
+	 *            转换后图片宽度
+	 * @param height
+	 *            转换后图片高度
+	 */
+	public static void resizeImage(String srcImgPath, String distImgPath, int width, int height) throws IOException {
+
+		File srcFile = new File(srcImgPath);
+		Image srcImg = ImageIO.read(srcFile);
+		BufferedImage buffImg = null;
+		buffImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		buffImg.getGraphics().drawImage(srcImg.getScaledInstance(width, height, Image.SCALE_SMOOTH), 0, 0, null);
+
+		ImageIO.write(buffImg, "JPEG", new File(distImgPath));
+
+	}
+}

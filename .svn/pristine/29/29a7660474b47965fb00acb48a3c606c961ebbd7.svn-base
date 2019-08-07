@@ -1,0 +1,192 @@
+package com.xl.cloud.dao;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.xl.cloud.bean.BaseIdType;
+import com.xl.cloud.common.Global;
+
+public class BaseIDSqlDao {
+	public static final String url = "jdbc:mysql://"+Global.DBhostIP+Global.baseID_DBName; //172.16.102.20 /baseidlib
+    public static final String name = "com.mysql.jdbc.Driver";  
+    public static final String user = Global.DBhostUser;  
+    public static final String password =Global.DBhostPassWord; // "qsdhjuy543"; // "123456";//
+  
+    public Connection conn = null;  
+    public PreparedStatement pst = null;  
+  
+    static{
+    	System.out.println("BaseIDSqlDao，数据库IP："+Global.DBhostIP);
+    }
+    
+    
+    public BaseIDSqlDao() {
+    	super();
+    }
+    public BaseIDSqlDao(String sql) {  
+        try {  
+            Class.forName(name);//指定连接类型  
+            conn = DriverManager.getConnection(url, user, password);//获取连接  
+            pst = conn.prepareStatement(sql);//准备执行语句  
+        } catch (Exception e) {  
+            e.printStackTrace();  
+        }  
+    }  
+  
+    public void close() {  
+        try {  
+            this.conn.close();  
+            this.pst.close();  
+        } catch (SQLException e) {  
+            e.printStackTrace();  
+        }  
+    }  
+    
+    public static Connection getConnection()
+    {
+    	Connection _conn = null;
+    	try {  
+            Class.forName(name);//指定连接类型  
+            _conn = DriverManager.getConnection(url, user, password);//获取连接   
+        } catch (Exception e) {  
+            e.printStackTrace();  
+        }  
+    	return _conn;
+    }
+    /**
+	 * 数据查询
+	 * 
+	 * @param t
+	 *            查询条件类
+	 * @return 查询结果list
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> List<T> getListfromMysql(T t) {
+		BaseIDSqlDao db1 = null;
+		ResultSet ret = null;
+		String sql = null;
+		String collectionName = t.getClass().getSimpleName();
+		List<T> tList = new ArrayList<T>();
+		sql = "SELECT * FROM " + collectionName;
+		String value = "";
+		boolean dateflag = false;
+		try {
+			Field[] fields = t.getClass().getDeclaredFields();
+
+			for (Field field : fields) {
+				String s = field.getName();
+				if (s.equals("date")) {
+					dateflag = true;
+				}
+				String methodName = "get" + s.substring(0, 1).toUpperCase() + s.substring(1);
+				Method m = t.getClass().getDeclaredMethod(methodName);
+				if (m.invoke(t) == null||m.invoke(t).equals("")) {
+					continue;
+				}
+				if (field.getType().getSimpleName().equals("int") && (Integer) m.invoke(t) == -1) {
+
+					continue;
+				}
+				value = value + s + "=\"" + m.invoke(t).toString() + "\" and ";
+			}
+
+			if (!value.equals("")) {
+				sql = sql + " WHERE " + value.substring(0, value.length() - 5);
+			}
+			if (dateflag) {
+				if(collectionName.contains("OrderTitle")||collectionName.contains("CountTitle")){
+					sql = sql + " order by date asc";
+				}else{
+				    sql = sql + " order by date desc";
+				}
+			}
+			if(collectionName.contains("Clue")) {
+				sql = sql + " order by id desc";
+			}
+			
+			db1 = new BaseIDSqlDao(sql);// 创建BaseIDSqlDao对象
+			// System.out.println(sql);
+
+//			if (collectionName.equals("ChatRoom") || collectionName.equals("GroupMember")||collectionName.equals("FriendZone")|| collectionName.equals("Messages")) {
+//				db1.pst.executeQuery("SET NAMES utf8mb4;");
+//			}
+			ret = db1.pst.executeQuery(sql);// 执行语句，得到结果集
+//			System.out.println(sql);
+			if (ret != null) {
+				while (ret.next()) {
+					T t_temp = (T) t.getClass().newInstance();// com.xl.wechat.AutoReply
+
+					for (Field field : fields) {// field=int
+
+						String s = field.getName();// s=id
+						String methodName = "set" + s.substring(0, 1).toUpperCase() + s.substring(1);// setId
+						Method m = t_temp.getClass().getDeclaredMethod(methodName, field.getType());// void
+																									// com.xl.wechat.bean.AutoReply.setId(int)
+						String typename = field.getType().getSimpleName();// int
+						if ((typename != null) && typename.equals("int")) {
+							m.invoke(t_temp, ret.getInt(s));
+						}
+						if ((typename != null) && typename.equals("Integer")) {
+							m.invoke(t_temp, ret.getInt(s));
+						}
+
+						if ((typename != null) && typename.equals("String")) {
+							String retvalue = ret.getObject(s) == null ? "" : ret.getObject(s).toString();
+							m.invoke(t_temp, retvalue);
+						}
+					}
+					tList.add(t_temp);
+				} // 显示数据
+			}
+
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (ret != null) {
+					ret.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			db1.close();
+		}
+		return tList;
+	}
+
+	public static void main(String[] args) {
+		// test
+		BaseIdType bit=new BaseIdType();
+		bit.setCELL("63102");
+		bit.setLAC("29632");
+		BaseIDSqlDao bis=new BaseIDSqlDao();
+		String addr=bis.getListfromMysql(bit).get(0).getADDRESS();
+		String lat=bis.getListfromMysql(bit).get(0).getLAT();
+		String lng=bis.getListfromMysql(bit).get(0).getLNG();
+		System.out.println("地点："+addr+"\n经度："+lng+"\n纬度："+lat);
+
+		System.out.println("操作成功");
+
+	}
+
+}

@@ -1,0 +1,1348 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<%
+		String path = request.getContextPath();
+		String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+%>  
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+	<style type="text/css">
+	body, html,#allmap {width: 100%;height: 100%;overflow: hidden;margin:0;font-family:"微软雅黑";}
+	</style>
+<!-- 	<script type="text/javascript" src="http://api.map.baidu.com/api?v=1.3"></script> -->
+<!-- 	<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=4aflybZEtwQXleKeqP4almEW1wH1Tqv6"></script> -->
+<!--离线地图加载  -->
+<script type="text/javascript" src="../template/baidu_map/baidumapv2/baidumap_offline_v2_load.js"></script>
+<link rel="stylesheet" type="text/css" href="../template/baidu_map/baidumapv2/css/baidu_map_v2.css"/>
+<!--离线地图加载——end  -->
+	
+	<title>地图展示</title>
+	<link href="<%=basePath%>template/css/cloud-admin.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/responsive.css">
+	<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/bootstrap.css">
+	<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/app.css">
+	<script src="<%=basePath%>template/js/jquery/jquery-2.0.3.min.js"></script>
+	<script src="<%=basePath%>template/js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+	<script src="<%=basePath%>template/bootstrap-dist/js/bootstrap.min.js"></script>
+	<style>
+	*{
+	margin: 0px;
+  padding: 0px;
+  font-family: Microsoft Yahei, arial, verdana, sans-serif;
+}
+.addBtn {
+  border: 1px solid #ccc;
+  line-height: 50px;
+  text-align: center;
+  font-size: 14px;
+  cursor: pointer;
+  background-color: #e8e8e8;
+  display:block;
+  margin:0px auto;
+  width:200px;
+  height:50px
+}
+
+.wrap{padding-left:20px;}
+.wflBox {
+
+  margin: 0px auto;
+  position: relative;
+  margin-top:20px;
+}
+.wflBox .proImg {
+  width: 280px;
+  float: left;
+  position: relative;
+  box-sizing: border-box;
+}
+.wflBox .absolute {
+  position: absolute;
+}
+.wflBox .bg {
+  display: block;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0px;
+  left: 0px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  z-index: 5;
+  background: url(about:blank);
+}
+.wflBox .proImg {
+  transition: 0.5s 0.1s;
+  -ms-transition: 0.5s 0.1s;
+  /* IE 9 */
+  -moz-transition: 0.5s 0.1s;
+  /* Firefox */
+  -webkit-transition: 0.5s 0.1s;
+  /* Safari 和 Chrome */
+  color: #333;
+}
+.wflBox .proImg img {
+  display: block;
+}
+.wflBox .proImg .desc {
+  padding-bottom: 30px;
+  position: relative;
+  z-index: 10;
+}
+.wflBox .proImg .desc p {
+  padding: 0em 0.8em;
+  font-size: 12px;
+}
+.wflBox .proImg .desc h5 {
+  padding: 0em 1em;
+  height: 55px;
+  line-height: 55px;
+  font-size: 16px;
+  font-weight: normal;
+}
+.wflBox:after {
+  content: " ";
+  display: block;
+  height: 5px;
+  width: 100%;
+  clear: both;
+}
+.alcenter {
+	text-align: center;
+}
+.inline {
+	display: inline-block;
+}
+.form-inline .form-control {
+	/*width:auto;*/
+	max-width: 391px;
+	width: 391px;
+}
+.clabel {
+	margin-right:14px;
+}
+.small_pic{
+	margin-top: 5px;
+    position: relative;
+    width: 19% !important;
+}
+#img span{
+	margin-left: 42%;
+}
+.span-1 {
+	display: inline-block;
+	padding-left: 25px;
+	padding-right: 25px;
+	margin-top: 20px;
+	margin-left: 20px;
+	border: 1px solid #FBD5CA;
+	width: auto;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 2px 12px 2px 2px;
+	background-color: #FEF4F1;
+}
+.addFot{
+	position:absolute;
+	bottom:0px;
+	display:inline-block;
+	height:30px;
+	line-height:30px;
+	background:rgba(0,0,0,0.5);
+	font-size:14px;
+	color:#fff;
+	text-align:left;
+	padding-left:10px;
+	overflow:hidden;
+	left:0px;
+	width:100%;
+	transform:translate(0,-99999px);
+	-ms-transform:translate(0,-99999px); 	/* IE 9 */
+	-moz-transform:translate(0,-99999px); 	/* Firefox */
+	-webkit-transform:translate(0,-99999px);/* Safari 和 Chrome */
+	-o-transform:translate(0,-99999px);
+}
+.addHov:hover .addFot{
+	transform:translate(0,0px) ;
+	-ms-transform:translate(0,0px); 	/* IE 9 */
+	-moz-transform:translate(0,0px); 	/* Firefox */
+	-webkit-transform:translate(0,0px);/* Safari 和 Chrome */
+	-o-transform:translate(0,0px);
+
+	
+}
+.span-11 {
+	display: inline-block;
+	background-color: #f0f3f4;
+	font-size: 15px;
+	line-height: 30px;
+	/* border:1px solid black; */
+}
+.span-1 {
+	display: inline-block;
+	padding-left: 25px;
+	padding-right: 25px;
+	margin-top: 20px;
+	margin-left: 20px;
+	border: 1px solid #ef9f8e;
+	width: auto;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 2px 12px 2px 2px;
+	background-color: #fadbd5;
+}
+
+.span-2 {
+	padding-left: 25px;
+	padding-right: 25px;
+	display: inline-block;
+	margin-top: 20px;
+	margin-left: 20px;
+	border: 1px solid #9fbad5;
+	width: auto;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 2px 12px 2px 2px;
+	background-color: #d5e4ef;
+}
+
+.span-3 {
+	padding-left: 25px;
+	padding-right: 25px;
+	display: inline-block;
+	margin-top: 20px;
+	margin-left: 20px;
+	border: 1px solid #efba84;
+	width: auto;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 2px 12px 2px 2px;
+	background-color: #efe1cd;
+}
+
+.span-4 {
+	padding-left: 25px;
+	padding-right: 25px;
+	display: inline-block;
+	margin-top: 20px;
+	margin-left: 20px;
+	border: 1px solid #9fc5bc;
+	width: auto;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 2px 12px 2px 2px;
+	background-color: #d2e7e1;
+}
+
+.span-5 {
+	padding-left: 25px;
+	padding-right: 25px;
+	display: inline-block;
+	margin-top: 20px;
+	margin-left: 20px;
+	border: 1px solid #cdc174;
+	width: auto;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 2px 12px 2px 2px;
+	background-color: #faf6d7;
+}
+
+.span-6 {
+	padding-left: 25px;
+	padding-right: 25px;
+	display: inline-block;
+	margin-top: 20px;
+	margin-left: 20px;
+	border: 1px solid #8bbcd2;
+	width: auto;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 2px 12px 2px 2px;
+	background-color: #c3deed;
+}
+
+.span-7 {
+	padding-left: 25px;
+	padding-right: 25px;
+	display: inline-block;
+	margin-top: 20px;
+	margin-left: 20px;
+	border: 1px solid #aaaad2;
+	width: auto;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 2px 12px 2px 2px;
+	background-color: #d7d7ed;
+}
+</style>
+</head>
+<body  style="overflow-y:scroll;">
+	<jsp:include page="common.jsp"></jsp:include>
+	<div class="bg-light lter b-b wrapper-md">
+  		<h1 class="m-n h4">图片GPS精准定位</h1>
+	</div>
+	<div class="row" style="height:; width: 98%; margin-left: 1%; margin-top: 1%;">
+		<div class="form-group" style="float: left;margin-bottom:0px;">
+			<span class="alcenter" style="float: left;line-height:35px;">已选案件：</span>
+			<div id="spans" style="margin-left: 75px; overflow:hidden;"></div>
+		</div>
+			<div>
+			<button data-target="#myModals" data-toggle="modal" type='button' class="btn btn-info" style="width:120px;margin-right: 10px; float: right; margin-top: 1px;" onclick="showcase()" >选择案件</button>
+		</div>
+	</div>
+			
+	<div class="wrapper-md">
+		<div class="col-md-12" style="margin-bottom:27px;">
+			<div class="row">
+				<div class="panel panel-default">
+					<div class="panel-heading">搜索<span style="float: right;"><img src="<%=basePath %>template/img/addevidence.png" onclick="testOfSearch(this)"></span></div>
+					<div class="panel-body" id="searchOfForm" style="display: block;">
+						<form class="form-inline" role="form" id="searchForm" action="<%=basePath %>admin/case_xietong.php" method="post">
+							<input type="hidden" name="pageno" id="pageno"/>
+							<div class="form-group">
+								<input type="text" value="" style="display: none;" />
+								<input id="dirName" type="text" class="form-control" placeholder="请输入图片名称..." onkeydown="onKeyDown(event)"/>
+							</div>
+							<button type="button" class="btn btn-info"
+								style="width: 75px; height: 30px; background-color: #475E9C;color: #fff;" onclick="showPicture(1)">搜索</button>
+						</form>
+					</div>
+				</div>
+				<div class="panel panel-default">
+					<div class="panel-heading">图片列表</div>
+					
+						<div class="wrap" style="overflow:hidden;">
+							<!-- 瀑布流布局 begin-->  
+						  	<div class="wflBox" id="wfl_block" style="padding:20px 0 20px 20px;overflow:hidden;">
+									
+						    	   
+						      
+							</div>  <!-- 瀑布流布局  end-->  
+						  
+						 	<!-- <a id="addImg" class="addBtn" style="display:block;margin:0px auto;width:200px;height:50px"> 加载更多&gt;&gt;</a> -->
+						</div>
+					
+
+				<div class="round_shade_box2" id="zoom2" style="position: absolute; top: 0px; left: 350px; width: 1017px; height: 924px; display: none;">
+				<img id="pic_one2" src="" style="vertical-align: middle; width: 100%;" onclick="setDisplay()">
+	</div>
+					<!-- 分页 -->
+					<div class="alcenter" style="font-size: 14px;margin-bottom:10px;display:none;">
+						<div id="total_GPS" class="pagecount inline" style="height: 29px;">
+							<span id="tot1_GPS"></span>
+						</div>
+						<div class="pagebar inline" style="position: absolute; right: 134px; height: 29px;">
+							<ul class="pagination pagination-sm" style="margin: 0;">
+								<li id = "pages1_GPS"></li>
+										
+								<li id = "pages_GPS"></li>
+					            		
+								<li id = "pages2_GPS"></li>
+							</ul>
+						</div>
+						<div style="float: right;margin-right: 11px;">
+								<input class="form-control" type="text" style="width:52px;height:28px;border-radius:2px; display: inline;" id="givePages" name="givePages" onkeydown="onKeyDown(event)"/>
+								<button type="button" class="btn" onclick="showPicture(1)" style="width:52px;height:28px;line-height: 12px;">跳转</button>
+						</div>
+					</div>
+					
+					<!-- 分页结束 -->
+							<div style="margin:0 auto;text-align:center;margin-bottom:30px;">
+								<button id="addImg" type="button" class="btn btn-info" style="width:200px;height:40px;" onclick="showPicture(0)">加载更多&gt;&gt;</button>
+							</div>
+					</div>
+				</div>
+				<!-- 显示地图 -->
+				<div class="row">
+					<div class="panel panel-default">
+							<div class="panel-heading" style="height:32px">
+									<div class="col-md-8">查询结果</div>
+									<div class="col-md-4" id="info_pic" ></div>
+							</div>
+							<div id="container" 
+					                style="
+						                width: 100%; 
+						                height: 580px; 
+						                top: 50; 
+						                display:none;
+						                overflow:hidden;">
+							</div>
+					</div>
+				</div>
+				<!-- 显示地图结束 -->
+			</div>
+		</div>
+		<div class="modal right fade" id="myModals"  tabindex="-1" style="width:100%;height: 100%;margin: auto;">
+		<div class="panel panel-default" style="width:30%;height: 80%;margin:3% auto;" >
+			<div class="panel-heading">更改案件</div>
+	 			<div class="panel-body" style="width:100%;height: 100%;">
+	 					<div class="panel-body" style="width:100%">
+							<input id="caseinfo" name="caseinfo" class="form-control" placeholder="搜索案件名称/案件编号" type="text" style="float:left;width:75%;" onkeyup="showcase()"/>
+							<button type='button' class="btn btn-info" style="width: 70px;margin-left: 10px;height: 34px" onclick="showcase()">搜索</button>
+						</div>
+<!-- 						<div class="panel-body" style="width:100%" >
+							<span style="float: left;">已选案件：</span> <div id="spans1" style="margin-left: 65px;margin-top: -9px;"></div>
+						</div> -->
+						<div class="panel-body" style="height: 60%;overflow-y: scroll;">		
+								<table id="datatable" class="table table-striped table-hover" style="border: 1px solid #DDDDDD;">
+									<tbody id="tbcont">
+										<tr>
+											<td class="td_left"><input type="checkbox" id="ckall" onclick="selectAll()"/></td>
+											<td class="td_left" style="color:#58666e;font-weight:600;font-size:14px;">案件编号</td>
+											<td class="td_right" style="color:#58666e;font-weight:600;font-size:14px;">案件名称</td>
+										</tr>
+									</tbody>
+								</table>		
+						</div>
+						<button type='button' class="btn btn-info" data-backdrop='static' data-dismiss="modal" style="width: 70px;height: 34px;margin-left: 40%;margin-top: 2%" onclick="checkCase();">选择</button>
+				</div>
+    	</div>
+</div>	
+	 		<!-- 弹出框       显示  -->
+	 <!-- 	<div class="modal right fade" id="myModalGPS" tabindex="-1" style="width: 100%; height: 100%; margin: auto;">
+				<div class="panel panel-default" style="width: 92%; height: 80%; margin: 3% auto;">
+					<div class="panel-heading">定位结果</div>
+					<div id="container" 
+					                style="
+						                width: 100%; 
+						                height: 580px; 
+						                top: 50; 
+						                display:none;
+						                overflow:hidden;">
+					</div>
+				</div>
+		</div> -->  
+		
+		<!-- footer -->
+    		<div style=" text-align:center; width:100%; background-color: #f0f3f4;padding-top: 17px;padding-bottom:47px;">
+			<%-- <img style=" margin-top:20px;" src="<%=basePath%>template/img/footer.png"> --%>
+			<img  src="<%=basePath%>template/img/left.png"><span style="color: #999;font-size:12px;margin: 0 12px;">  由勋立云计算提供技术支持  版本号: V1.1.1082  </span><img src="<%=basePath%>template/img/left2.png">
+			</div>   
+</body>
+	<script src="<%=basePath%>template/js/jquery/jquery-2.0.3.min.js"></script>
+	<script src="<%=basePath%>template/js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+	<script src="<%=basePath%>template/bootstrap-dist/js/bootstrap.min.js"></script>
+	<script src="<%=basePath%>template/js/cutover/js.js"></script>
+	<script type="text/javascript">
+/* 	function setFilePath4(){
+		var filepath = $("#file4").val();
+		$("#picfile2").val(filepath);
+	}
+	//上传图片并定位
+	function imgGPSPostion(){
+		if($("#picfile2").val()==''){
+			alert("请选择文件！");
+			return false;
+		}
+		$("#searchForm").submit();
+	} */
+
+	//查询图片
+	var bei=[];
+	window.onload = showPicture(1);
+	var beipage=1;//页数
+	function showPicture(pageno){
+		
+		//pageno=1代表 是点击搜索按钮 
+		if(pageno==1){
+			beipage=1;
+		}
+		if(beipage>0){
+		}else{
+			beipage=1;
+		}	
+		bei=[];
+		var dirName =$("#dirName").val();
+		var givePages = $("#givePages").val();
+    	if(givePages!=""){
+    		pageno = parseInt(givePages);
+    	}
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>admin/showPictureInfo.php",
+			data : {
+				"pageIndex":beipage,
+				"dirName":dirName,
+                "caseidStr":caseidStr
+			},
+			dataType : "json",
+			async: true,
+			success : function(data) {
+				var docs=data.hits.hits;
+				var sizes=10;
+				var pagesum=data.hits.total;
+				var pagenum = pagesum / sizes;
+				var length=5;  //要显示的分页页数
+					
+				if(pagenum%1!=0){
+						pagenum=pagenum+(1-pagenum%1);
+				}
+				$("#pages_GPS").empty();
+				//用于删除之前显示的页数，动态添加时id名均设为order
+				for(var i=1;i<=length;i++)
+					  $("#orderA_GPS").remove();
+				if(pagesum<sizes){
+					var html2 = '<li class="active" id="orderA_GPS"><a href="#" onclick="showPicture(1)">1</a></li >';
+					$("#pages_GPS").after(html2);	
+				}else{
+				if(pageno<pagenum){
+					if(pageno+length-1<=pagenum){
+						var html2="";
+						if(pageno-2>0){
+							for(var i =pageno-2;i<=pageno+length-1-2;i++){	
+								if(i==pageno)
+									html2 += '<li class="active" id="orderA_GPS"><a href="#" onclick="showPicture('+i+')">'+i+'</a></li >';
+									else
+						
+										html2 += '<li id="orderA_GPS"><a href="#" onclick="showPicture('+i+')">'+i+'</a></li >';  
+						   				   }
+							}
+						else{
+							for(var i =1;i<=length;i++){	
+								if(i==pageno)
+									html2 += '<li class="active" id="orderA_GPS"><a href="#" onclick="showPicture('+i+')">'+i+'</a></li >';
+									else
+						
+										html2 += '<li id="orderA_GPS"><a href="#" onclick="showPicture('+i+')">'+i+'</a></li >';  
+						   				   }
+						}
+					$("#pages_GPS").after(html2);
+					}/* if */
+					else{
+						var html2="";
+						if(pagenum>=length){
+						for(var i =pageno-(length-1-pagenum+pageno);i<=pagenum;i++){	
+							 if(i==pageno)
+								html2 += '<li class="active" id="orderA_GPS"><a href="#" onclick="showPicture('+i+')">'+i+'</a></li >';
+							else
+								html2 += '<li id="orderA_GPS"><a href="#" onclick="showPicture('+i+')">'+i+'</a></li >'; 
+						   }
+						$("#pages_GPS").after(html2);	
+						}
+						else{
+							for(var i =1;i<=pagenum;i++){	
+								 if(i==pageno)
+									html2 += '<li class="active" id="orderA_GPS"><a href="#" onclick="showPicture('+i+')">'+i+'</a></li >';
+								else
+									html2 += '<li id="orderA_GPS"><a href="#" onclick="showPicture('+i+')">'+i+'</a></li >';
+							   }
+							$("#pages_GPS").after(html2);	
+						}
+					}
+				}
+				else{
+					if(pageno==pagenum){
+						var html2="";
+						for(var i =pageno-length+1>0?pageno-length+1:1;i<=pagenum;i++){	
+						if(i==pageno)
+							html2 += '<li class="active" id="orderA_GPS"><a href="#" onclick="showPicture('+i+')">'+i+'</a></li >';
+						else
+							html2 += '<li id="orderA_GPS"><a href="#" onclick="showPicture('+i+')">'+i+'</a></li >';
+					   }
+						$("#pages_GPS").after(html2);
+					}/* if */
+				}
+			}
+				$("#tot1_GPS").empty();
+				$("#pages1_GPS").empty();
+				$("#pages2_GPS").empty();
+				var html3 ='<span >共'+pagesum+'条，当前'+pageno+'/'+pagenum+'页</span>';
+				$("#tot1_GPS").append(html3);
+				
+				var html5 = '<a href="#" onclick="showPicture('+pageno+'-1<1?1:'+pageno+'-1)"><</a>';
+				$("#pages1_GPS").append(html5);
+				
+				var html4 = '<a href="#" onclick="showPicture('+pageno+'+1>'+pagenum+'?'+pagenum+':'+pageno+'+1)">></a>';
+				$("#pages2_GPS").append(html4);
+		
+				var imgs=data.hits.hits;
+				  $.each(imgs,function(i,item){
+					 
+					 //进页面判断星标是否为1   页面刷新后已收藏的图片还是显示亮的星星
+					 var pictureStarFlag=item._source.starFlag;
+					 var src="<%=basePath%>"+"template/img/star2.png";
+					 if(pictureStarFlag=='1'){
+						src="<%=basePath%>"+"template/img/star.png";
+					 }	
+					 var img = item._source.picDirpath;
+					 var img2 = img.split("emaildata")[1];
+					 var picNam = img2.split("/")[3];
+					 if(picNam.length>36){
+						 picNam =picNam.substring(picNam.length-36,picNam.length)
+					 }
+					 var html =   '<div class="small_pic js-wfl-elem absolute" >'+
+				                	 '<a href="#pic_one2"class="addHov" style="display:inline-block;position:relative;height:auto;width:100%;border:1px solid #eee;line-height:198px;"><img onload="loadcomplete()" id="picUrl'+i+'" src="/picture/'+img2+'"style="height: auto;width:100%; " onclick="getPicUrl('+i+')" />'+'<span class="addFot">'+picNam +'</span>'+'</a>'+
+				                	'<span id="pictureSrc'+i+'" style=" display:none;">'+item._source.picDirpath+'</span>'+
+				                	'<span id="pictureStarFlag'+i+'" style=" display:none;">'+item._source.starFlag+'</span>'+
+				                	'<span id="pictureId'+i+'" style=" display:none;">'+item._id+'</span>'+
+					            '</div>';
+					            //var bei1={"imgurl":"/picture/"+img2,"cont":picNam, "href":"#pic_one2",  "size":item._source.picDirpath , "des":item._source.starFlag,"else":item._id,"imgid":"picUrl"+i,"click":"getPicUrl('+i+')"};
+								var bei1={
+										"idi":i,  
+						                  "picpath":"/picture"+img2,  
+						                  "picNam":picNam, 
+						                  "pictureSrc":item._source.picDirpath, 
+						                  "starFlag":item._source.starFlag, 
+						                  "picId":item._id
+								   };
+					            bei.push(bei1);
+
+					//$("#wfl_block").append(html);	
+					});  
+					$("#givePages").val("");
+					//加载瀑布流
+					if(beipage<=pagenum){ 
+						
+						if(pageno==0){						
+							if(beipage==1){
+							   $("#wfl_block").empty();
+							   _wfl.initData();
+							}
+							_wfl.createHtml(demoJson.data);
+							beipage=beipage+1;
+						}else{					
+							$("#wfl_block").empty();
+							_wfl.initData();
+							_wfl.createHtml(demoJson.data);
+							beipage=beipage+1;
+						}
+					}
+					
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+				alert("失败");
+			}
+		});
+	}
+	<%-- function showPicture(pageno){
+		var dirName =$("#dirName").val();
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>admin/showPictureInfoGPS.php",
+			data : {
+				"pageIndex":pageno,
+				"dirName":dirName
+			},
+			dataType : "json",
+			async: true,
+			success : function(data) {
+				$("#wfl_block").empty();
+				
+				var docs=data.pictureList;
+				var sizes=10;
+				var pagesum=data.count;
+				var pagenum = pagesum / sizes;
+				var length=5;  //要显示的分页页数
+
+				if(pagenum%1!=0){
+						pagenum=pagenum+(1-pagenum%1);
+				}
+				$("#pages_d5").empty();
+				//用于删除之前显示的页数，动态添加时id名均设为order
+				for(var i=1;i<=length;i++)
+					  $("#orderA_5").remove();
+				if(pagesum<sizes){
+					var html2 = '<li class="active" id="orderA_5"><a href="#" onclick="showPicture(1)">1</a></li >';
+					$("#pages_d5").after(html2);
+				}else{
+
+				if(pageno<pagenum){
+					if(pageno+length-1<=pagenum){
+						var html2="";
+						if(pageno-2>0){
+							for(var i =pageno-2;i<=pageno+length-1-2;i++){
+								if(i==pageno)
+									html2 += '<li class="active" id="orderA_5"><a href="#" onclick="showPicture('+i+')">'+i+'</a></li >';
+									else
+										html2 += '<li id="orderA_5"><a href="#" onclick="showPicture('+i+')">'+i+'</a></li >';
+						   				   }
+							}
+						else{
+							for(var i =1;i<=length;i++){
+								if(i==pageno)
+									html2 += '<li class="active" id="orderA_5"><a href="#" onclick="showPicture('+i+')">'+i+'</a></li >';
+									else
+
+										html2 += '<li id="orderA_5"><a href="#" onclick="showPicture('+i+')">'+i+'</a></li >';
+						   				   }
+						}
+					$("#pages_d5").after(html2);
+
+					}
+					else{
+						var html2="";
+						if(pagenum>=length){
+						for(var i =pageno-(length-1-pagenum+pageno);i<=pagenum;i++){
+
+							 if(i==pageno)
+								html2 += '<li class="active" id="orderA_5"><a href="#" onclick="showPicture('+i+')">'+i+'</a></li >';
+							else
+								html2 += '<li id="orderA_5"><a href="#" onclick="showPicture('+i+')">'+i+'</a></li >';
+						   }
+						$("#pages_d5").after(html2);
+						}
+						else{
+							for(var i =1;i<=pagenum;i++){
+								 if(i==pageno)
+									html2 += '<li class="active" id="orderA_5"><a href="#" onclick="showPicture('+i+')">'+i+'</a></li >';
+								else
+									html2 += '<li id="orderA_5"><a href="#" onclick="showPicture('+i+')">'+i+'</a></li >';
+							   }
+							$("#pages_d5").after(html2);
+						}
+					}
+				}
+				else{
+					if(pageno==pagenum){
+						var html2="";
+						for(var i =pageno-length+1>0?pageno-length+1:1;i<=pagenum;i++){
+						 if(i==pageno)
+							html2 += '<li class="active" id="orderA_5"><a href="#" onclick="showPicture('+i+')">'+i+'</a></li >';
+						else
+							html2 += '<li id="orderA_5"><a href="#" onclick="showPicture('+i+')">'+i+'</a></li >';
+					   }
+						$("#pages_d5").after(html2);
+					}/* if */
+				}
+			}
+				$("#tot1_d5").empty();
+				$("#pages1_d5").empty();
+				$("#pages2_d5").empty();
+				var html3 ='<span >共'+pagesum+'条，当前'+pageno+'/'+pagenum+'页</span>';
+				$("#tot1_d5").append(html3);
+
+				var html5 = '<a href="#" onclick="showPicture('+pageno+'-1<1?1:'+pageno+'-1)"><</a>';
+				$("#pages1_d5").append(html5);
+
+				var html4 = '<a href="#" onclick="showPicture('+pageno+'+1>'+pagenum+'?'+pagenum+':'+pageno+'+1)">></a>';
+				$("#pages2_d5").append(html4);
+
+				$("#wfl_block").empty();
+				
+				  $.each(docs,function(i,item){
+					var html =   '<div class="small_pic">'+
+				                	'<a href="#pic_one2"><img id="picUrl'+i+'" src="/picture/'+item.caseID+'/'+item.evUUID+'/'+item.dirName+'" data-target="#myModalGPS" data-toggle="modal" style="width: 284px; height: 198px; " onclick="getPicUrl('+i+')"/></a><br/>'+item.dirName+'<span id="pictureSrc'+i+'" style=" display:none;">'+item.caseID+'/'+item.evUUID+'/'+item.dirName+'</span>'+
+					            '</div>';
+
+					$("#wfl_block").append(html);	
+				});  
+				
+			}
+		});
+	} --%>
+	
+	function getPicUrl(i) {
+		var pUrl = document.getElementById("picUrl"+i).src;
+		$.ajax({
+			type: "POST",
+			url: "<%=basePath %>admin/pictureGPS.php",
+			dataType : "json",
+			data : {
+				"pUrl" : pUrl
+			},						
+			success : function(data) {
+				$("#info_pic").empty();
+				
+				document.getElementById("container").style.display="";//显
+				//地理位置展示
+				showPicGPS(data.latitude,data.longitude);
+				//showPicGPS(39.899855,116.259307);
+				
+				var str="拍摄机型："+data.shootTool+"&nbsp;&nbsp;&nbsp;&nbsp;拍摄日期："+data.date_photograph;
+				$("#info_pic").append(str);
+			},						
+			error : function(data) {
+			}
+		});
+	}
+	var caseidStr ="";
+	//显示选择案件的案件
+ 	function showcase(){
+		var casenumorname = document.getElementById("caseinfo").value;
+		//alert(casenumorname);
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>admin/getCaseOfEmail.php",
+			data : {
+				"casenumorname":casenumorname
+			},
+			dataType : "json",
+			async: true,
+			success : function(data) {
+				$("#tbcont").empty();
+				var htmlhead='<tr>'+
+					'<td class="td_left"><input type="checkbox" id="ckall" onclick="selectAll()"/></td>'+
+					'<td class="td_left" style="color:#58666e;font-weight:600;font-size:14px;">案件编号</td>'+
+					'<td class="td_right" style="color:#58666e;font-weight:600;font-size:14px;">案件名称</td>'+
+				'</tr>';
+				$("#tbcont").append(htmlhead);	
+				var caseidStrSplit=caseidStr.split(" ");
+				var aaaa="";
+				var html="";
+				$.each(data,function(i,item){
+					 	var caseflag=0;
+						for(var j=0;j<caseidStrSplit.length;j++){
+							if(caseidStrSplit[j]==item.id){
+								caseflag=1;
+							}
+						}
+						if(caseflag==1){
+							 html+= '<tr>'+
+							'<td class="td_left"><input id="caselist'+i+'" type="checkbox" checked="checked" name="ids" value="'+item.caseName+' '+item.id+'" onclick="chooseCase(this.id);" />'+
+								'<td class="td_left">'+item.caseNum+'</td>'+
+								'<td class="td_right" id="">'+item.caseName+'</td>'+
+							'</tr>';
+						} else{  
+							 html+= '<tr>'+
+							'<td class="td_left"><input id="caselist'+i+'" type="checkbox"  name="ids" value="'+item.caseName+' '+item.id+'" onclick="chooseCase(this.id);" />'+
+								'<td class="td_left">'+item.caseNum+'</td>'+
+								'<td class="td_right" id="">'+item.caseName+'</td>'+
+							'</tr>';
+						}
+				});
+				$("#tbcont").append(html);	
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+			}
+		});
+	} 
+ 	//选择所有复选框
+	function selectAll(){
+		var ckall=document.getElementById("ckall");
+	    var ck=document.getElementsByName("ids");
+	    for(var i=0;i<ck.length;i++){
+	    	if(ck[i].checked==false){
+	    	ck[i].checked=ckall.checked;
+	    	selectCase(i); 
+	    	}
+		}
+	   if($("input[name='ids']:checked").length <= $("input[name='ids']").length && ckall.checked==false){
+	    	for(var j=0;j<ck.length;j++){   		
+	    		if(ck[j].checked==true){
+	    		ck[j].checked=false;
+	    		selectCase(j);
+	    	}
+		 }
+    }
+	    
+}
+	function showChoose(id){
+		 var ckall=document.getElementById(id);
+	    //var ck=document.getElementsByName(id);
+	   // for(var i=0;i<ck.length;i++){
+	    	ck[i].checked=ckall.checked;
+	    //}
+	}
+	//选择选择案件下的所有复选框
+	function selectCase(idi){
+		//alert(idi);
+ 		var casesus="";
+		var ckall=document.getElementById("caselist"+idi);
+		 var ids_call=document.getElementsByName("ids_call"+idi);
+	    for(var i=0;i<ids_call.length;i++){
+	    	ids_call[i].checked=ckall.checked;
+	    	 var sus1 = ids_call[i].value
+	    	 if(ckall.checked){
+	    		if(suspectPhoneStr==""){
+	            	suspectPhoneStr=sus1;
+	            }else{
+	            	suspectPhoneStr=suspectPhoneStr+","+sus1;
+	            }
+	    		casesus=casesus+","+sus1;
+	    	}else{
+	    		var suspectPhoneStrSplit=suspectPhoneStr.split(",");
+				var suspectStrNew="";
+				if(suspectPhoneStrSplit.length>0){
+					for(var j=0;j<suspectPhoneStrSplit.length;j++){
+						var par = suspectPhoneStrSplit[j];
+						if(par!=sus1){
+							if(suspectStrNew==""){
+								suspectStrNew=par;
+							}else{
+								suspectStrNew=suspectStrNew+","+par;
+							}
+						}
+					}
+				}
+				suspectPhoneStr=suspectStrNew;
+	    	} 
+	    }
+	    
+		var caseInfo = document.getElementById("caselist"+idi);
+		 var caseId=caseInfo.value.split(" ")[1];
+		 var caseName=caseInfo.value.split(" ")[0];
+		 if(caseInfo.checked){
+			 if(caseidStr==""){
+           	caseidStr=caseId;
+           }else{
+           	caseidStr=caseidStr+" "+caseId;
+           } 
+			if(caseName.length>6){
+				caseName = caseName.substring(0,6) + "...";
+			}
+			var html ='<span class="span-1" id="shanchu2'+caseId+'" style="width: 150px; height: 30px; white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-right: 15px;margin-top: 5px;" onclick="deletemainParty(this.id,'+caseId+')">'+caseName+
+			'<img style="vertical-align:middle;" src="<%=basePath%>template/img/x.png" /></span><span id="suspectnum'+caseId+'" style=" display:none;">'+casesus+'</span>';
+			$("#spans").append(html);	 
+		 }else{
+			 $("#shanchu2"+caseId+"").remove();
+			var caseidStrSplit=caseidStr.split(" ");
+			var caseidStrNew="";
+			if(caseidStrSplit.length>0){
+				for(var i=0;i<caseidStrSplit.length;i++){
+					var par = caseidStrSplit[i];
+					if(par!=caseId){
+						if(caseidStrNew==""){
+							caseidStrNew=par;
+						}else{
+							caseidStrNew=caseidStrNew+" "+par;
+						}
+					}
+				}
+			}
+			caseidStr=caseidStrNew;	
+		 }
+ 		
+	}
+	
+	//选择某个复选框案件将案件信息展示在页面上
+		function chooseCase(id){
+		 var caseInfo = document.getElementById(id);
+		 var caseId=caseInfo.value.split(" ")[1];
+		 var caseName=caseInfo.value.split(" ")[0];
+		 if(caseInfo.checked){
+			 if(caseidStr==""){
+            	caseidStr=caseId;
+            }else{
+            	caseidStr=caseidStr+" "+caseId;
+            } 
+			if(caseName.length>6){
+				caseName = caseName.substring(0,6) + "...";
+			}
+			var html ='<span class="span-1" id="shanchu2'+caseId+'" style="width: 150px; height: 30px;margin-right: 15px;margin-top: 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" onclick="deletemainParty(this.id,'+caseId+')">'+caseName+
+			'<img style="vertical-align:middle;" src="<%=basePath%>template/img/x.png" /></span>';
+			$("#spans").append(html);	 
+		 }else{
+			 $("#shanchu2"+caseId+"").remove();
+			var caseidStrSplit=caseidStr.split(" ");
+			var caseidStrNew="";
+			if(caseidStrSplit.length>0){
+				for(var i=0;i<caseidStrSplit.length;i++){
+					var par = caseidStrSplit[i];
+					if(par!=caseId){
+						if(caseidStrNew==""){
+							caseidStrNew=par;
+						}else{
+							caseidStrNew=caseidStrNew+" "+par;
+						}
+					}
+				}
+			}
+			caseidStr=caseidStrNew;	
+		 }
+	}
+	function checkCase(){
+	    showPicture(1)
+	}
+	
+	function deletemainParty(id,caseId){
+		$("#"+id+"").remove();
+		var caseidStrSplit=caseidStr.split(" ");
+		var caseidStrNew="";
+		if(caseidStrSplit.length>0){
+			for(var i=0;i<caseidStrSplit.length;i++){
+				var par = caseidStrSplit[i];
+				if(par!=caseId){
+					if(caseidStrNew==""){
+						caseidStrNew=par;
+					}else{
+						caseidStrNew=caseidStrNew+" "+par;
+					}
+				}
+			}
+		}
+		caseidStr=caseidStrNew;
+		showPicture(1)
+	}
+	//折叠
+	function testOfSearch(obj){
+	  var div1=document.getElementById("searchOfForm");
+	  
+	  if(div1.style.display=="block"){
+	    div1.style.display="none";
+	    obj.src="<%=basePath %>template/img/downXia.png";
+	  }else{
+	    div1.style.display="block";
+	    obj.src="<%=basePath %>template/img/addevidence.png";
+	  }
+	}
+</script>
+</html>
+
+<script type="text/javascript">
+
+
+//点击地名显示对应地点
+function showPicGPS(lat,lon){
+	// 百度地图API功能，显示离线地图
+	var map = new BMap.Map("container", {minZoom:2,maxZoom:8});    // 创建Map实例
+	//var map = new BMap.Map("map_demo", {minZoom:2,maxZoom:8});    // 创建Map实例
+	map.centerAndZoom(new BMap.Point(116.404, 39.915), 8);  // 初始化地图,设置中心点坐标和地图级别
+	//map.setCurrentCity("北京");          // 设置地图显示的城市 离线地图不支持！！
+	map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+	map.addControl(new BMap.NavigationControl());   //缩放按钮
+
+	var cr = new BMap.CopyrightControl({anchor: BMAP_ANCHOR_TOP_RIGHT});   //设置版权控件位置
+	map.addControl(cr); //添加版权控件
+	var bs = map.getBounds();   //返回地图可视区域
+
+//	alert(lat+"--"+lon);
+map.clearOverlays();//清空原来的标注	
+var point = new BMap.Point(lon,lat);
+map.centerAndZoom(point, 8);
+var marker = new BMap.Marker(point);  // 创建标注
+map.addOverlay(marker);               // 将标注添加到地图中
+marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画	
+}
+	//初始化gps信息     百度地图API功能
+	<%-- function showPicGPS(x,y){
+	    var ggPoint = new BMap.Point(x,y);
+		
+	    //地图初始化
+	    var bm = new BMap.Map("container");
+	    bm.centerAndZoom(ggPoint, 15);
+	    bm.addControl(new BMap.NavigationControl());
+	    bm.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放 
+	    
+	  //坐标转换完之后的回调函数
+	    translateCallback = function (data){
+	      if(data.status === 0) {
+	        var marker = new BMap.Marker(data.points[0]);
+	        bm.addOverlay(marker);
+	        var label = new BMap.Label("目标位置",{offset:new BMap.Size(20,-10)});
+	        marker.setLabel(label); //添加百度label
+	        bm.setCenter(data.points[0]);
+	      }
+	    }
+	    setTimeout(function(){
+	        var convertor = new BMap.Convertor();
+	        var pointArr = [];
+	        pointArr.push(ggPoint);
+	        convertor.translate(pointArr, 1, 5, translateCallback)
+	    }, 1000);
+	    
+		//设置图片的显示
+		$("#gpsPicImg").attr("src","<%=basePath%>preview/"+imgpath);
+	} --%>
+	
+	//回车搜索事件
+	function onKeyDown(event){
+	   var e = event || window.event || arguments.callee.caller.arguments[0];
+	   if(e && e.keyCode==13){ // enter 键
+		   showPicture(1);
+	   }
+	}
+	
+	
+	
+	
+	/*瀑布流  */ 
+	/**
+	*
+	*
+	*
+	*
+	*Waterfall flow layout 
+	*/
+	var _wfl = {
+	    //配置参数
+	   
+	    $iBlock : $("#wfl_block"),//瀑布流包裹层 jq对象
+	    wfl_all_width: 0, //画布总宽
+	    wfl_count:5, //列数
+	     wfl_times: 0,
+	    wfl_padding: 10,//内容之间的间隔 纵向和横向<img onload="loadcomplete()" src="%imgurl%" >'   <img onload="loadcomplete()"  onclick="showImg()" src="%imgurl%" />'
+	    wfl_fomat:'<div id="%id%" class="js-wfl-elem small_pic absolute">'+
+					    '<a href="#pic_one2" class="addHov" style="display:inline-block;position:relative;height:auto;border:1px solid #eee;line-height:198px;">'+
+							'<img onload="loadcomplete()" src="%picpath%" id="picUrl%idi%" style=" height: auto;width:100%;" onclick="getPicUrl(%idi%)"/>'+
+							'<span class="addFot">%picNam%</span>'+
+						'</a>'+
+						'<span id="pictureSrc%idi%" style=" display:none;">%pictureSrc%</span>'+
+						'<span id="pictureStarFlag%idi%" style=" display:none;">%starFlag%</span>'+
+						'<span id="pictureId%idi%" style=" display:none;">%picId%</span>'+
+		               	
+					'</div>',
+	/*  原来的   	
+			     wfl_fomat:'<div id="%id%" class="js-wfl-elem small_pic absolute" style="float:left;">'
+			         +' <a href="%href%" class="addHov" style="display:inline-block;position:relative;height:auto;width:100%;border:1px solid #eee;line-height:198px;">'
+			         +'    <input type="checkbox" id="%inputid%" name="favoPic_check" value="%value%" style="position: absolute;right:5px;">'
+			         +'    <img src="%imgurl%" style="position: absolute;left:0" onclick="%click%" id="%imgid%" data-target="#myPicModalfavorite" data-toggle="modal">'
+			         +'    <img src="%imgsurl%" style=" height: auto;width:100%;" onclick="%onclick%">'
+			         +'    <span class="addFot">%cont%</span>'
+			         +' </a>'
+			         +' <span id="%sid1%" style=" display:none;">%title%</span>'
+			         +' <span id="%sid2%" style=" display:none;">%logoname%</span>'
+			         +' <span id="%sid3%" style=" display:none;">%size%<</span>'
+			         +' <span id="%sid4%" style=" display:none;">%des%</span>'
+			         +' <span id="%sid5%" style=" display:none;">%else%</span>'
+			         +'</div>', */
+
+	    wfl_width:0,  //单内容块的宽度
+	    
+	    
+	    cacuData :[],//计算位置的数据记录
+
+	       
+	    idFirstName: "wfl",
+	    lastId : 0, //动态加载的ID
+	  
+	    //获取最初内容对应列上的总高度
+	    initData: function (data){
+	      _wfl.$iBlock = $("#wfl_block");// ！ 临时解决加载不出的问题
+	      _wfl.wfl_all_width =  _wfl.$iBlock.width();
+	      _wfl.wfl_width =(_wfl.wfl_all_width - ( _wfl.wfl_padding * (_wfl.wfl_count-1) )) / _wfl.wfl_count;  //单内容块的宽度
+	      var limit = _wfl.wfl_count;
+	      var i = 0;
+	      
+	      if (_wfl.$iBlock.find(".js-wfl-elem ").length == 0){
+	         
+	          for(var i =0 ; i< _wfl.wfl_count; i++){
+	              _wfl.cacuData[_wfl.cacuData.length] = {"colum": "c"+i, "left": ( ( _wfl.wfl_width +  _wfl.wfl_padding ) *  i) , "height":0} ;   //保存单行个列的高度
+	               limit --
+	          }
+	        
+	      }else{
+	      
+	          $.each( _wfl.$iBlock.find(".js-wfl-elem "), function () {
+	            
+	            if (limit <= 0) {
+	              $(this).remove();//第一次加载最多仅限一行 也就是wfl_count的设置值，多余部分删除
+	              
+	            }else{        
+	            
+	              _wfl.cacuData[_wfl.cacuData.length] = {"colum": "c"+i, "left": ( ( _wfl.wfl_width +  _wfl.wfl_padding ) *  i) , "height": ($(this).height() + _wfl.wfl_padding)} ;   //保存单行个列的高度
+
+	            }
+	             i ++;
+	             limit --;
+	          });      
+	          
+	      }
+	      if(data){
+	         this.createHtml(data);
+	     }
+	     
+	    },
+	    
+	    
+	    sortListByName :function (list ,  cname ){     
+	      var i,j,k,temp,n = list.length;      
+	      var list = list;
+	      for( i = 0; i < n; i++){        
+	        for( j = 0; j < n; j++ ){
+	           
+	            if( list[i][cname] < list[j][cname]  ){
+	              temp = list[i];
+	              list[i] = list[j];
+	              list[j] = temp;   
+	            }
+	        }
+	      }     
+	    },
+	    
+	    
+	    
+	    /**
+	    * @method
+	    * @param  {array} list 二维数组 当前加载的单行列元素列表
+	    */
+	    setColSite : function (list) {
+	     
+	      var ilist = list;
+	      var oblist= [];
+	      var len = ilist.length > _wfl.wfl_count ? _wfl.wfl_count : ilist.length;
+	     
+	      for (var i = 0; i <  len; i++){     //从多个数据中取出限定的列个数进行比较   
+	         oblist[oblist.length] = ilist.shift();         
+	      }
+	      
+	      var objArr =[];
+	      for (var j = 0; j < oblist.length; j++) { //将取出的数据整理成有对应高度的数组进行排序
+	        objArr[objArr.length] = {"id":oblist[j], "height":$("#"+oblist[j]) .height()};        
+	        
+	      }
+	    
+	      this.sortListByName(_wfl.cacuData, "height");//高度排序
+	     
+	      this.sortListByName(objArr, "height");//高度排序  
+	      
+	      var k = len-1;
+	      var maxHeight = 0,hIndex,curElem;
+	      for( i = 0; i <  len; i++ ){
+	        curElem =  $("#" + objArr[i].id);
+	        curElem.css({left: _wfl.cacuData[k].left + "px", top: _wfl.cacuData[k].height + "px",opacity:1});   
+
+	       
+	        _wfl.cacuData[k].height += ( objArr[i].height + _wfl.wfl_padding );
+	         
+	        if ( _wfl.cacuData[k].height > maxHeight) {
+	          maxHeight = _wfl.cacuData[k].height;
+	          hIndex = k;
+	        }
+	        
+	        k--;
+	      }
+	     
+	      _wfl.$iBlock.css("height",  _wfl.cacuData[hIndex].height + "px")
+	      
+	      
+	      //规定一行判断一次
+	      if ( ilist.length > 0) {
+	        _wfl.setColSite( ilist );        
+	      }
+	    },
+	    
+	    
+	    
+	     createHtml : function (jsonList){
+	       
+	       var beginId = _wfl.lastId + 1; //建立ID名       
+	       var loadLen = jsonList.length;
+	       var idlist = [];
+	       
+	       var temStr = "";
+	       
+
+	      // if(loadLen == _wfl.wfl_count){
+	       
+	             for(var i = 0; i < loadLen; i++ ){
+	               jsonList[i]["id"] = _wfl.idFirstName +"_"+beginId;         
+	               idlist.push(_wfl.idFirstName +"_"+beginId);
+	               beginId ++ ;
+	               temStr += _wfl.htmlFormat( _wfl.wfl_fomat, jsonList[i] );
+	             }
+	             
+	             _wfl.lastId = beginId;
+	             _wfl.wfl_times = loadLen;
+	           
+	             _wfl.$iBlock.append(temStr);    
+	            
+	              
+	              var myInterval = setInterval(function(){
+	                  if (_wfl.wfl_times == 0){
+	                      clearInterval(myInterval);
+	                      _wfl.setColSite( idlist );
+	                  } 
+	              },1)        
+	        //}else{
+	            
+	          
+	        //}
+
+	     },
+	     
+	     
+	     
+	      /**
+	     * 说明：新增字符串format方法
+	     * 用法. var resultStr = htmlFormat(拥有占位符的字符串,{key:value,key:value....key:value});
+	     * @methed strFormat
+	     * @param  {string} str  第一个是具有占位符的字符串，后面的都是加入到对应占位符的阐述
+	     * @param  {json} obj json格式对象
+	     * @return {string} 拼接完成的字符串
+	     */
+	      htmlFormat:function(str, obj){
+	        if(obj == undefined || obj == null) {
+	          return str;
+	        }			
+	        var s = str;			
+	        $.each(obj, function(i) {
+	          s = s.replace(new RegExp("\\%" + i + "\\%","g"), obj[i]);
+	        });   
+	        return s;
+	      }
+	     
+	}
+
+
+	function loadcomplete(){    
+	    _wfl.wfl_times --;
+	}
+	/* 测试数据 */
+ <%--  var demoJson = {"data":[
+	                		{
+	                	   "idi":1, 
+	                	  "starpath":"<%=basePath%>template/img/star.png", 
+	                	  "picpath":"/picture/2169/2169e802bede2a/3.jfif", 
+	                	  "picId":"11", 
+	                	  "picNam":"111", 
+	                	  "picDirpath":"/emaildata/2169/2169e802bede2a/3.jfif", 
+	                	  "starFlag":"1", 
+	                	  "favoritePerson":"favoritePerson", 
+	                	  "caseName":"caseName"
+	                	   },
+	                	   {
+	                	   "idi":2, 
+	                	 "starpath":"<%=basePath%>template/img/star.png",
+	                	  "picpath":"/picture/2169/2169e802bede2a/10.jpg", 
+	                	  "picId":"22", 
+	                	  "picNam":"222", 
+	                	  "picDirpath":"/emaildata/2169/2169e802bede2a/10.jpg", 
+	                	  "starFlag":"1", 
+	                	  "favoritePerson":"favoritePerson", 
+	                	  "caseName":"caseName"
+	                	   },
+	                	   {
+	                	   "idi":3, 
+	                	 "starpath":"<%=basePath%>template/img/star.png",
+	                	  "picpath":"/picture/2160/2160bfb4d06f47/timg.jpg", 
+	                	  "picId":"33", 
+	                	  "picNam":"333", 
+	                	  "picDirpath":"/emaildata/2160/2160bfb4d06f47/timg.jpg", 
+	                	  "starFlag":"1", 
+	                	  "favoritePerson":"favoritePerson", 
+	                	  "caseName":"caseName"
+	                	   },
+	                	   {
+	                	   "idi":4, 
+	                	 "starpath":"<%=basePath%>template/img/star.png",
+	                	  "picpath":"/picture/2169/2169e802bede2a/5.jpg", 
+	                	  "picId":"44", 
+	                	  "picNam":"444", 
+	                	  "picDirpath":"/emaildata/2169/2169e802bede2a/5.jpg", 
+	                	  "starFlag":"1", 
+	                	  "favoritePerson":"favoritePerson", 
+	                	  "caseName":"caseName"
+	                	   },
+	                	   {
+	                	   "idi":5, 
+	                	  "starpath":"<%=basePath%>template/img/star.png",
+	                	  "picpath":"/picture/2169/2169e802bede2a/1.jfif", 
+	                	  "picId":"55", 
+	                	  "picNam":"555", 
+	                	  "picDirpath":"/emaildata/2169/2169e802bede2a/1.jfif", 
+	                	  "starFlag":"1", 
+	                	  "favoritePerson":"favoritePerson", 
+	                	  "caseName":"caseName"
+	                	   }
+
+	                 ]}; --%> 
+
+
+	
+	  var demoJson = {"data":bei};
+	 
+	  
+	  
+</script>

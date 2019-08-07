@@ -1,0 +1,1354 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+   <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+   <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%
+	String path = request.getContextPath();
+	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
+			+ path + "/";
+%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+
+<link rel="stylesheet" type="text/css"
+	href="<%=basePath%>template/css/cloud-admin.css">
+<link rel="stylesheet" type="text/css"
+	href="<%=basePath%>template/css/themes/default.css" id="skin-switcher">
+<link rel="stylesheet" type="text/css"
+	href="<%=basePath%>template/css/responsive.css">
+<link rel="stylesheet" type="text/css"
+	href="<%=basePath%>template/css/bootstrap.css">
+<link rel="stylesheet" type="text/css"
+	href="<%=basePath%>template/css/app.css">
+
+
+<link href="<%=basePath%>template/css/shengshiqu/common.css"
+	rel="stylesheet" />
+<link href="<%=basePath%>template/css/shengshiqu/select2.css"
+	rel="stylesheet" />
+</head>
+<style>
+
+
+.find_nav_left {
+	height: 46px;
+	position: relative;
+	overflow: hidden;
+
+}
+.find_nav_cur a {
+	color: #48a5f4 !important;
+}
+.find_nav_list ul {
+	position: relative;
+	white-space: nowrap;
+	font-size: 0;
+}
+
+.find_nav_list ul li {
+	display: inline-block;
+	padding: 0 13px;
+}
+
+.find_nav_list ul li a {
+	
+	width: 100%;
+	height: 100%;
+	line-height: 10px;
+	font-size: 16px;
+	text-align: center;
+	color: #666;
+	display:block;
+	line-height:50px;
+}
+
+.inline {
+	display: inline-block;
+}
+
+	#menu, #menu li {
+		list-style:none; /* 将默认的列表符号去掉 */
+		padding:0; /* 将默认的内边距去掉 */
+		margin:0; /* 将默认的外边距去掉 */
+		}
+#menu li { 
+		float:left; /* 往左浮动 */
+		padding: 0px 30px 0px 30px;
+		}
+
+
+.menus {
+	width:400px;
+	height:35px;
+ 	white-space:nowrap;
+	overflow:hidden;
+	text-overflow:ellipsis;
+
+}
+#menu li a:hover {
+
+color:#475e9c; /* 变换文字颜色 */
+
+}
+
+#menu li a:active { 
+color:#475e9c; 
+
+}
+.spn1 {
+padding-left:5.4%;
+	font-size: 14px;
+}
+.span2 {
+color:red;
+}
+.span-1 {
+	display: inline-block;
+	background-color: #f0f3f4;
+	font-size: 15px;
+	line-height: 30px;
+	/* border:1px solid black; */
+}
+.menuss{
+	width:300px;
+	height:35px;
+	white-space:nowrap;
+	overflow:hidden;
+	text-overflow:ellipsis;
+}
+
+.sideline {
+	display: block;
+	position: absolute;
+	border: 0;
+	height: 10px;
+	background-color: #48a5f4;
+	left: 0;
+	top: 43px;
+	pointer-events: none;
+}
+
+</style>
+
+<body>
+	<%-- <jsp:include page="left.jsp"></jsp:include> --%>
+
+	<div class="bg-light lter b-b wrapper-md">
+		<h1 class="m-n h4" >智能检索</h1>
+		<span id="dasousuo" style=" display:none;"></span>
+	</div>
+ 		<div class="" style="padding-left: 20px;padding-top: 15px;float: left;">
+			<a href="<%=basePath%>getGimps.php" class="btn w-xs btn-info" style="margin-right: 30px;" onclick="return">返回上一级</a>
+		</div>
+		<div class="form-group" style="float: left;margin-left: 20px;">
+			<span class="alcenter" style="float: left;margin-top: 23px;">已选案件：</span>
+			<div id="spans" style="margin-left: 75px; margin-top: 14px;width:1300px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
+		</div>
+	<div class="wrapper-md" style="height: 93%;">
+		<div class="col-md-12" style="height: 100%;">
+			
+			<div class="row">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+					<span>已找到<span id="nuba">0</span>条包含“<span id="text"></span>”的搜索结果</span> 
+				
+					</div>
+					<div class="panel-body" style="padding: 0 0 15px;">
+								
+						<table id="datatable" class="table table-striped table-hover"
+							style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+							<thead>
+								<tr>
+									<td class="" id = "">
+									<div class="find_nav">
+									<div class="find_nav_left">
+									<div class="find_nav_list">
+									<ul id="menu" >
+
+											<li><a  id="sum" class="ali"  onclick="Searchdocandemail(1)">全部[0]</a></li>
+											<!-- <li><a  id="ghdb" class="ali"  onclick="SearchGHDB(1)">黑客数据库[0]</a></li> -->
+											<li><a  id="jpg"class="ali"  onclick="">图片[0]</a></li>
+											<li><a  id="doc" class="ali"  onclick="SearchResultdoc(1)">文档[0]</a></li>
+											<li><a  id="leng" class="ali"  onclick="showAllemail(1)">邮件[0]</a></li>
+											<li><a  id="docdoc"class="ali"  onclick="" >DOC[0]</a></li>
+											<li><a  id="pdfpdf"class="ali"  onclick="" >PDF[0]</a></li>
+											<li id="butn" class="sideline"></li>
+									</ul>
+									</div>
+									</div>
+									</div>
+									</td>
+<!-- 									<td style="font-size: 14px;color:#bababa;padding-top: 25px;margin: 0px;">
+									<span style="margin-right: -20px;">
+										已选案件：全部案件
+									</span>
+									</td> -->
+									<td style="padding-top: 20px;margin: 0px;">
+										<button data-target="#myModals" data-toggle="modal" type='button' class="btn btn-info" style="width:120px;" onclick="showcase()" >选择案件</button>
+									</td>
+								</tr>
+							</thead>
+						</table>
+				
+						<div id = "" class="panel-body"style="width: 100%;padding: 0px; height:600px;">
+							<table id = "emails" style="border-bottom: 1px solid #DDDDDD;width: 100%;table-layout: fixed;">
+							
+							</table>
+						</div>
+							
+						
+							<div id="total" style="text-align: center;" class="pagecount inline" style="height: 29px;">
+								<span style="margin-left: 700px;" id="tot"></span>
+							</div>
+							<div class="pagebar inline"
+								style="position: absolute; right: 10px; height: 29px;">
+								<ul class="pagination pagination-sm" style="margin: 0;">
+									<li id = "pages1"></li>
+									
+									<li id = "pages"></li>	
+				            		
+									<li id = "pages2"></li>
+								</ul>
+							</div>				
+					</div>
+					
+				</div>
+			</div>
+			</div>
+		</div>
+		
+				<!-- 邮件内容 -->
+		<div class="modal right fade" id="myModal" tabindex="-1" role="dialog"
+			aria-labelledby="myModalLabel" aria-hidden="true" >
+				
+				<div class="panel panel-default" style="width: 60%;height:80%; margin: auto;">
+					<div class="panel-heading">
+						邮件内容<span style="float: right;"></span>
+					</div>
+					<div class="panel-body"
+						style="margin-top: 2%;margin-left: 2%; height: auto;border-bottom:1px solid #DDDDDD;margin-right: 2%;">
+						<div id="emailsubject" style="font-weight: bolder;font-size: 17px;">邮件标题</div>
+						<!-- <div id="emailurl" style=" display:none;"></div> -->
+						
+						<div id="emailtoWho">发件人：</div>
+						
+						<div id="emailfromWho">收件人：</div>
+						<div id="emaildate">时间：</div>
+					</div>
+					<div  class="panel-body" style="margin-top: 2%;margin-left: 2%;border-bottom:1px solid #DDDDDD;margin-right: 2%;">
+							<img src="<%=basePath%>template/img/word.png" /> 项目文档.doc (730KB)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="<%=basePath%>template/img/yasuo.png" />项目说明.rar (12MB)
+					</div>
+					<div style=" overflow-x:hidden;height: 55%;width: 97%;margin-top: 2%;margin-left: 2%;margin-right: 2%;" id="emailcontent" ></div>
+					
+				</div>
+			</div>
+	<div class="modal right fade" id="myModals"  tabindex="-1" style="width:100%;height: 100%;margin: auto;">
+		<div class="panel panel-default" style="width:30%;height: 80%;margin:3% auto;" >
+			<div class="panel-heading">更改案件</div>
+	 			<div class="panel-body" style="width:100%;height: 100%;">
+	 					<div class="panel-body" style="width:100%">
+							<input id="caseinfo" name="caseinfo" class="form-control" placeholder="搜索案件名称/案件编号" type="text" style="float:left;width:82%;"/>
+							<button type='button' class="btn btn-info" style="width: 70px;margin-left: 10px;height: 34px" onclick="showcase()">搜索</button>
+						</div>
+<!-- 						<div class="panel-body" style="width:100%" >
+							<span style="float: left;">已选案件：</span> <div id="spans1" style="margin-left: 65px;margin-top: -9px;"></div>
+						</div> -->
+						<div class="panel-body" style="height: 65%;overflow-y: scroll;">		
+								<table id="datatable" class="table table-striped table-hover" style="border: 1px solid #DDDDDD;">
+									<tbody id="tbcont">
+										<tr>
+											<td class="td_left"><input type="checkbox" id="ckall" onclick="selectAll()"/></td>
+											<td class="td_left">案件编号</td>
+											<td class="td_right">案件名称</td>
+										</tr>
+									</tbody>
+								</table>		
+						</div>
+						<button type='button' class="btn btn-info" style="width: 70px;height: 34px;margin-left: 40%;margin-top: 3%" onclick="checkCase();">选择</button>
+				</div>
+    	</div>
+</div>	
+		
+			<script src="<%=basePath%>template/js/jquery/jquery-2.0.3.min.js"></script>
+	<script src="<%=basePath%>template/js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+	<script src="<%=basePath%>template/bootstrap-dist/js/bootstrap.min.js"></script>
+	<script src="<%=basePath%>template/js/cutover/js.js"></script>
+	<script type="text/javascript">
+	
+	
+	var caseID = new Array();
+	var dl=1;
+	var typess = '<%=session.getAttribute("typess")%>';
+	//alert(typess);
+	  var big_search_box = '<%=session.getAttribute("big_search_boxx")%>';
+	//alert(big_search_box);
+	
+	//window.onload = Searchdocandemail(1);
+	//window.onload = showcase();
+	
+	
+	
+	$(function(){
+		if(typess==1){
+			//alert(typess);
+			Searchdocandemail(1);
+			//document.getElementById("sum").click();
+		};
+		
+		 /* if(typess==2){
+			 //SearchGHDB(1);
+			 //alert(typess);
+			 document.getElementById("ghdb").click();
+			 
+		}; */
+		if(typess==3){
+			//alert(typess);
+			//showAllemail(1);
+			//SearchResultdoc(1);
+			document.getElementById("doc").click();
+		};
+		if(typess==4){
+			//alert(typess);
+			//showAllemail(1);
+			document.getElementById("leng").click();
+		};
+ 		 if(typess==5){
+ 			//SearchResultdoc(1);
+ 			document.getElementById("jpg").click();
+ 		}; 
+	});
+	
+	//查询全部
+	function Searchdocandemail(pageno){
+		
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>admin/Searchdocandemail.php",
+			data : {
+				"big_search_box":big_search_box,
+				"pageno":pageno,
+				"caseidStr":caseidStr
+			},
+			dataType : "json",
+			async: true,
+			success : function(data) {
+				
+				var total=data.total;
+				var items=data.allesDTOList;
+				var caseidd = data.caseidlist;
+				//alert(items.length);
+				 $("#text").text(big_search_box);
+				 $("#nuba").text(total);
+				 $("#sum").text("全部["+total+"]");
+
+					var sizes=8;
+					var pagesum=total;
+					var pagenum = pagesum / sizes;
+					//5%3=5-(5/3)*3=2
+					var length=5;  //要显示的分页页数
+					
+					if(pagenum%1!=0){
+						pagenum=pagenum+(1-pagenum%1);
+				}
+				
+				
+				$("#pages").empty();
+				$("#emails").empty();
+				//用于删除之前显示的页数，动态添加时id名均设为order
+				for(var i=1;i<=length;i++)
+					  $("#order").remove();
+				
+				if(pagesum<sizes){
+					var html2 = '<li class="active" id="order"><a href="#" onclick="Searchdocandemail(1)">1</a></li >';
+					$("#pages").after(html2);	
+					
+					
+				}else{
+				
+					if(pageno<pagenum){
+					if(pageno+length-1<=pagenum){
+						var html2="";
+						if(pageno-2>0){
+							for(var i =pageno-2;i<=pageno+length-1-2;i++){	
+								if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="Searchdocandemail('+i+')">'+i+'</a></li >';
+									else
+						
+										html2 += '<li id="order"><a href="#" onclick="Searchdocandemail('+i+')">'+i+'</a></li >';  
+						   				   }
+							}
+						else{
+							for(var i =1;i<=length;i++){	
+								if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="Searchdocandemail('+i+')">'+i+'</a></li >';
+									else
+						
+										html2 += '<li id="order"><a href="#" onclick="Searchdocandemail('+i+')">'+i+'</a></li >';  
+						   				   }
+						}
+					//alert(html2);
+					$("#pages").after(html2);
+				
+					}/* if */
+					else{
+						var html2="";
+						if(pagenum>=length){
+						for(var i =pageno-(length-1-pagenum+pageno);i<=pagenum;i++){	
+							
+							 
+							 if(i==pageno)
+								html2 += '<li class="active" id="order"><a href="#" onclick="Searchdocandemail('+i+')">'+i+'</a></li >';
+							else
+								html2 += '<li id="order"><a href="#" onclick="Searchdocandemail('+i+')">'+i+'</a></li >'; 
+							
+						   }
+						//alert(html2);
+						$("#pages").after(html2);	
+						}
+						else{
+							
+							for(var i =1;i<=pagenum;i++){	
+								
+								  
+								 if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="Searchdocandemail('+i+')">'+i+'</a></li >';
+								else
+									html2 += '<li id="order"><a href="#" onclick="Searchdocandemail('+i+')">'+i+'</a></li >';
+								 
+								
+							   }
+							$("#pages").after(html2);	
+						}
+							
+					}
+				}
+				else{
+					if(pageno==pagenum){
+						var html2="";
+					
+						for(var i =pageno-length+1>0?pageno-length+1:1;i<=pagenum;i++){	
+						
+						
+						 if(i==pageno)
+							html2 += '<li class="active" id="order"><a href="#" onclick="Searchdocandemail('+i+')">'+i+'</a></li >';
+						else
+							html2 += '<li id="order"><a href="#" onclick="Searchdocandemail('+i+')">'+i+'</a></li >';
+							 
+					   }
+						$("#pages").after(html2);
+					}/* if */
+				}
+			}
+				$("#tot").empty();
+				$("#pages1").empty();
+				$("#pages2").empty();
+				var html3 ='<span >共'+pagesum+'条，当前'+pageno+'/'+pagenum+'页</span>';
+				$("#tot").append(html3);
+				var html5 = '<a href="#" onclick="Searchdocandemail('+pageno+'-1<1?1:'+pageno+'-1)"><</a>';
+				$("#pages1").append(html5);
+				
+				var html4 = '<a href="#" onclick="Searchdocandemail('+pageno+'+1>'+pagenum+'?'+pagenum+':'+pageno+'+1)">></a>';
+				$("#pages2").append(html4);
+				
+				$("#emails").empty();
+				$.each(items,function(i,item){
+					//alert(item._type);
+					if(item._type=="docType"){
+						var htmldoc = 	
+						'<tr">'+
+							'<td class="menuss" style=" padding-left:30px;"><a id="lookOnlineOfSearch" onclick="lookOnlineOfDoc('+i+')">'+item.fileName+'</a></td>'+
+						'</tr>'+
+						'<tr onclick="lookOnlineOfDoc('+i+')" style="border-bottom: 1px solid #DDDDDD;">'+
+							'<td class="menuss" id="menus" style="padding-left:30px">文件大小：'+item.fileSize+'kb</td>'+
+							'<td class="menuss" id="menus" style="">扩展名：'+item.docType+'</td>'+
+							'<td class="menuss" style="" >案件名称：'+item.caseName+'</td>'+
+							'<td class="menuss" style="" >案件编号：'+item.caseID+'</td>'+
+							'<td class="menuss" style="" >导入日期：'+item.editDate+'</td>'+
+							'<td class="menuss" id="docUrl'+i+'" style="display:none;">'+item.file_download_url+'</td>'+
+						'</tr>';
+							
+						$("#emails").append(htmldoc);
+						
+					}
+					if(item._type=="email"){
+						//alert(item._type);
+						var htmlemail = '<tr>'+
+											'<td  data-toggle="modal" data-target="#myModal" onclick="showdetails('+i+')" class="menus" style="padding-left:30px;">'+item.subject+'</td>'+
+										'</tr>'+
+										'<tr data-toggle="modal" data-target="#myModal" onclick="showdetails('+i+')"style="border-bottom: 1px solid #DDDDDD;">'+
+											'<td class="menus" id="menus" style="padding-left:30px;" >发件人：'+item.fromWho+'</td>'+
+											'<td class="menus" id="menus" style="padding-left:200px;">收件人：'+item.toWho+'</td>'+
+											'<td class="menus" style="padding-left:200px;">邮件日期：'+item.date+
+											'<span id="emaildetails1'+i+'" style=" display:none;">'+item.subject+'</span>'+
+											'<span id="emaildetails2'+i+'" style=" display:none;">'+item.toWho+'</span>'+
+											'<span id="emaildetails3'+i+'" style=" display:none;">'+item.fromWho+'</span>'+
+											'<span id="emaildetails4'+i+'" style=" display:none;">'+item.date+'</span>'+
+											'<span id="emaildetails5'+i+'" style=" display:none;">'+item.content+'</span>'+ 
+											'</td>'+
+										'</tr>';
+					$("#emails").append(htmlemail);
+					}
+					/* if(item._type=="hkdb"){
+						var html = 
+							'<tr style="border-bottom: 1px solid #DDDDDD;">'+
+							'<td class="menuss" id="menus" style="padding-left:30px">邮箱：'+item.email+'</td>'+
+							'<td class="menuss" id="menus" style="">来源：'+item.dataSource+'</td>'+
+							'<td class="menuss" style="">邮箱密码：'+item.emailPasswd+'</td>'+
+							'<td class="menuss" style="">QQ账号：'+item.qqNum+'</td>'+
+							'<td class="menuss" style="">QQ密码：'+item.qqPasswd+'</td>'+
+						'</tr>';
+						$("#emails").append(html);
+						
+					} */
+				});
+				$.each(caseidd,function(i,id){
+					caseID.push(id.caseID);
+					//alert(id.caseID);
+				});
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+				alert("失败");
+				 $("#text").text(big_search_box);
+			}
+		});
+	}
+	//查询黑客数据库
+	<%-- function SearchGHDB(pageno){
+		document.getElementById("dasousuo").innerText=big_search_box;
+		
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>admin/SearchGHDB.php",
+			data : {
+				"big_search_box":big_search_box,
+				"pageno":pageno,
+				"caseidStr":caseidStr
+			},
+			dataType : "json",
+			async: true,
+			success : function(data) {
+				//alert("访问成功");
+				var total=data.total;
+				var items=data.allesDTOList;
+				var caseidd = data.caseidlist;
+				 $("#text").text(big_search_box);
+				 $("#nuba").text(total);
+				 $("#ghdb").text("黑客数据库["+total+"]");
+
+					var sizes=8;
+					var pagesum=total;
+					var pagenum = pagesum / sizes;
+					//5%3=5-(5/3)*3=2
+					var length=5;  //要显示的分页页数
+					
+					if(pagenum%1!=0){
+						pagenum=pagenum+(1-pagenum%1);
+				}
+				
+				
+					$("#pages").empty();
+					$("#emails").empty();
+				//用于删除之前显示的页数，动态添加时id名均设为order
+				for(var i=1;i<=length;i++)
+					  $("#order").remove();
+				
+				if(pagesum<sizes){
+					var html2 = '<li class="active" id="order"><a href="#" onclick="SearchGHDB(1)">1</a></li >';
+					$("#pages").after(html2);	
+					
+					
+				}else{
+				
+				if(pageno<pagenum){
+					if(pageno+length-1<=pagenum){
+						var html2="";
+						if(pageno-2>0){
+							for(var i =pageno-2;i<=pageno+length-1-2;i++){	
+								if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="SearchGHDB('+i+')">'+i+'</a></li >';
+									else
+						
+										html2 += '<li id="order"><a href="#" onclick="SearchGHDB('+i+')">'+i+'</a></li >';  
+						   				   }
+							}
+						else{
+							for(var i =1;i<=length;i++){	
+								if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="SearchGHDB('+i+')">'+i+'</a></li >';
+									else
+						
+										html2 += '<li id="order"><a href="#" onclick="SearchGHDB('+i+')">'+i+'</a></li >';  
+						   				   }
+						}
+					//alert(html2);
+					$("#pages").after(html2);
+				
+					}
+					else{
+						var html2="";
+						if(pagenum>=length){
+						for(var i =pageno-(length-1-pagenum+pageno);i<=pagenum;i++){	
+							
+							 
+							 if(i==pageno)
+								html2 += '<li class="active" id="order"><a href="#" onclick="SearchGHDB('+i+')">'+i+'</a></li >';
+							else
+								html2 += '<li id="order"><a href="#" onclick="SearchGHDB('+i+')">'+i+'</a></li >'; 
+							
+						   }
+						//alert(html2);
+						$("#pages").after(html2);	
+						}
+						else{
+							
+							for(var i =1;i<=pagenum;i++){	
+								
+								  
+								 if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="SearchGHDB('+i+')">'+i+'</a></li >';
+								else
+									html2 += '<li id="order"><a href="#" onclick="SearchGHDB('+i+')">'+i+'</a></li >';
+								 
+								
+							   }
+							$("#pages").after(html2);	
+						}
+							
+					}
+				}
+				else{
+					if(pageno==pagenum){
+						var html2="";
+					
+						for(var i =pageno-length+1>0?pageno-length+1:1;i<=pagenum;i++){	
+						
+						
+						 if(i==pageno)
+							html2 += '<li class="active" id="order"><a href="#" onclick="SearchGHDB('+i+')">'+i+'</a></li >';
+						else
+							html2 += '<li id="order"><a href="#" onclick="SearchGHDB('+i+')">'+i+'</a></li >';
+							 
+					   }
+						$("#pages").after(html2);
+					}
+				}
+			}
+				$("#tot").empty();
+				$("#pages1").empty();
+				$("#pages2").empty();
+				var html3 ='<span >共'+pagesum+'条，当前'+pageno+'/'+pagenum+'页</span>';
+				$("#tot").append(html3);
+				
+				
+				var html5 = '<a href="#" onclick="SearchGHDB('+pageno+'-1<1?1:'+pageno+'-1)"><</a>';
+				$("#pages1").append(html5);
+				
+				var html4 = '<a href="#" onclick="SearchGHDB('+pageno+'+1>'+pagenum+'?'+pagenum+':'+pageno+'+1)">></a>';
+				$("#pages2").append(html4);
+				
+
+				$("#emails").empty();
+			
+				$.each(items,function(i,item){
+					var html = 
+								'<tr style="border-bottom: 1px solid #DDDDDD;">'+
+									'<td class="menuss" id="menus" style="padding-left:30px">邮箱：'+item.email+'</td>'+
+									'<td class="menuss" id="menus" style="">来源：'+item.dataSource+'</td>'+
+									'<td class="menuss" style="">邮箱密码：'+item.emailPasswd+'</td>'+
+									'<td class="menuss" style="">QQ账号：'+item.qqNum+'</td>'+
+									'<td class="menuss" style="">QQ密码：'+item.qqPasswd+'</td>'+
+								'</tr>';
+					$("#emails").append(html);
+				});
+				$.each(caseidd,function(i,id){
+					caseID.push(id.caseID);
+					//alert(id.caseID);
+				});
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+				alert("失败");
+				 $("#text").text(big_search_box);
+			}
+		});
+	} --%>
+	
+	
+//查询邮件
+	function showAllemail(pageno){
+
+		document.getElementById("dasousuo").innerText=big_search_box;
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>admin/SearchResultss.php",
+			data : {
+				"big_search_box":big_search_box,
+				"pageno":pageno,
+				"caseidStr":caseidStr
+			},
+			dataType : "json",
+			async: true,
+			success : function(data) {
+				var total=data.total;
+				var items=data.allesDTOList;
+				var caseidd = data.caseidlist;
+				 $("#text").text(big_search_box);
+				 $("#nuba").text(total);
+				 $("#leng").text("邮件["+total+"]")
+
+					var sizes=8;
+					var pagesum=total;
+					var pagenum = pagesum / sizes;
+					//5%3=5-(5/3)*3=2
+					var length=5;  //要显示的分页页数
+					
+					if(pagenum%1!=0){
+						pagenum=pagenum+(1-pagenum%1);
+				}
+				
+				
+				$("#pages").empty();
+				$("#emails").empty();
+				//用于删除之前显示的页数，动态添加时id名均设为order
+				for(var i=1;i<=length;i++)
+					  $("#order").remove();
+				
+				if(pagesum<sizes){
+					var html2 = '<li class="active" id="order"><a href="#" onclick="showAllemail(1)">1</a></li >';
+					$("#pages").after(html2);	
+					
+					
+				}else{
+				
+				if(pageno<pagenum){
+					if(pageno+length-1<=pagenum){
+						var html2="";
+						if(pageno-2>0){
+							for(var i =pageno-2;i<=pageno+length-1-2;i++){	
+								if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="showAllemail('+i+')">'+i+'</a></li >';
+									else
+						
+										html2 += '<li id="order"><a href="#" onclick="showAllemail('+i+')">'+i+'</a></li >';  
+						   				   }
+							}
+						else{
+							for(var i =1;i<=length;i++){	
+								if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="showAllemail('+i+')">'+i+'</a></li >';
+									else
+						
+										html2 += '<li id="order"><a href="#" onclick="showAllemail('+i+')">'+i+'</a></li >';  
+						   				   }
+						}
+					//alert(html2);
+					$("#pages").after(html2);
+				
+					}
+					else{
+						var html2="";
+						if(pagenum>=length){
+						for(var i =pageno-(length-1-pagenum+pageno);i<=pagenum;i++){	
+							
+							 
+							 if(i==pageno)
+								html2 += '<li class="active" id="order"><a href="#" onclick="showAllemail('+i+')">'+i+'</a></li >';
+							else
+								html2 += '<li id="order"><a href="#" onclick="showAllemail('+i+')">'+i+'</a></li >'; 
+							
+						   }
+						//alert(html2);
+						$("#pages").after(html2);	
+						}
+						else{
+							
+							for(var i =1;i<=pagenum;i++){	
+								
+								  
+								 if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="showAllemail('+i+')">'+i+'</a></li >';
+								else
+									html2 += '<li id="order"><a href="#" onclick="showAllemail('+i+')">'+i+'</a></li >';
+								 
+								
+							   }
+							$("#pages").after(html2);	
+						}
+							
+					}
+				}
+				else{
+					if(pageno==pagenum){
+						var html2="";
+					
+						for(var i =pageno-length+1>0?pageno-length+1:1;i<=pagenum;i++){	
+						
+						
+						 if(i==pageno)
+							html2 += '<li class="active" id="order"><a href="#" onclick="showAllemail('+i+')">'+i+'</a></li >';
+						else
+							html2 += '<li id="order"><a href="#" onclick="showAllemail('+i+')">'+i+'</a></li >';
+							 
+					   }
+						$("#pages").after(html2);
+					}
+				}
+			}
+				$("#tot").empty();
+				$("#pages1").empty();
+				$("#pages2").empty();
+				var html3 ='<span >共'+pagesum+'条，当前'+pageno+'/'+pagenum+'页</span>';
+				$("#tot").append(html3);
+				
+				
+				var html5 = '<a href="#" onclick="showAllemail('+pageno+'-1<1?1:'+pageno+'-1)"><</a>';
+				$("#pages1").append(html5);
+				
+				var html4 = '<a href="#" onclick="showAllemail('+pageno+'+1>'+pagenum+'?'+pagenum+':'+pageno+'+1)">></a>';
+				$("#pages2").append(html4);
+				
+ 
+				$("#emails").empty();
+			
+				$.each(items,function(i,item){
+					
+					var html = '<tr>'+
+										'<td data-toggle="modal" data-target="#myModal" onclick="showdetails('+i+')" class="menus" style="padding-left:30px;">'+item.subject+'</td>'+
+									'</tr>'+
+									'<tr data-toggle="modal" data-target="#myModal" onclick="showdetails('+i+')" style="border-bottom: 1px solid #DDDDDD;">'+
+										'<td class="menus" id="menus" style="padding-left:30px;" >发件人：'+item.fromWho+'</td>'+
+										'<td class="menus" id="menus" style="padding-left:200px;">收件人：'+item.toWho+'</td>'+
+										'<td class="menus" style="padding-left:200px;">邮件日期：'+item.date+
+										'<span id="emaildetails1'+i+'" style=" display:none;">'+item.subject+'</span>'+
+										'<span id="emaildetails2'+i+'" style=" display:none;">'+item.toWho+'</span>'+
+										'<span id="emaildetails3'+i+'" style=" display:none;">'+item.fromWho+'</span>'+
+										'<span id="emaildetails4'+i+'" style=" display:none;">'+item.date+'</span>'+
+										'<span id="emaildetails5'+i+'" style=" display:none;">'+item.content+'</span>'+ 
+										
+										'</td>'+
+										
+									'</tr>';
+									//caseID.push(item.caseID);
+				
+					$("#emails").append(html);
+				});
+				$.each(caseidd,function(i,id){
+					caseID.push(id.caseID);
+					//alert(id.caseID);
+				});
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+				alert("失败");
+				 $("#text").text(big_search_box);
+			}
+		});
+	}
+	//查询文档
+	function SearchResultdoc(pageno){
+		document.getElementById("dasousuo").innerText=big_search_box;
+	
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>admin/SearchResultdoc.php",
+			data : {
+				"big_search_box":big_search_box,
+				"pageno":pageno,
+				"caseidStr":caseidStr
+			},
+			dataType : "json",
+			async: true,
+			
+			success : function(data) {
+				//alert("访问成功");
+				var total=data.total;
+				var items=data.allesDTOList;
+				var caseidd = data.caseidlist;
+				//alert(items.length);
+				 $("#text").text(big_search_box);
+				 $("#nuba").text(total);
+				 $("#doc").text("文档["+total+"]")
+		
+				 
+				 //分页
+				 	var sizes=8;
+					var pagesum=total;
+					var pagenum = pagesum / sizes;
+					//5%3=5-(5/3)*3=2
+					var length=5;  //要显示的分页页数
+					
+					
+					if(pagenum%1!=0){
+						pagenum=pagenum+(1-pagenum%1);
+				}
+				
+					$("#pages").empty();
+					$("#emails").empty();
+					//用于删除之前显示的页数，动态添加时id名均设为order
+					for(var i=1;i<=length;i++)
+						  $("#order").remove();
+					
+					if(pagesum<sizes){
+						var html2 = '<li class="active" id="order"><a href="#" onclick="SearchResultdoc(1)">1</a></li >';
+						$("#pages").after(html2);	
+						
+						
+					}else{
+					
+					if(pageno<pagenum){
+						if(pageno+length-1<=pagenum){
+							var html2="";
+							if(pageno-2>0){
+								for(var i =pageno-2;i<=pageno+length-1-2;i++){	
+									if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="SearchResultdoc('+i+')">'+i+'</a></li >';
+										else
+							
+											html2 += '<li id="order"><a href="#" onclick="SearchResultdoc('+i+')">'+i+'</a></li >';  
+							   				   }
+								}
+							else{
+								for(var i =1;i<=length;i++){	
+									if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="SearchResultdoc('+i+')">'+i+'</a></li >';
+										else
+							
+											html2 += '<li id="order"><a href="#" onclick="SearchResultdoc('+i+')">'+i+'</a></li >';  
+							   				   }
+							}
+						//alert(html2);
+						$("#pages").after(html2);
+					
+						}
+						else{
+							var html2="";
+							if(pagenum>=length){
+							for(var i =pageno-(length-1-pagenum+pageno);i<=pagenum;i++){	
+								
+								 
+								 if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="SearchResultdoc('+i+')">'+i+'</a></li >';
+								else
+									html2 += '<li id="order"><a href="#" onclick="SearchResultdoc('+i+')">'+i+'</a></li >'; 
+								
+							   }
+							//alert(html2);
+							$("#pages").after(html2);	
+							}
+							else{
+								
+								for(var i =1;i<=pagenum;i++){	
+									
+									  
+									 if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="SearchResultdoc('+i+')">'+i+'</a></li >';
+									else
+										html2 += '<li id="order"><a href="#" onclick="SearchResultdoc('+i+')">'+i+'</a></li >';
+									 
+									
+								   }
+								$("#pages").after(html2);	
+							}
+								
+						}
+					}
+					else{
+						if(pageno==pagenum){
+							var html2="";
+						
+							for(var i =pageno-length+1>0?pageno-length+1:1;i<=pagenum;i++){	
+							
+							
+							 if(i==pageno)
+								html2 += '<li class="active" id="order"><a href="#" onclick="SearchResultdoc('+i+')">'+i+'</a></li >';
+							else
+								html2 += '<li id="order"><a href="#" onclick="SearchResultdoc('+i+')">'+i+'</a></li >';
+								 
+						   }
+							$("#pages").after(html2);
+						}
+					}
+				}
+					$("#tot").empty();
+					$("#pages1").empty();
+					$("#pages2").empty();
+					var html3 ='<span >共'+pagesum+'条，当前'+pageno+'/'+pagenum+'页</span>';
+					$("#tot").append(html3);
+					
+					
+					var html5 = '<a href="#" onclick="SearchResultdoc('+pageno+'-1<1?1:'+pageno+'-1)"><</a>';
+					$("#pages1").append(html5);
+					
+					var html4 = '<a href="#" onclick="SearchResultdoc('+pageno+'+1>'+pagenum+'?'+pagenum+':'+pageno+'+1)">></a>';
+					$("#pages2").append(html4);
+					
+	 
+					$("#emails").empty();
+				$.each(items,function(i,item){
+				//alert(i);
+					var html222 = 	
+						'<tr">'+
+							'<td class="menuss" style=" padding-left:30px;"><a id="lookOnlineOfSearch" onclick="lookOnlineOfDoc('+i+')">'+item.fileName+'</a></td>'+
+						'</tr>'+
+						'<tr onclick="lookOnlineOfDoc('+i+')" style="border-bottom: 1px solid #DDDDDD;">'+
+							'<td class="menuss" id="menus" style="padding-left:30px">文件大小：'+item.fileSize+'kb</td>'+
+							'<td class="menuss" id="menus" style="">扩展名：'+item.docType+'</td>'+
+							'<td class="menuss" style="">案件名称：'+item.caseName+'</td>'+
+							'<td class="menuss" style="">案件编号：'+item.caseID+'</td>'+
+							'<td class="menuss" style="">导入日期：'+item.editDate+'</td>'+
+							'<td class="menuss" id="docUrl'+i+'" style="display:none;">'+item.file_download_url+'</td>'+
+						'</tr>';
+						
+					$("#emails").append(html222);
+
+				});
+				
+				$.each(caseidd,function(i,id){
+					caseID.push(id.caseID);
+					//alert(id.caseID);
+				});
+				
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+				alert("失败");
+				 $("#text").text(big_search_box);
+			}
+		});
+	}
+	
+	//查询图片
+	function SearchResultPic(pageno){
+		document.getElementById("dasousuo").innerText=big_search_box;
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>admin/SearchResultPic.php",
+			data : {
+				"big_search_box":big_search_box,
+				"pageno":pageno,
+				"caseidStr":caseidStr
+			},
+			dataType : "json",
+			async: true,
+			
+			success : function(data) {
+				//alert("访问成功");
+				var total=data.total;
+				var items=data.allesDTOList;
+				var caseidd = data.caseidlist;
+				 $("#text").text(big_search_box);
+				 $("#nuba").text(total);
+				 $("#jpg").text("图片["+total+"]")
+				 //分页
+				 	var sizes=8;
+					var pagesum=total;
+					var pagenum = pagesum / sizes;
+					//5%3=5-(5/3)*3=2
+					var length=5;  //要显示的分页页数
+					
+					
+					if(pagenum%1!=0){
+						pagenum=pagenum+(1-pagenum%1);
+				}
+				
+				
+				$("#pages").empty();
+				$("#emails").empty();
+				
+				//alert("empty");
+				//用于删除之前显示的页数，动态添加时id名均设为order
+				for(var i=1;i<=length;i++)
+					  $("#order").remove();
+				
+				if(pagesum<sizes){
+					var html2 = '<li class="active" id="order"><a href="#" onclick="SearchResultPic(1)">1</a></li >';
+					$("#pages").after(html2);	
+					
+					
+				}else{
+				
+				if(pageno<pagenum){
+					if(pageno+length-1<=pagenum){
+						var html2="";
+						if(pageno-2>0){
+							for(var i =pageno-2;i<=pageno+length-1-2;i++){	
+								if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="SearchResultPic('+i+')">'+i+'</a></li >';
+									else
+						
+										html2 += '<li id="order"><a href="#" onclick="SearchResultPic('+i+')">'+i+'</a></li >';  
+						   				   }
+							}
+						else{
+							for(var i =1;i<=length;i++){	
+								if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="SearchResultPic('+i+')">'+i+'</a></li >';
+									else
+						
+										html2 += '<li id="order"><a href="#" onclick="SearchResultPic('+i+')">'+i+'</a></li >';  
+						   				   }
+						}
+					//alert(html2);
+					$("#pages").after(html2);
+				
+					}/* if */
+					else{
+						var html2="";
+						if(pagenum>=length){
+						for(var i =pageno-(length-1-pagenum+pageno);i<=pagenum;i++){	
+							
+							 
+							 if(i==pageno)
+								html2 += '<li class="active" id="order"><a href="#" onclick="SearchResultPic('+i+')">'+i+'</a></li >';
+							else
+								html2 += '<li id="order"><a href="#" onclick="SearchResultPic('+i+')">'+i+'</a></li >'; 
+							
+						   }
+						//alert(html2);
+						$("#pages").after(html2);	
+						}
+						else{
+							
+							for(var i =1;i<=pagenum;i++){	
+								
+								  
+								 if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="SearchResultPic('+i+')">'+i+'</a></li >';
+								else
+									html2 += '<li id="order"><a href="#" onclick="SearchResultPic('+i+')">'+i+'</a></li >';
+								 
+								
+							   }
+							$("#pages").after(html2);	
+						}
+							
+					}
+				}
+				else{
+					if(pageno==pagenum){
+						var html2="";
+					
+						for(var i =pageno-length+1>0?pageno-length+1:1;i<=pagenum;i++){	
+						
+						
+						 if(i==pageno)
+							html2 += '<li class="active" id="order"><a href="#" onclick="SearchResultPic('+i+')">'+i+'</a></li >';
+						else
+							html2 += '<li id="order"><a href="#" onclick="SearchResultPic('+i+')">'+i+'</a></li >';
+							 
+					   }
+						$("#pages").after(html2);
+					}
+				}
+			}
+				$("#tot").empty();
+				$("#pages1").empty();
+				$("#pages2").empty();
+				var html3 ='<span >共'+pagesum+'条，当前'+pageno+'/'+pagenum+'页</span>';
+				$("#tot").append(html3);
+				
+				
+				var html5 = '<a href="#" onclick="SearchResultPic('+pageno+'-1<1?1:'+pageno+'-1)"><</a>';
+				$("#pages1").append(html5);
+				
+				var html4 = '<a href="#" onclick="SearchResultPic('+pageno+'+1>'+pagenum+'?'+pagenum+':'+pageno+'+1)">></a>';
+				$("#pages2").append(html4);
+				
+
+				$("#emails").empty();
+				
+				var html='<tr>';
+				$.each(items,function(i,item){
+					var srcStr = (item.picDirpath+"").replace("emaildata","picture");
+					html+='<td><div><img src="'+srcStr+'" style="width: 200px; height: 250px;margin-top:10px;margin-left:10px;"/></div></td>';
+					if((i+1)%4==0){
+						html+='</tr><tr>';
+					}
+
+				});
+				html+='</tr>';
+				//alert("html  =====    "+html);
+				$("#emails").append(html);
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+				alert("查询图片失败");
+				 $("#text").text(big_search_box);
+			}
+		});
+	}
+	
+	//点击邮件显示详情
+	function showdetails(i){
+		
+		var emailsubject = document.getElementById("emaildetails1"+i+"").innerHTML;
+		
+	 	var emailtoWho = document.getElementById("emaildetails2"+i+"").innerText;
+	 	
+		var emailfromWho = document.getElementById("emaildetails3"+i+"").innerText;
+		var emaildate = document.getElementById("emaildetails4"+i+"").innerText;
+		var emailcontent = document.getElementById("emaildetails5"+i+"").innerHTML;
+		//alert("emailcontentemailcontent"+emailcontent);
+		//alert(emailcontent);
+		//var emlpath = document.getElementById("emaildetails6"+i+"").innerText;  */
+		// alert(emailcontent); */
+		//document.getElementById("emailsubject").innerText="邮件标题 : "+emailsubject;
+		$("#emailsubject")[0].innerHTML="邮件标题 : "+emailsubject;
+		$("#emailtoWho").text("收件人 : "+emailtoWho);
+		$("#emailfromWho").text("发件人 : "+emailfromWho);
+		
+		$("#emaildate").text("时间："+emaildate);
+		$("#emailcontent")[0].innerHTML=emailcontent;
+		//$("#emailsubject").text(emailcontent);
+		//alert(emailsubject);
+		//document.getElementById("emailtoWho").innerText="发件人 : "+emailtoWho;
+		//document.getElementById("emailfromWho").innerText="收件人 : "+emailfromWho;
+		//document.getElementById("emaildate").innerText= emaildate;
+		//document.getElementById("emailcontent").innerText=emailcontent;
+		
+
+	}
+	<%-- //文档预览
+ 	function lookOnlineOfDoc(i) {
+		var lookOnlineOfSearchpath = document.getElementById("docUrl"+i).innerText;
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>admin/lookOnlineOfDoc.php",
+			data : {
+				"lookOnlineOfSearchpath":lookOnlineOfSearchpath
+			},
+			dataType : "json",
+			async: true,
+			
+			success : function(data) {
+				//alert("进去data");
+				}
+			}); 
+		$("#lookOnlineOfSearch").attr("href","<%=basePath %>admin/lookOnlineOfDoc.php?lookOnlineOfSearchpath="+lookOnlineOfSearchpath);
+		var httpUrls = $("#lookOnlineOfSearch").attr("href");
+		window.open(httpUrls,'_blank','');
+	} --%>
+	//文档预览
+ 	function lookOnlineOfDoc(i) {
+		var lookOnlineOfSearchpath = document.getElementById("docUrl"+i).innerText;
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>admin/lookOnlineOfDoc.php",
+			data : {
+				"lookOnlineOfSearchpath":lookOnlineOfSearchpath
+			},
+			dataType : "json",
+			//async: true,
+			success : function(data) {
+				//$("#lookOnlineOfSearch").attr("href",data.res);
+				//var httpUrls = $("#lookOnlineOfSearch").attr("href");
+				var httpUrls="<%=basePath%>"+data.res;
+				//alert(httpUrls);
+				window.open(httpUrls,'_blank','');
+			},
+			error:function(){
+			}
+		}); 
+		
+	}
+ 	//显示选择案件的案件
+ 	function showcase(){
+		var casenumorname = document.getElementById("caseinfo").value;
+		
+		caseID.sort(); //先排序
+		 var res = [caseID[0]];
+		 for(var i = 1; i < caseID.length; i++){
+		  if(caseID[i] !== res[res.length - 1]){
+		   res.push(caseID[i]);
+		  }
+		 }
+		//alert(res);
+		
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>admin/getmohucase.php",
+			data : {
+				"big_search_box":big_search_box,
+				"caseID":res
+			},
+			traditional: true,
+			dataType : "json",
+			async: true,
+			success : function(data) {
+				$("#tbcont").empty();
+				var htmlhead='<tr>'+
+					'<td class="td_left"><input type="checkbox" id="ckall" onclick="selectAll()"/></td>'+
+					'<td class="td_left">案件编号</td>'+
+					'<td class="td_right">案件名称</td>'+
+				'</tr>';
+				$("#tbcont").append(htmlhead);	
+				$.each(data,function(i,item){
+					var htmlhead2='<tr data-toggle="modal">';
+					var html = '<tr>'+
+						'<td class="td_left"><input id="caselist'+i+'" type="checkbox" name="ids" value="'+item.caseName+' '+item.id+'" onclick="showChoose(this.id);" />'+
+							'<td class="td_left">'+item.caseNum+'</td>'+
+							'<td class="td_right" id="">'+item.caseName+'</td>'+
+						'</tr>';
+					$("#tbcont").append(html);					
+				});
+
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+			}
+			
+		});
+		
+	}
+ 	//选择所有复选框
+	function selectAll(){
+		 var ckall=document.getElementById("ckall");
+	    var ck=document.getElementsByName("ids");
+	    for(var i=0;i<ck.length;i++){
+	    	ck[i].checked=ckall.checked;
+	    }
+	}
+	function showChoose(id){
+		 var ckall=document.getElementById(id);
+	    //var ck=document.getElementsByName(id);
+	   // for(var i=0;i<ck.length;i++){
+	    	ck[i].checked=ckall.checked;
+	    //}
+	}
+	
+	
+	//选择某个复选框案件将案件信息展示在页面上
+	var caseidStr ="";
+	function checkCase(obj){
+	    var CaseInfo = document.getElementsByName("ids");
+	    var str = [];
+	    for(i=0;i<CaseInfo.length;i++){
+	        if(CaseInfo[i].checked){
+	            str.push(CaseInfo[i].value.split(" ")[0]);
+	            if(caseidStr==""){
+	            	caseidStr=CaseInfo[i].value.split(" ")[1];
+	            }else{
+	            	caseidStr=caseidStr+" "+CaseInfo[i].value.split(" ")[1];
+	            }
+	        }
+	    }
+	   	//alert(str);
+	   	if($("#spans").text()!=null || $("#spans").text()!=""){
+	   		$("#spans").empty();
+	   	}
+	   	for (var i = 0; i < str.length; i++) {
+			var s = str[i];
+			//alert(s);
+			var html ='<span class="span-1" id="shanchu2'+i+'" style="width: 150px; height: 30px;margin-right: 15px;margin-top: 5px;" onclick="deletemainParty(this.id)">'+s+
+			'<img style="float: right; margin-right: 5px; margin-top: 7px;" src="<%=basePath%>template/img/x.png" /></span>';
+			$("#spans").append(html);	
+		}
+	   	showAllemail(1);
+	    $("#myModals").modal("hide");
+	  
+	}
+	
+	function deletemainParty(id){
+		$("#"+id+"").remove();
+	}
+	</script>
+</body>
+</html>

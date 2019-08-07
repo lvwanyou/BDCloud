@@ -1,0 +1,549 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<%
+		String path = request.getContextPath();
+		String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+%>  
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+	<style type="text/css">
+	body, html,#allmap {width: 100%;height: 100%;overflow: hidden;margin:0;font-family:"微软雅黑";}
+	</style>
+
+<title>地图展示</title>
+	<link href="<%=basePath%>template/css/cloud-admin.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/responsive.css">
+	<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/bootstrap.css">
+	<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/app.css">
+	<script src="<%=basePath%>template/js/jquery/jquery-2.0.3.min.js"></script>
+	<script src="<%=basePath%>template/js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+	<script src="<%=basePath%>template/bootstrap-dist/js/bootstrap.min.js"></script>
+	<style>
+.alcenter {
+	text-align: center;
+}
+.inline {
+	display: inline-block;
+}
+.form-inline .form-control {
+	/*width:auto;*/
+	max-width: 391px;
+	width: 391px;
+}
+.clabel {
+	margin-right:14px;
+}
+.small_pic{
+	float: left;
+	margin-left: 5px;
+	margin-top: 5px;
+	position:relative;
+}
+#img span{
+	margin-left: 42%;
+}
+.span-1 {
+	display: inline-block;
+	padding-left: 25px;
+	padding-right: 25px;
+	margin-top: 20px;
+	margin-left: 20px;
+	border: 1px solid #FBD5CA;
+	width: auto;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 2px 12px 2px 2px;
+	background-color: #FEF4F1;
+}
+.addFot{
+	position:absolute;
+	bottom:0px;
+	display:inline-block;
+	height:30px;
+	line-height:30px;
+	background:rgba(0,0,0,0.5);
+	font-size:14px;
+	color:#fff;
+	text-align:left;
+	padding-left:10px;
+	overflow:hidden;
+	left:0px;
+	width:100%;
+	transform:translate(0,-99999px);
+	-ms-transform:translate(0,-99999px); 	/* IE 9 */
+	-moz-transform:translate(0,-99999px); 	/* Firefox */
+	-webkit-transform:translate(0,-99999px);/* Safari 和 Chrome */
+	-o-transform:translate(0,-99999px);
+}
+.addHov:hover .addFot{
+	transform:translate(0,0px) ;
+	-ms-transform:translate(0,0px); 	/* IE 9 */
+	-moz-transform:translate(0,0px); 	/* Firefox */
+	-webkit-transform:translate(0,0px);/* Safari 和 Chrome */
+	-o-transform:translate(0,0px);
+}
+</style>
+</head>
+<body  style="overflow-y:scroll;">
+	<jsp:include page="common.jsp"></jsp:include>
+	<div class="bg-light lter b-b wrapper-md">
+  		<h1 class="m-n h4">图片人脸识别</h1>
+	</div>
+	<div class="row"
+		style="height:; width: 98%; margin-left: 1%; margin-top: 1%;">
+		<div class="form-group" style="float: left;">
+			<span class="alcenter" style="float: left;line-height:35px;">已选案件：</span>
+			<div id="spans" style="margin-left: 75px; margin-top: -12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
+		</div>
+			<div>
+			<button data-target="#myModals" data-toggle="modal" type='button' class="btn btn-info" style="width:120px;margin-right: 10px; float: right; margin-top: 1px;" onclick="showcase()" >选择案件</button>
+		</div>
+	</div>
+	
+	<div class="wrapper-md">
+	<div class="col-md-12">
+	<div class="row">
+		<div class="panel panel-default">
+					<div class="panel-heading">搜索<span style="float: right;"><img src="<%=basePath %>template/img/addevidence.png" onclick="testOfSearch(this)"></span></div>
+					<div class="panel-body" id="searchOfForm" style="display: block;">
+						<form class="form-inline" role="form" id="searchForm" action="<%=basePath %>admin/case_xietong.php" method="post">
+							<input type="hidden" name="pageno" id="pageno"/>
+							<div class="form-group">
+								<input type="text" value="" style="display: none;" />
+								<input type="text" id="dirName" class="form-control" placeholder="请输入图片名称..." onkeydown="onKeyDown(event)"/>
+							</div>
+							<button type="button" class="btn btn-info"
+								style="width: 75px; height: 30px; background-color: #475E9C;color: #fff;" onclick="showPicture(1)">搜索</button>
+						</form>
+					</div>
+				</div>
+				<div class="panel panel-default">
+					<div class="panel-heading">图片列表</div>
+					<div class="panel-body" id="PictureInfoList" >
+					
+					</div> 
+
+	<div class="round_shade_box2" id="zoom2" style="position: absolute; top: 0px; left: 350px; width: 1017px; height: 924px; display: none;">
+	
+	<img id="pic_one2" src="" style="vertical-align: middle; width: 100%;" onclick="setDisplay()">
+	 
+	</div>
+
+<!-- 	<div id="pic_one" style="display: ;vertical-align: middle ;"><img id="pic_one1111" src="/myImgs/testimg1.jpg" style="vertical-align: middle"/></div>
+    <div id="pic_one2" style="display: ;vertical-align: middle ;"><img id="pic_one1111" src="/myImgs/testimg1.jpg" style="vertical-align: middle"/></div>
+ -->
+					<div class="alcenter" style="font-size: 14px">
+						<div id="total_face" class="pagecount inline" style="height: 29px;">
+							<span id="tot1_face"></span>
+						</div>
+						<div class="pagebar inline" style="position: absolute; right: 134px; height: 29px;">
+							<ul class="pagination pagination-sm" style="margin: 0;">
+								<li id = "pages1_face"></li>
+										
+								<li id = "pages_face"></li>
+					            		
+								<li id = "pages2_face"></li>
+							</ul>
+						</div>
+						<div style="float: right;margin-right: 11px;">
+								<input class="form-control" type="text" style="width:52px;height:28px;border-radius:2px; display: inline;" id="givePages" name="givePages" onkeydown="onKeyDown(event)"/>
+								<button type="button" class="btn" onclick="showPicture(1)" style="width:52px;height:28px;line-height: 12px;">跳转</button>
+						</div>
+					</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		
+		<!-- 弹出框       选择标签 -->
+		<div class="modal right fade" id="myModalGPS" tabindex="-1" style="width: 100%; height: 100%; margin: auto;">
+				<div class="panel panel-default" style="width: 92%; height: 80%; margin: 3% auto;">
+					<div class="panel-heading" style="height:32px">
+					<div class="col-md-8">识别结果</div>
+					<div class="col-md-4" id="info_pic" ></div>
+					</div>
+					<div id="container" 
+					                style="
+						                width: 100%; 
+						                height: 580px; 
+						                top: 50; 
+						                display:none;
+						                text-align:center;
+						                overflow:hidden;">
+					</div>
+				</div>
+		</div>
+		
+		<div class="modal right fade" id="myModals"  tabindex="-1" style="width:100%;height: 100%;margin: auto;">
+		<div class="panel panel-default" style="width:30%;height: 80%;margin:3% auto;" >
+			<div class="panel-heading">更改案件</div>
+	 			<div class="panel-body" style="width:100%;height: 100%;">
+	 					<div class="panel-body" style="width:100%">
+							<input id="caseinfo" name="caseinfo" class="form-control" placeholder="搜索案件名称/案件编号" type="text" style="float:left;width:75%;" onkeyup="showcase()"/>
+							<button type='button' class="btn btn-info" style="width: 70px;margin-left: 10px;height: 34px" onclick="showcase()">搜索</button>
+						</div>
+<!-- 						<div class="panel-body" style="width:100%" >
+							<span style="float: left;">已选案件：</span> <div id="spans1" style="margin-left: 65px;margin-top: -9px;"></div>
+						</div> -->
+						<div class="panel-body" style="height: 60%;overflow-y: scroll;">		
+								<table id="datatable" class="table table-striped table-hover" style="border: 1px solid #DDDDDD;">
+									<tbody id="tbcont">
+										<tr>
+											<td class="td_left"><input type="checkbox" id="ckall" onclick="selectAll()"/></td>
+											<td class="td_left">案件编号</td>
+											<td class="td_right">案件名称</td>
+										</tr>
+									</tbody>
+								</table>		
+						</div>
+						<button type='button' class="btn btn-info" data-backdrop='static' data-dismiss="modal"style="width: 70px;height: 34px;margin-left: 40%;margin-top: 2%" onclick="checkCase();">选择</button>
+				</div>
+    	</div>
+</div>	
+</body>
+<script src="<%=basePath%>template/js/jquery/jquery-2.0.3.min.js"></script>
+<script src="<%=basePath%>template/js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+<script src="<%=basePath%>template/bootstrap-dist/js/bootstrap.min.js"></script>
+<script src="<%=basePath%>template/js/cutover/js.js"></script>
+<script type="text/javascript">
+	function setFilePath4(){
+		var filepath = $("#file4").val();
+		$("#picfile2").val(filepath);
+	}
+	//上传图片并定位
+	function imgGPSPostion(){
+		if($("#picfile2").val()==''){
+			alert("请选择文件！");
+			return false;
+		}
+		$("#searchForm").submit();
+	}
+	
+	window.onload = showPicture(1);
+	//查询图片
+	function showPicture(pageno){
+		var dirName =$("#dirName").val();
+		var givePages = $("#givePages").val();
+    	if(givePages!=""){
+    		pageno = parseInt(givePages);
+    	}
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>admin/showPictureInfo.php",
+			data : {
+				"pageIndex":pageno,
+				"dirName":dirName,
+				"caseidStr":caseidStr
+			},
+			dataType : "json",
+			async: true,
+			success : function(data) {
+//				var docs=data.hits.hits;
+				var sizes=8;
+				var pagesum=data.hits.total;
+				var pagenum = pagesum / sizes;
+				var length=5;  //要显示的分页页数
+					
+				if(pagenum%1!=0){
+						pagenum=pagenum+(1-pagenum%1);
+				}
+				$("#pages_face").empty();
+				
+				//用于删除之前显示的页数，动态添加时id名均设为order
+				for(var i=1;i<=length;i++)
+					  $("#order").remove();
+				
+				if(pagesum<sizes){
+					var html2 = '<li class="active" id="order"><a href="#" onclick="showPicture(1)">1</a></li >';
+					$("#pages_face").after(html2);	
+					
+					
+				}else{
+				
+				if(pageno<pagenum){
+					if(pageno+length-1<=pagenum){
+						var html2="";
+						if(pageno-2>0){
+							for(var i =pageno-2;i<=pageno+length-1-2;i++){	
+								if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="showPicture('+i+')">'+i+'</a></li >';
+									else
+						
+										html2 += '<li id="order"><a href="#" onclick="showPicture('+i+')">'+i+'</a></li >';  
+						   				   }
+							}
+						else{
+							for(var i =1;i<=length;i++){	
+								if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="showPicture('+i+')">'+i+'</a></li >';
+									else
+						
+										html2 += '<li id="order"><a href="#" onclick="showPicture('+i+')">'+i+'</a></li >';  
+						   				   }
+						}
+					//alert(html2);
+					$("#pages_face").after(html2);
+				
+					}/* if */
+					else{
+						var html2="";
+						if(pagenum>=length){
+						for(var i =pageno-(length-1-pagenum+pageno);i<=pagenum;i++){	
+							 if(i==pageno)
+								html2 += '<li class="active" id="order"><a href="#" onclick="showPicture('+i+')">'+i+'</a></li >';
+							else
+								html2 += '<li id="order"><a href="#" onclick="showPicture('+i+')">'+i+'</a></li >'; 
+							
+						   }
+						$("#pages_face").after(html2);	
+						}
+						else{
+							
+							for(var i =1;i<=pagenum;i++){	
+								
+								  
+								 if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="showPicture('+i+')">'+i+'</a></li >';
+								else
+									html2 += '<li id="order"><a href="#" onclick="showPicture('+i+')">'+i+'</a></li >';
+							   }
+							$("#pages_face").after(html2);	
+						}
+							
+					}
+				}
+				else{
+					if(pageno==pagenum){
+						var html2="";
+					
+						for(var i =pageno-length+1>0?pageno-length+1:1;i<=pagenum;i++){	
+						 if(i==pageno)
+							html2 += '<li class="active" id="order"><a href="#" onclick="showPicture('+i+')">'+i+'</a></li >';
+						else
+							html2 += '<li id="order"><a href="#" onclick="showPicture('+i+')">'+i+'</a></li >';
+					   }
+						$("#pages_face").after(html2);
+					}/* if */
+				}
+			}
+
+				$("#tot1_face").empty();
+				$("#pages1_face").empty();
+				$("#pages2_face").empty();
+				var html3 ='<span >共'+pagesum+'条，当前'+pageno+'/'+pagenum+'页</span>';
+				$("#tot1_face").append(html3);
+				
+				var html5 = '<a href="#" onclick="showPicture('+pageno+'-1<1?1:'+pageno+'-1)"><</a>';
+				$("#pages1_face").append(html5);
+				
+				var html4 = '<a href="#" onclick="showPicture('+pageno+'+1>'+pagenum+'?'+pagenum+':'+pageno+'+1)">></a>';
+				$("#pages2_face").append(html4);
+				$("#PictureInfoList").empty();
+				var imgs=data.hits.hits;
+				  $.each(imgs,function(i,item){
+					 
+					 //进页面判断星标是否为1   页面刷新后已收藏的图片还是显示亮的星星
+					 var pictureStarFlag=item._source.starFlag;
+					 var src="<%=basePath%>"+"template/img/star2.png";
+					 if(pictureStarFlag=='1'){
+						src="<%=basePath%>"+"template/img/star.png";
+					 }	
+					 var img = item._source.picDirpath;
+					 var img2 = img.split("emaildata")[1];
+					 var picNam = img2.split("/")[3];
+					 if(picNam.length>36){
+						 picNam =picNam.substring(picNam.length-36,picNam.length)
+					 }
+					 var html =   '<div class="small_pic">'+
+				                	'<a href="#pic_one2" class="addHov" style="display:inline-block;position:relative;height:198px;width:100%"><img style="height:198px;" id="picUrl'+i+'" src="/picture/'+img2+'" data-target="#myModalGPS" data-toggle="modal" "style="height:198px;" onclick="getPicUrl('+i+')" />'+'<span class="addFot">'+picNam +'</span>'+'</a>'
+				                	'<span id="pictureSrc'+i+'" style=" display:none;">'+item._source.picDirpath+'</span>'+
+				                	'<span id="pictureStarFlag'+i+'" style=" display:none;">'+item._source.starFlag+'</span>'+
+				                	'<span id="pictureId'+i+'" style=" display:none;">'+item._id+'</span>'+
+					            '</div>';
+
+					$("#PictureInfoList").append(html);	
+					});
+				  	$("#givePages").val("");
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+				alert("失败");
+			}
+		});
+	}
+	
+	
+	function getPicUrl(i) {
+		var pUrl = document.getElementById("picUrl"+i).src;
+		$.ajax({
+			type: "POST",
+			url: "<%=basePath %>admin/getFaceDetect.php",
+			dataType : "json",
+			data : {
+				"pUrl" : pUrl
+			},						
+			success : function(data) {
+				$("#info_pic").empty();
+				var str="拍摄机型："+data.shootTool+"&nbsp;&nbsp;&nbsp;&nbsp;拍摄日期："+data.date_photograph;
+				$("#info_pic").append(str);
+				$("#container").empty();
+				document.getElementById("container").style.display="";
+ 				var pic = '<img style="height:100%" src= "<%=basePath %>admin/getPic.php?url='+data.detecPic+'"/>';
+				$("#container").append(pic); 
+			},						
+			error : function(data) {
+			}
+		});
+		 
+	}
+	
+//显示选择案件的案件
+	var caseidStr ="";
+ function showcase(){
+		var casenumorname = document.getElementById("caseinfo").value;
+		//alert(casenumorname);
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>admin/getCaseOfEmail.php",
+			data : {
+				"casenumorname":casenumorname
+			},
+			dataType : "json",
+			async: true,
+			success : function(data) {
+				$("#tbcont").empty();
+				var htmlhead='<tr>'+
+					'<td class="td_left"><input type="checkbox" id="ckall" onclick="selectAll()"/></td>'+
+					'<td class="td_left">案件编号</td>'+
+					'<td class="td_right">案件名称</td>'+
+				'</tr>';
+				$("#tbcont").append(htmlhead);	
+				var caseidStrSplit=caseidStr.split(" ");
+				var aaaa="";
+				var html="";
+				$.each(data,function(i,item){
+					 	var caseflag=0;
+						for(var j=0;j<caseidStrSplit.length;j++){
+							if(caseidStrSplit[j]==item.id){
+								caseflag=1;
+							}
+						}
+						if(caseflag==1){
+							 html+= '<tr>'+
+							'<td class="td_left"><input id="caselist'+i+'" type="checkbox" checked="checked" name="ids" value="'+item.caseName+' '+item.id+'" onclick="chooseCase(this.id);" />'+
+								'<td class="td_left">'+item.caseNum+'</td>'+
+								'<td class="td_right" id="">'+item.caseName+'</td>'+
+							'</tr>';
+						} else{  
+							 html+= '<tr>'+
+							'<td class="td_left"><input id="caselist'+i+'" type="checkbox"  name="ids" value="'+item.caseName+' '+item.id+'" onclick="chooseCase(this.id);" />'+
+								'<td class="td_left">'+item.caseNum+'</td>'+
+								'<td class="td_right" id="">'+item.caseName+'</td>'+
+							'</tr>';
+						}
+				});
+				$("#tbcont").append(html);	
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+			}
+		});
+	} 
+ 	//选择所有复选框
+	function selectAll(){
+		 var ckall=document.getElementById("ckall");
+	    var ck=document.getElementsByName("ids");
+	    for(var i=0;i<ck.length;i++){
+	    	ck[i].checked=ckall.checked;
+	    }
+	}
+	function showChoose(id){
+		 var ckall=document.getElementById(id);
+	    	ck[i].checked=ckall.checked;
+	}
+	
+	//选择某个复选框案件将案件信息展示在页面上
+
+	function chooseCase(id){
+		 var caseInfo = document.getElementById(id);
+		 var caseId=caseInfo.value.split(" ")[1];
+		 var caseName=caseInfo.value.split(" ")[0];
+		 if(caseInfo.checked){
+			 if(caseidStr==""){
+           	caseidStr=caseId;
+           }else{
+           	caseidStr=caseidStr+" "+caseId;
+           } 
+			if(caseName.length>6){
+				caseName = caseName.substring(0,6) + "...";
+			}
+			var html ='<span class="span-1" id="shanchu2'+caseId+'" style="width: 150px; height: 30px;margin-right: 15px;margin-top: 5px;" onclick="deletemainParty(this.id,'+caseId+')">'+caseName+
+			'<img style="vertical-align:middle;" src="<%=basePath%>template/img/x.png" /></span>';
+			$("#spans").append(html);	 
+		 }else{
+			 $("#shanchu2"+caseId+"").remove();
+			var caseidStrSplit=caseidStr.split(" ");
+			var caseidStrNew="";
+			if(caseidStrSplit.length>0){
+				for(var i=0;i<caseidStrSplit.length;i++){
+					var par = caseidStrSplit[i];
+					if(par!=caseId){
+						if(caseidStrNew==""){
+							caseidStrNew=par;
+						}else{
+							caseidStrNew=caseidStrNew+" "+par;
+						}
+					}
+				}
+			}
+			caseidStr=caseidStrNew;
+		 }
+	}
+	function checkCase(){
+		$("#emailKeyword").val(""); //设置 为空
+	    showPicture(1)
+	}
+	
+	function deletemainParty(id,caseId){
+		$("#"+id+"").remove();
+		var caseidStrSplit=caseidStr.split(" ");
+		var caseidStrNew="";
+		if(caseidStrSplit.length>0){
+			for(var i=0;i<caseidStrSplit.length;i++){
+				var par = caseidStrSplit[i];
+				if(par!=caseId){
+					if(caseidStrNew==""){
+						caseidStrNew=par;
+					}else{
+						caseidStrNew=caseidStrNew+" "+par;
+					}
+				}
+			}
+		}
+		caseidStr=caseidStrNew;
+		showPicture(1)
+	}
+	//折叠
+	function testOfSearch(obj){
+	  var div1=document.getElementById("searchOfForm");
+	  
+	  if(div1.style.display=="block"){
+	    div1.style.display="none";
+	    obj.src="<%=basePath %>template/img/downXia.png";
+	  }else{
+	    div1.style.display="block";
+	    obj.src="<%=basePath %>template/img/addevidence.png";
+	  }
+	}
+	//回车搜索事件
+	function onKeyDown(event){
+	   var e = event || window.event || arguments.callee.caller.arguments[0];
+	   if(e && e.keyCode==13){ // enter 键
+		   showPicture(1);
+	   }
+	}
+</script>
+</html>

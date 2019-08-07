@@ -1,0 +1,880 @@
+<%@ page language="java" contentType="text/html; charset=utf-8"
+	pageEncoding="utf-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%
+	String path = request.getContextPath();
+	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
+			+ path + "/";
+%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title></title>
+<link href="<%=basePath%>template/css/cloud-admin.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css"
+	href="<%=basePath%>template/css/responsive.css">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/app.css">
+<style>
+
+.span-1 {
+	display: inline-block;
+	padding-left: 25px;
+	padding-right: 25px;
+	margin-top: 20px;
+	margin-left: 20px;
+	border: 1px solid #FBD5CA;
+	width: auto;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 2px 12px 2px 2px;
+	background-color: #FEF4F1;
+}
+
+.span-2 {
+	padding-left: 25px;
+	padding-right: 25px;
+	display: inline-block;
+	margin-top: 20px;
+	margin-left: 20px;
+	border: 1px solid #D5E4F1;
+	width: auto;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 2px 12px 2px 2px;
+	background-color: #F1F7FB;
+}
+
+.span-3 {
+	padding-left: 25px;
+	padding-right: 25px;
+	display: inline-block;
+	margin-top: 20px;
+	margin-left: 20px;
+	border: 1px solid #FBE4C3;
+	width: auto;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 2px 12px 2px 2px;
+	background-color: #FBF6EE;
+}
+
+.span-4 {
+	padding-left: 25px;
+	padding-right: 25px;
+	display: inline-block;
+	margin-top: 20px;
+	margin-left: 20px;
+	border: 1px solid #D5EAE5;
+	width: auto;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 2px 12px 2px 2px;
+	background-color: #F0F8F6;
+}
+
+.span-5 {
+	padding-left: 25px;
+	padding-right: 25px;
+	display: inline-block;
+	margin-top: 20px;
+	margin-left: 20px;
+	border: 1px solid #EEE8B7;
+	width: auto;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 2px 12px 2px 2px;
+	background-color: #FEFDF2;
+}
+
+.span-6 {
+	padding-left: 25px;
+	padding-right: 25px;
+	display: inline-block;
+	margin-top: 20px;
+	margin-left: 20px;
+	border: 1px solid #C8E5F0;
+	width: auto;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 2px 12px 2px 2px;
+	background-color: #E9F5FA;
+}
+
+.span-7 {
+	padding-left: 25px;
+	padding-right: 25px;
+	display: inline-block;
+	margin-top: 20px;
+	margin-left: 20px;
+	border: 1px solid #DBDBF0;
+	width: auto;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 2px 12px 2px 2px;
+	background-color: #F2F2FA;
+}
+
+.mycolor{
+	background-color: lightcoral;
+}
+
+.alcenter {
+	text-align: center;
+}
+
+.inline {
+	display: inline-block;
+}
+
+.form-inline .form-control {
+	width: auto;
+}
+
+.clabel {
+	margin-right: 14px;
+}
+
+.mybtn {
+	position: fixed;
+	right: 10px;
+	bottom: 20px;
+	display: block;
+	width: 50px;
+	height: 50px;
+	border-radius: 50px;
+	padding: 0px;
+	text-align: center;
+	line-height: 50px;
+}
+
+.modal.left .modal-dialog, .modal.right .modal-dialog {
+	position: fixed;
+	margin: auto;
+	width: 620px;
+	height: 100%;
+	-webkit-transform: translate3d(0%, 0, 0);
+	-ms-transform: translate3d(0%, 0, 0);
+	-o-transform: translate3d(0%, 0, 0);
+	transform: translate3d(0%, 0, 0);
+}
+
+.modal.left .modal-content, .modal.right .modal-content {
+	height: 100%;
+	overflow-y: auto;
+}
+
+.modal.left .modal-body, .modal.right .modal-body {
+	padding: 15px 15px 80px;
+}
+
+/*Left*/
+.modal.left.fade .modal-dialog {
+	left: -320px;
+	-webkit-transition: opacity 0.3s linear, left 0.3s ease-out;
+	-moz-transition: opacity 0.3s linear, left 0.3s ease-out;
+	-o-transition: opacity 0.3s linear, left 0.3s ease-out;
+	transition: opacity 0.3s linear, left 0.3s ease-out;
+}
+
+.modal.left.fade.in .modal-dialog {
+	left: 0;
+}
+.breakLine{word-break: break-all;}
+
+/*Right*/
+.modal.right.fade .modal-dialog {
+	right: -320px;
+	-webkit-transition: opacity 0.3s linear, right 0.3s ease-out;
+	-moz-transition: opacity 0.3s linear, right 0.3s ease-out;
+	-o-transition: opacity 0.3s linear, right 0.3s ease-out;
+	transition: opacity 0.3s linear, right 0.3s ease-out;
+}
+
+.modal.right.fade.in .modal-dialog {
+	right: 0;
+}
+
+/* ----- MODAL STYLE ----- */
+.modal-content {
+	border-radius: 0;
+	border: none;
+}
+
+.modal-header {
+	border-bottom-color: #EEEEEE;
+	background-color: #FAFAFA;
+}
+
+.td_left {
+	text-align: left;
+}
+
+.td_right {
+	text-align: right;
+}
+.red_num {
+	color:#fff;
+	background-color:red;
+	width: 15px;
+	height: 15px;
+	border-radius:50%;
+	float:right;
+	text-align:center;
+}
+.hover{
+	background-color:red;
+}
+</style>
+<script type="text/javascript">
+function searchbycondit() {
+	$("#searchForm").submit();
+}
+
+//分页
+function subForm(pageno){
+	$("#pageno").val(pageno);
+	$("#searchForm").submit();
+}
+
+function searchone(node) {
+	var id = node.getElementsByTagName("td")[0].innerHTML;
+	var status =  node.getElementsByTagName("td")[8].innerHTML;
+	var mainParty = node.getElementsByTagName("td")[7].innerHTML;
+	var trustee_right1 = node.getElementsByTagName("td")[6].innerHTML;//获取案件负责人
+	var username = '${user.username}';//获取当前登陆用户
+	if (status == "已结案") {
+		$("#editCaseA").css("background","#A8A8A8");
+		$("#editCaseB").css("background","#A8A8A8");
+		$("#nextA").css("background","#A8A8A8");
+		$("#editCaseA").click(function(A){
+			A.preventDefault();
+		});
+		$("#editCaseB").removeAttr('href');
+		$("#editCaseB").removeAttr('onclick');
+		$("#nextA").removeAttr('href');
+		$("#nextA").removeAttr('onclick');
+	}else if (status == "办案中") {
+		$("#editCaseA").css("background-color","#475e9c");
+		$("#editCaseB").css("background-color","#475e9c");
+		
+		$("#editCaseA").click(function(){
+			//跳转
+			window.location.href=$('#editCaseA').attr("href");
+		});
+		$("#editCaseB").click(function(){
+			getid();
+		});
+	}
+	
+	//禁止授权
+	if(trustee_right1!=username){
+		//alert("不相同");
+		$("#nextA").css("background","#A8A8A8");
+		$("#nextA").removeAttr('href');
+		$("#nextA").removeAttr('onclick');
+	}
+	
+	$("#editCaseA").attr("href","<%=basePath %>admin/edit_case.php?id="+id);
+	
+	$.ajax({
+        url:"<%=basePath %>getcaseone.php",
+        data:{
+           "id":id             
+        },
+        type:"post",
+        dataType:"json",
+        success: function(data){
+           $("#id_right").html(data.id);
+           $("#caseNum_right").html(data.caseNum);
+           $("#caseName_right").html(data.caseName);
+           $("#caseType_rignt").html(data.caseType);	//案件类型	
+           if(data.shi == "市辖区" || data.shi == "市辖县"){
+        	   $("#shi_right").html(data.sheng);				//案件所在城市
+           } else {
+           	   $("#shi_right").html(data.sheng + data.shi);				//案件所在城市
+           }
+           $("#section_right").html(data.section);
+           $("#trustee_right").html(data.trustee);
+           $("#status_right").html(data.status);
+           $("#label_right").empty();
+           var getLabel = data.label;
+           if(getLabel.length != 0) {
+        	   var getEveryLabel = getLabel.split(" ");   
+           }
+           
+           for(i=0;i<getEveryLabel.length;i++) {
+        	   if(i % 7 == 0) {
+        	   var s = '<span>'+getEveryLabel[i]+'</span>';
+   			   $("#label_right").append("<span class='span-1'>"+s+"</span>");
+        	   }
+        	   if(i % 7 == 1) {
+        	   var s = '<span>'+getEveryLabel[i]+'</span>';
+   			   $("#label_right").append("<span class='span-2'>"+s+"</span>");
+        	   }
+        	   if(i % 7 == 2) {
+        	   var s = '<span>'+getEveryLabel[i]+'</span>';
+   			   $("#label_right").append("<span class='span-3'>"+s+"</span>");
+        	   }
+        	   if(i % 7 == 3) {
+        	   var s = '<span>'+getEveryLabel[i]+'</span>';
+   			   $("#label_right").append("<span class='span-4'>"+s+"</span>");
+        	   }
+        	   if(i % 7 == 4) {
+        	   var s = '<span>'+getEveryLabel[i]+'</span>';
+   			   $("#label_right").append("<span class='span-5'>"+s+"</span>");
+        	   }
+        	   if(i % 7 == 5) {
+        	   var s = '<span>'+getEveryLabel[i]+'</span>';
+   			   $("#label_right").append("<span class='span-6'>"+s+"</span>");
+        	   }
+        	   if(i % 7 == 6) {
+        	   var s = '<span>'+getEveryLabel[i]+'</span>';
+   			   $("#label_right").append("<span class='span-7'>"+s+"</span>");
+        	   }
+        	   if(i % 7 == 7) {
+        	   var s = '<span>'+getEveryLabel[i]+'</span>';
+   			   $("#label_right").append("<span class='span-3'>"+s+"</span>");
+        	   }
+   			
+           }
+        	   
+           /* var s = '<span>'+data.resData[i].label+'</span>';
+			if(i % 7 == 1) {
+				$("#label_right").append("<span class='span-1'>"+s+"</span>");
+			} */
+           /* alert(getEveryLabel[0]);
+           alert(getEveryLabel[1]); */
+           /* $("#label_right").html(data.label); */
+           $("#createdTime_right").html(data.createdTime);
+           $("#accepted_date").html(data.acceptTime);	//案件受理日期 
+           $("#trustee_right1").html(data.userName);	//案件受理人
+           
+           $("#relatedObject_right").html(data.relatedObject);  //涉案物品  
+           
+           $("#list_companies").html(data.relatedCompany);	//涉案公司列表
+           
+           //涉案人员
+           $("#mainParty").empty();
+           var mainPartyhtml="";
+           var mainPartystrs = data.mainParty.split("/");
+          // alert(mainPartystrs)
+           if(mainPartystrs.length>0){
+	           for(var i=0;i<mainPartystrs.length;i++){
+	        	  var mainPartystr =  mainPartystrs[i].split(" ");
+	        	  var name =  mainPartystr[0];
+	        	  var phone =  mainPartystr[1];
+	        	  var email =  mainPartystr[2];
+	        	  var city =  mainPartystr[3];
+	        	  if(name==null){name=""}
+	        	  if(phone==null){phone=""}
+	        	  if(email==null){email=""}
+	        	  if(city==null){city=""}
+	        	  mainPartyhtml+='<tr data-toggle="modal">'+
+						        	  ' <td>'+name+'</td>'+
+						        	  ' <td>'+city+'</td>'+
+						        	  ' <td>'+phone+'</td>'+
+						        	  ' <td>'+email+'</td>'+
+						        	' </tr>';
+	           }
+           }
+           $("#mainParty").append(mainPartyhtml);	
+        }
+    });
+	
+	
+}
+
+function getid() {
+	var evid = $("#id_right").text();
+	window.location.href = "<%=basePath %>getEvidencelist.php?evid="+evid;
+	//alert("kdk");
+}
+
+function toggle(targetid){
+    if (document.getElementById){
+        target=document.getElementById(targetid);
+            if (target.style.display=="block"){
+                target.style.display="none";
+            } else {
+                target.style.display="block";
+            }
+    }
+}  
+
+//  用window.onload调用myfun()
+window.onload = onloadd;//不要括号
+window.onload = test;
+//页面加载时要执行的方法 --案件类型和案件标签
+function onloadd(){
+	//showAllCaseType();
+	showAllSection();
+	myfun();
+}
+
+//查询所有科室list
+function showAllSection(){
+	$.ajax({
+		type : "POST",
+		url : "<%=basePath%>showAllSection.php",
+		data : {
+			"evID":1
+		},
+		dataType : "json",
+		async: true,
+		success : function(data) {
+			var isse = $("#section").val();
+			if(isse==null || isse==""){
+				$("#section").empty();
+			}
+			$("#section").append('<option  value="" style="color: #BFA6A6;">请选择...</option>');
+			$.each(data,function(i,item){
+				//<option id="sections" value="" style="color: #BFA6A6;">请选择...</option>
+				$("#sections").append('<c:if test="${section=='+item.id+'}">'+item.sectionName+'</c:if>');
+				
+				$("#section").append('<option value="'+item.id+'">'+item.sectionName+'</option>');	
+			});
+			
+		},
+	});
+}
+
+//案件列表页面点击更多条件显示常用标签list     style='width: 90px; height: 30px; margin-right: 10px;margin-top: 10px;'
+function myfun() {	
+	var label = "${caseLabel }";
+//	alert(label);                     //测试用
+	$.ajax({
+		type: "POST",
+		url: "<%=basePath %>getAllLabel.php",
+		dataType : "json",
+		data : {
+			"page" : '1'
+		},							    
+		success : function(data) {
+			labelList = data.resData;
+			var labelDivs = "";
+			var noe="";
+			for(var i=0;i<data.resData.length;i++){			
+				 /* var s = '<div id="label_'+data.resData[i].id+'" class="tags" title="'+data.resData[i].label+'" onclick="changebg('+data.resData[i].id+',\''+data.resData[i].label+'\')">'+data.resData[i].label+'</div>';		   
+				$("#label1").append($("<span name='shanchu' class='span-1' id='labelInfo' style='align:center;width: 70px; height: 30px; text-align: center;margin-right: 20px;margin-top: 10px;'>"+s+"</span>")); */
+				
+				var s = '<span id="label_'+data.resData[i].id+'" class="tags" title="'+data.resData[i].label+'" >'+data.resData[i].label+'</span>';
+				if(i % 7 == 1) {
+					$("#label1").append("<span name='shanchu' class='span-1' id='labelInfo"+data.resData[i].id+"' onclick='changebg("+data.resData[i].id+",\""+data.resData[i].label+"\")'>"+s+"</span>");
+				}
+				
+				if(i % 7 == 2) {
+					$("#label1").append("<span name='shanchu' class='span-2' id='labelInfo"+data.resData[i].id+"' onclick='changebg("+data.resData[i].id+",\""+data.resData[i].label+"\")'>"+s+"</span>");
+				}
+				
+				if(i % 7 == 3) {
+					$("#label1").append("<span name='shanchu' class='span-3' id='labelInfo"+data.resData[i].id+"' onclick='changebg("+data.resData[i].id+",\""+data.resData[i].label+"\")'>"+s+"</span>");
+				}
+				if(i % 7 == 4) {
+					$("#label1").append("<span name='shanchu' class='span-4' id='labelInfo"+data.resData[i].id+"' onclick='changebg("+data.resData[i].id+",\""+data.resData[i].label+"\")'>"+s+"</span>");
+				}
+				if(i % 7 == 5) {
+					$("#label1").append("<span name='shanchu' class='span-5' id='labelInfo"+data.resData[i].id+"' onclick='changebg("+data.resData[i].id+",\""+data.resData[i].label+"\")'>"+s+"</span>");
+				}
+				if(i % 7 == 6) {
+					$("#label1").append("<span name='shanchu' class='span-6' id='labelInfo"+data.resData[i].id+"' onclick='changebg("+data.resData[i].id+",\""+data.resData[i].label+"\")'>"+s+"</span>");
+				}
+				if(i % 7 == 7) {
+					$("#label1").append("<span name='shanchu' class='span-7' id='labelInfo"+data.resData[i].id+"' onclick='changebg("+data.resData[i].id+",\""+data.resData[i].label+"\")'>"+s+"</span>");
+				}
+				if(i % 7 == 0) {
+					$("#label1").append("<span name='shanchu' class='span-3' id='labelInfo"+data.resData[i].id+"' onclick='changebg("+data.resData[i].id+",\""+data.resData[i].label+"\")'>"+s+"</span>");
+				}
+				
+ 				 if(label.indexOf(data.resData[i].label)!=-1){	//翻页返回时显示之前已选择的标签
+					$("#labelInfo"+data.resData[i].id).addClass("mycolor");
+					$("#label2").append("<input type='hidden' id='check_"+data.resData[i].id+"' name='ids' value='"+data.resData[i].label+"' />");
+				}
+			}
+		},						
+		error : function(data) {
+			alert("获取标签列表失败，请重试!");
+		}
+	});
+}
+//选择标签
+function changebg(id,label){
+	//var s="#label_"+id;
+	//alert(id);
+	/* alert("#label_"+id);
+	alert("#labelInfo"+id); */
+	$("#labelInfo"+id).toggleClass("mycolor");
+	/* $("#labelInfo"+id).css("background","lightcoral"); */
+	/* alert(501); */
+	if($("#check_"+id).val()==null)
+		$("#label2").append("<input type='hidden' id='check_"+id+"' name='ids' value='"+label+"' />");
+	else
+		$("#check_"+id).remove();
+	//$("#label2").append("haha");
+	//alert();
+	//<input type='checkbox' id='check"+i+"' name='ids' value='"+data.resData[i].label
+}
+
+//案件授权
+function setHref(){
+	var caseId = $("#id_right").text();
+	var caseNum = $("#caseNum_right").text();
+	var caseName = $("#caseName_right").text();
+    var param = "id="+caseId+"&noStr="+caseNum+"&str="+caseName;
+	param = encodeURI(param);
+	param = encodeURI(param);
+    $("#nextA").attr("href", "<%=basePath%>admin/case_new_granttwo.php?"+param);
+	return true;
+	
+}
+
+//折叠
+function testOfSearch(obj){
+  var div1=document.getElementById("searchOfForm");
+  if(div1.style.display=="block"){
+    div1.style.display="none";
+    obj.src="<%=basePath %>template/img/downXia.png";
+  }else{
+    div1.style.display="block";
+    obj.src="<%=basePath %>template/img/addevidence.png";
+  }
+}
+</script>
+
+</head>
+<body>
+	<jsp:include page="common.jsp"></jsp:include>
+	<div class="bg-light lter b-b wrapper-md">
+  		<h1 class="m-n h4">案件列表</h1>
+	</div>
+
+	<div class="wrapper-md">
+		<div class="col-md-12">
+			<div class="row">
+				<div class="panel panel-default">
+					<div class="panel-heading">搜索案件<span style="float: right;"><img src="<%=basePath %>template/img/addevidence.png" onclick="testOfSearch(this)"></span></div>
+					<div class="panel-body" id="searchOfForm" style="display: block;">
+						<form class="form-inline" role="form" id="searchForm" action="<%=basePath%>/searchbycondit.php" method="post">
+							<input type="hidden" name="pageno" id="pageno"/>
+							<div class="form-group">
+								<label for="" class="clabel">案件编号:</label><input id="caseNum" name="caseNum" value="${caseNum }"
+									class="form-control" placeholder="请输入..." type="text" style="width:390px;"/>
+							</div>
+							<div class="form-group">
+								<label for="" class="clabel">案件名称:</label><input id="caseName" name="caseName" value="${caseName }"
+									class="form-control" placeholder="请输入..." type="text" style="width:390px;"/>
+							</div>
+							<div class="form-group">
+								<label for="" class="clabel">案件状态:</label>
+								<select class="form-control" style="width:390px;color: #BFA6A6;" id="casestatus" name="casestatus">
+								    <option value="" style="color: #BFA6A6;">请选择...</option>
+									<option value="0" <c:if test="${casestatus=='办案中' }">selected</c:if>>办案中</option>
+									<option value="1" <c:if test="${casestatus=='已结案' }">selected</c:if>>已结案</option>
+								</select>
+							</div>
+							<button type="button" class="btn btn-info"  onclick="searchbycondit()">搜索</button>
+							<a href="javascript:void(0);" style="text-decoration: underline;" onclick="toggle('hidden')">更多条件&gt;</a>
+							<div id="hidden" style="display: none;">
+							<hr>
+								
+							<div class="form-group">
+								<label for="" class="clabel">案件类型:</label>
+								<select class="form-control" style="width:390px;color: #BFA6A6;margin-left: -4px;" id="caseType" name="caseType">
+									
+								   <option value="" style="color: #BFA6A6;">请选择...</option>
+								    
+								  	<c:forEach items="${caseTypeList }" var="cType">
+										<option id="caseTypes" value="${cType.typeName}" <c:if test="${cType.typeName==caseType}">selected</c:if>>${cType.typeName}</option>
+									</c:forEach>
+								</select>
+							</div>
+								<%-- <div class="form-group">
+									<label for="" class="clabel">所属科室:</label><input id="section" name="section" value="${section }"
+										class="form-control" placeholder="请输入..." type="text" style="width:390px;"/>
+								</div> --%>
+								
+								<div class="form-group">
+								<label for="" class="clabel">所属科室:</label>
+								<select class="form-control" style="width:390px;color: #BFA6A6;margin-left: -4px;" id="section" name="section">
+								    <option id="sections" value="${section}"></option>
+								    
+								    
+								</select>
+							</div>
+								
+								<div class="form-group">
+									<label for="" class="clabel">所在地区:</label><input id="shi" name="shi" value="${shi }"
+										class="form-control" placeholder="请输入..." type="text" style="width:390px;margin-left: 4px;"/>
+								</div><br>
+								
+								<div class="form-group" style="margin-top: 20px;">
+									<label for="" class="clabel">案件日期:</label>
+									<input id="startDate" name="createdTime" value="${createdTime }"
+											class="form-control" placeholder="请输入起始时间" type="text" style="width:168px;margin-left: -4px;" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'endDate\')||\'new Date()\'}'});"/> 	
+								</div>
+								<div class="form-group" style="margin-top: 20px;">
+									<label for="" class="clabel">&nbsp;&nbsp;&nbsp;至</label>
+									<input id="endDate" name="endTime"  value="${endTime }"
+										    class="form-control" placeholder="请输入结束时间" type="text" style="width:168px;" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'startDate\')}',maxDate:new Date()});"/>
+								</div>
+								<hr>
+								<div class="form-group">
+									<label for="" class="clabel">案件标签:</label>
+									<span id="label1"></span>
+									<span id="label2"></span>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+	
+			<div class="row">
+				<div class="panel panel-default">
+					<div class="panel-heading"><span>搜索结果</span></div>
+					<div class="panel-body" style="padding: 0 0 15px;">
+						<table id="datatable" class="table table-striped table-hover"
+							style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+							<thead>
+								<tr>
+									<th class="alcenter">案件编号</th>
+									<th class="alcenter">案件名称</th>
+									<th class="alcenter">案件受理日期</th>
+									<th class="alcenter">案件类型</th>
+									<th class="alcenter">所属科室</th>
+									<th class="alcenter">案件负责人</th>
+									<th class="alcenter">创建时间</th>
+									<th class="alcenter">案件状态</th>
+								</tr>
+							</thead>
+							<tbody id="tbcont">
+							<c:forEach items="${logs }" var="cas">
+								<tr data-toggle="modal" data-target="#myModal" onclick="searchone(this)">
+									<td style="display: none;">${cas.id }</td>
+									<td class="breakLine">${cas.caseNum }</td>
+									<td class="breakLine">${cas.caseName }</td>
+									<td class="breakLine">${cas.acceptTime }</td>
+									<td class="breakLine">${cas.caseType }</td>
+									<td class="breakLine">${cas.section }</td>
+									<td class="breakLine">${cas.userName }</td>
+									<td class="breakLine">${cas.createdTime }</td>
+									<td class="breakLine">${cas.status }</td>
+								</tr>
+							</c:forEach>
+							</tbody>
+						</table>
+						<div class="alcenter" style="font-size: 14px">
+							<div class="pagecount inline" style="height: 29px;">
+								<span>共${totalNum }条，当前${nowPage }/${totalPages }页</span>
+							</div>
+							<div class="pagebar inline"
+								style="position: absolute; right: 10px; height: 29px;">
+								<ul class="pagination pagination-sm" style="margin: 0;">
+									<li><a href="#" onclick="subForm('${nowPage-1<1?1:nowPage-1}')">&lt;</a></li>
+									<c:forEach items="${pageList }" var="pageNO">
+				            			<li <c:if test="${nowPage==pageNO }">class="active"</c:if>>
+				            				<a href="#" onclick="subForm('${pageNO}')">${pageNO}</a>
+				            			</li>
+				            		</c:forEach>
+									<li><a href="#" onclick="subForm('${nowPage+1>totalPages?totalPages:nowPage+1}')">&gt;</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal right fade" id="myModal" tabindex="-1" role="dialog"
+			aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="panel panel-default" style="padding-right: 10px;">
+						<div class="panel-body" style = "overflow-y:auto;height:750px;">
+							<div class="panel-heading"
+								style="padding: 10px; background-color: #fff; border: 1px solid #DDDDDD;">案件信息</div>
+							<table id="datatable" class="table table-striped table-hover"
+								style="border: 1px solid #DDDDDD;">
+								<tbody id="tbcont">
+								
+									<tr data-toggle="modal" style="display: none;">
+										<td class="td_left">案件id</td>
+										<td class="td_right" id="id_right"></td>
+									</tr>
+									
+									<tr data-toggle="modal">
+										<td class="td_left">案件编号</td>
+										<td class="td_right" id="caseNum_right"></td>
+									</tr>
+									<tr data-toggle="modal">
+										<td class="td_left">案件名称</td>
+										<td class="td_right" id="caseName_right"></td>
+									</tr>
+									<tr data-toggle="modal">
+										<td class="td_left">案件类型</td>
+										<td class="td_right" id="caseType_rignt"></td>
+									</tr>
+									<tr data-toggle="modal">
+										<td class="td_left">案件所在城市</td>
+										<td class="td_right" id="shi_right"></td>
+									</tr>
+									<tr data-toggle="modal">
+										<td class="td_left">案件所属科室</td>
+										<td class="td_right" id="section_right"></td>
+									</tr>
+									<tr data-toggle="modal">
+										<td class="td_left">办案人员</td>
+										<td class="td_right" id="trustee_right"></td>
+									</tr>
+									<tr data-toggle="modal">
+										<td class="td_left">案件状态</td>
+										<td class="td_right" id="status_right"></td>
+									</tr>
+
+									<tr data-toggle="modal">
+										<td class="td_left" colspan="2" >办案标签</td>
+										
+									</tr>
+									<tr data-toggle="modal">
+										<td class="td_left" colspan="2" id="label_right"></td>
+									</tr>
+									
+									<tr data-toggle="modal">
+										<td class="td_left">案件创建日期</td>
+										<td class="td_right" id="createdTime_right"></td>
+									</tr>
+									
+									<tr data-toggle="modal">
+										<td class="td_left">案件受理日期</td>
+										<td class="td_right" id="accepted_date"></td>
+									</tr>
+									<tr data-toggle="modal">
+										<td class="td_left">案件负责人</td>
+										<td class="td_right" id="trustee_right1"></td>
+									</tr>
+									<!-- <tr data-toggle="modal">
+										<td class="td_left">案件等级</td>
+										<td class="td_right">A级</td>
+									</tr> -->
+								</tbody>
+							</table>
+
+							<div class="panel-heading"
+								style="padding: 10px; background-color: #fff; border: 1px solid #DDDDDD;">涉案组织</div>
+							<table id="datatable" class="table table-striped table-hover"
+								style="border: 1px solid #DDDDDD;">
+								
+								<tbody id="tbcont_companies">
+									<tr data-toggle="modal">		
+										<td class="td_left" id="list_companies">公司1，公司2</td>
+										<!-- <td class="td_right"></td> -->
+									</tr>
+									
+								</tbody>
+							</table>
+
+							<div class="panel-heading"
+								style="padding: 10px; background-color: #fff; border: 1px solid #DDDDDD;">涉案人员</div>
+							<table id="datatable" class="table table-striped table-hover"
+								style="text-align: center; border: 1px solid #DDDDDD;">
+								<thead>
+									<tr>
+										<th class="alcenter">嫌疑人姓名</th>
+										<th class="alcenter">位置</th>
+										<th class="alcenter">手机号码</th>
+										<th class="alcenter">电子邮箱</th>
+									</tr>
+								</thead>
+								<tbody id="mainParty">
+									<!-- <tr data-toggle="modal">
+										<td>杨阳洋</td>
+										<td>广东省广州市</td>
+										<td>11717749174</td>
+										<td>yangyangyang@163.com</td>
+									</tr>
+									<tr data-toggle="modal">
+										<td>林琳琳</td>
+										<td>广东省东莞市</td>
+										<td>13854389438</td>
+										<td>linlinlin@126.com</td>
+									</tr> -->
+								</tbody>
+							</table>
+							
+							
+							<div class="panel-heading"
+								style="padding: 10px; background-color: #fff; border: 1px solid #DDDDDD;">涉案物品</div>
+							<table id="datatable" class="table table-striped table-hover"
+								style="border: 1px solid #DDDDDD;">
+								
+								<tbody id="tbcont">
+									<tr data-toggle="modal">		
+										<td class="td_left" id="relatedObject_right"></td>
+										<td class="td_right"></td>
+									</tr>
+									<!-- <tr data-toggle="modal">
+										<td class="td_left">无形资产</td>
+										<td class="td_right">电子产品专利</td>
+									</tr> -->
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div style="text-align:center;">
+							<div class="">
+								<%-- <button class="btn" id="editCaseA"
+									style="margin-right: 20px; background-color: #475e9c; color: #fff; width: 120px;" onclick="javascript:window.location.href='<%=basePath%>admin/edit_case.php';">编辑案件</button> --%>
+									<a href="<%=basePath%>admin/edit_case.php" class="btn" id="editCaseA"
+										style="margin-right: 20px; background-color: #475e9c; color: #fff; width: 120px;">编辑案件</a>
+
+									<a href="#" class="btn" onclick="getid();" id="editCaseB"
+										style="margin-right: 20px; background-color: #475e9c; color: #fff; width: 120px;">数据列表</a>
+
+									<a id="nextA" class="btn" href="<%=basePath%>admin/case_new_granttwo.php" onclick="return setHref();"
+										style="margin-right: 20px; background-color: #475e9c; color: #fff; width: 120px;">案件授权</a>
+
+							    	<button class="btn"
+										style="background-color: #475e9c; color: #fff; width: 120px;">案件分析</button>
+							</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	<script src="<%=basePath%>template/js/jquery/jquery-2.0.3.min.js"></script>
+	<script src="<%=basePath%>template/js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+	<script src="<%=basePath%>template/bootstrap-dist/js/bootstrap.min.js"></script>
+	<script src="<%=basePath%>template/My97DatePicker/WdatePicker.js"></script>
+	<script>
+	var a =$("#caseType").val();
+	var b =$("#section").val();
+	var c =$("#shi").val();
+	var d =$("#startDate").val();
+	var e =$("#endDate").val();
+	var ss=""+b+c+d+e+a;
+	$(document).ready(function () {
+	        if("" != ss){
+	        $("#hidden").css("display", "block");
+	        }
+	});
+	$("#tbcont tr").hover(
+		  function () {
+		    $(this).addClass("hover");
+		  },
+		  function () {
+		    $(this).removeClass("hover");
+		  }
+		);
+	</script>
+</body>
+</html>

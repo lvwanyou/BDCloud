@@ -1,0 +1,2738 @@
+<%@ page language="java" contentType="text/html; charset=utf-8"
+	pageEncoding="utf-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%
+	String path = request.getContextPath();
+	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
+			+ path + "/";
+%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport"
+	content=" height = device-height,
+                    width = device-width,
+                    initial-scale = 1.0,
+                    minimum-scale = 1.0,
+                    maximum-scale = 1.0,
+                    user-scalable = no" />
+<title></title>
+<link href="<%=basePath%>template/css/cloud-admin.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css"
+	href="<%=basePath%>template/css/responsive.css">
+<link rel="stylesheet" type="text/css"
+	href="<%=basePath%>template/css/bootstrap.css">
+<link rel="stylesheet" type="text/css"
+	href="<%=basePath%>template/css/app.css">
+	<link rel="stylesheet" type="text/css"
+	href="<%=basePath%>template/css/workspace.css">
+<script src="<%=basePath%>template/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=1.3"></script>
+<style>
+* {
+	margin: 0;
+	padding: 0;
+	-webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+	-webkit-overflow-scrolling: touch;
+	overflow-scrolling: touch;
+}
+
+ul {
+	list-style: none;
+}
+
+a {
+	text-decoration: none;
+}
+
+.find_nav {
+	background-color: #f9f9f9;
+	position: relative;
+	top: 0;
+	z-index: 99;
+	border-bottom: 1px solid #ddd;
+	display: -moz-box;
+	display: -webkit-box;
+	display: box;
+}
+
+.yuan { 
+-moz-border-radius: 18px; 
+-webkit-border-radius: 18px; 
+border-radius: 18px;
+background-color:#f45151;
+height:28px;
+width:18px;
+color:#fff;
+padding:4px;
+margin:5px;
+text-align:center;
+font-family:"微软雅黑";
+font-size:10px;
+} 
+
+.find_nav_left {
+	height: 46px;
+	position: relative;
+	overflow: hidden;
+	-moz-box-flex: 1;
+	-webkit-box-flex: 1;
+	box-flex: 1;
+}
+
+.find_nav_list {
+	position: absolute;
+	/* */
+	left: 0;
+}
+
+.find_nav_list ul {
+	position: relative;
+	white-space: nowrap;
+	font-size: 0;
+}
+
+.find_nav_list ul li {
+	display: inline-block;
+	padding: 0 21px;
+}
+
+.find_nav_list ul li a {
+	display: block;
+	width: 100%;
+	height: 100%;
+	line-height: 46px;
+	font-size: 14px;
+	text-align: center;
+	color: #666;
+}
+
+.find_nav_cur a {
+	color: #48a5f4 !important;
+}
+
+.sideline {
+	display: block;
+	position: absolute;
+	border: 0;
+	height: 2px;
+	background-color: #48a5f4;
+	left: 0;
+	top: 43px;
+	pointer-events: none;
+}
+
+.alcenter {
+	text-align: center;
+}
+
+.inline {
+	display: inline-block;
+}
+
+.form-inline .form-control {
+	width: auto;
+}
+
+.clabel {
+	margin-right: 14px;
+}
+
+.mybtn {
+	position: fixed;
+	right: 10px;
+	bottom: 20px;
+	display: block;
+	width: 50px;
+	height: 50px;
+	border-radius: 50px;
+	padding: 0px;
+	text-align: center;
+	line-height: 50px;
+}
+
+.modal.left .modal-dialog, .modal.right .modal-dialog {
+	position: fixed;
+	margin: auto;
+	width: 620px;
+	height: 100%;
+	-webkit-transform: translate3d(0%, 0, 0);
+	-ms-transform: translate3d(0%, 0, 0);
+	-o-transform: translate3d(0%, 0, 0);
+	transform: translate3d(0%, 0, 0);
+}
+
+.modal.left .modal-content, .modal.right .modal-content {
+	height: 100%;
+	overflow-y: auto;
+}
+
+.modal.left .modal-body, .modal.right .modal-body {
+	padding: 15px 15px 80px;
+}
+
+/*Left*/
+.modal.left.fade .modal-dialog {
+	left: -320px;
+	-webkit-transition: opacity 0.3s linear, left 0.3s ease-out;
+	-moz-transition: opacity 0.3s linear, left 0.3s ease-out;
+	-o-transition: opacity 0.3s linear, left 0.3s ease-out;
+	transition: opacity 0.3s linear, left 0.3s ease-out;
+}
+
+.modal.left.fade.in .modal-dialog {
+	left: 0;
+}
+
+/*Right*/
+.modal.right.fade .modal-dialog {
+	right: -320px;
+	-webkit-transition: opacity 0.3s linear, right 0.3s ease-out;
+	-moz-transition: opacity 0.3s linear, right 0.3s ease-out;
+	-o-transition: opacity 0.3s linear, right 0.3s ease-out;
+	transition: opacity 0.3s linear, right 0.3s ease-out;
+}
+
+.modal.right.fade.in .modal-dialog {
+	right: 0;
+}
+
+/* ----- MODAL STYLE ----- */
+.modal-content {
+	border-radius: 0;
+	border: none;
+}
+
+.modal-header {
+	border-bottom-color: #EEEEEE;
+	background-color: #FAFAFA;
+}
+
+.td_left {
+	text-align: left;
+}
+
+.td_right {
+	text-align: right;
+}
+
+.red_num {
+	color: #fff;
+	background-color: #f6f8f8;
+	width: 15px;
+	height: 15px;
+	border-radius: 50%;
+	float: right;
+	text-align: center;
+}
+
+.hover {
+	background-color: #f6f8f8;
+}
+
+.menu_l {
+	margin-top: -2px;
+}
+
+.menu-text {
+	margin-left: 12px;
+}
+
+.menu_arrow {
+	margin-top: -3px;
+	margin-left: 100px;
+	width: 5px;
+}
+
+.has-sub.open .menu_arrow {
+	transform: rotateZ(90deg);
+	-ms-transform: rotateZ(90deg); /* IE 9 */
+	-moz-transform: rotateZ(90deg); /* Firefox */
+	-webkit-transform: rotateZ(90deg); /* Safari 和 Chrome */
+	-o-transform: rotateZ(90deg);
+}
+
+.sidebar-collapse {
+	text-align: center;
+	margin-top: 20px;
+}
+
+body>div:nth-child(13)>div.col-md-2>div>div>div.panel-body>div>ul>li>a {
+	background-color: #f6f8f8;
+	padding-left: 0px;
+	padding-right: 0px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+</style>
+
+</head>
+<body>
+	<jsp:include page="common.jsp"></jsp:include>
+	<div class="bg-light lter b-b wrapper-md">
+		<h1 class="m-n h4">数据挖掘</h1>
+	</div>
+
+	<div class="wrapper-md">
+		<div class="col-md-2" style="height: 800px">
+			<div class="row">
+				<div class="panel panel-default">
+					<div class="panel-heading">搜索案件</div>
+					<div class="panel-body" style="width: 100%">
+						<input id="caseinfo" name="caseinfo" class="form-control"
+							placeholder="案件名称" type="text" style="float: left; width: 66%;" />
+						<button type='button' class="btn btn-info"
+							style="width: 70px; margin-left: 10px; height: 34px"
+							onclick="showcase()">搜索</button>
+					</div>
+					<div class="panel-body">
+
+						<div id="caseSuspect" class="sidebar-menu2"
+							style="position: relative; height: 700px; overflow-y: auto">
+							<!-- SIDEBAR MENU -->
+
+							
+
+
+							<!-- /SIDEBAR MENU -->
+						</div>
+
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+		<div class="col-md-10">
+				<div class="panel-body" style="padding-top: 0px;padding-left:0px;">
+					<div name="gp_btnm"  class="_normal-button"
+						style="cursor: pointer;"
+						onclick="d1()"><img src="<%=basePath %>template/img/qt1.png"  style="margin-bottom:4px; "><span style="margin-left: 6px;">手机号码</span><span id="sj"  class="yuan" style="margin-left: 6px;">0</span></div>
+					<div name="gp_btnm"  class="_normal-button"
+						style="cursor: pointer; margin-left: 6px;"
+						onclick="d2()"><img src="<%=basePath %>template/img/qt2.png"  style="margin-bottom:4px; "><span style="margin-left: 6px;">身份证号</span><span id="sfz"  class="yuan">0</span></div>
+					<div name="gp_btnm" id="regContainer" class="_normal-button"
+						style="cursor: pointer; margin-left: 6px;"
+						onclick="d3()"><img src="<%=basePath %>template/img/qt3.png"  style="margin-bottom:4px; "><span style="margin-left: 6px;">固话信息</span><span id="gddh"  class="yuan">0</span></div>
+					<div name="gp_btnm" id="regEmail" class="_normal-button"
+						style="cursor: pointer; margin-left: 6px;"
+						onclick="d4()"><img src="<%=basePath %>template/img/qt4.png"  style="margin-bottom:4px; "><span style="margin-left: 6px;">银行卡号</span><span id="yh"  class="yuan">0</span></div>
+					<div name="gp_btnm" id="regStamp" class="_normal-button"
+						style="cursor: pointer; margin-left: 6px;"
+						onclick="d5()"><img src="<%=basePath %>template/img/qt5.png"  style="margin-bottom:4px; "><span style="margin-left: 6px;">邮箱账号</span><span id="yx"  class="yuan">0</span></div>
+					<div name="gp_btnm"  class="_normal-button"
+						style="cursor: pointer; margin-left: 6px;"
+						onclick="d6()"><img src="<%=basePath %>template/img/qt6.png" style="margin-bottom:4px; "><span style="margin-left: 6px;">车牌信息</span><span id="cp"  class="yuan">0</span></div>
+					<div name="gp_btnm"  class="_normal-button"
+						style="cursor: pointer; margin-left: 6px;"
+						onclick="d7()"><img src="<%=basePath %>template/img/qt21.png"  style="margin-bottom:4px; "><span style="margin-left: 6px;">护照信息</span><span id="hz"  class="yuan">0</span></div>
+					<div name="gp_btnm" id="regGPS" class="_normal-button"
+						style="cursor: pointer; margin-left: 6px;"
+						onclick="d13()"><img src="<%=basePath %>template/img/qt19.png"  style="margin-bottom:4px; "><span style="margin-left: 6px;">信用证号</span><span id="xyz"  class="yuan">0</span></div>
+					<div name="gp_btnm"  class="_normal-button"
+						style="cursor: pointer; margin-left: 6px;"
+						onclick="d14()"><img src="<%=basePath %>template/img/qt12.png"  style="margin-bottom:4px; "><span style="margin-left: 6px;">集装箱号</span><span id="jzx"  class="yuan">0</span></div>
+					<div name="gp_btnm" class="_normal-button"
+						style="cursor: pointer; margin-top: 6px;"
+						onclick="d17()"><img src="<%=basePath %>template/img/qt13.png"  style="margin-bottom:4px; "><span style="margin-left: 6px;">运输车号</span><span id="ys"  class="yuan">0</span></div>
+					<div name="gp_btnm" id="twitter" class="_normal-button"
+						style="cursor: pointer; margin-top: 6px; margin-left: 6px;"
+						onclick="d19()"><img src="<%=basePath %>template/img/qt14.png"  style="margin-bottom:4px; "><span style="margin-left: 6px;">电汇信息</span><span id="dh"  class="yuan">0</span></div>
+				</div>
+		</div>
+		
+		
+		<div class="col-md-10" id="d1">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<span>信息展示</span>
+					</div>
+					<div class="panel-body" style="padding: 0 0 15px;">
+						<table id="datatable520" class="table table-striped table-hover"
+							style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+							<thead>
+								 <tr>
+							<th class="alcenter" >手机号</th>
+							<th class="alcenter" >次数</th>
+						</tr>
+							</thead>
+							<tbody id="emails">
+							</tbody>
+						</table>
+						<div class="alcenter" style="font-size: 14px">
+							<div class="pagecount inline" style="height: 29px;">
+								<span id="tot520"></span>
+							</div>
+							<div class="pagebar inline"
+								style="position: absolute; right: 30px; height: 29px;">
+								<ul class="pagination pagination-sm" style="margin: 0;">
+									<li id = "pages1"></li>
+									
+									<li id = "pages"></li>	
+				            		
+									<li id = "pages2"></li>
+									</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		
+		
+		
+		
+			<!--身份证信息展示 -->
+			<div class="col-md-10" id="d2">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<span>信息展示</span>
+					</div>
+					<div class="panel-body" style="padding: 0 0 635px;">
+						<table id="datatable207" class="table table-striped table-hover"
+							style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+							<thead>
+								 <tr>
+							<th class="alcenter" >身份证号</th>
+							<th class="alcenter" >次数</th>
+						</tr>
+							</thead>
+							<tbody id="emails207">
+								
+							</tbody>
+						</table>
+						<div class="alcenter" style="font-size: 14px">
+							<div class="pagecount inline" style="height: 29px;">
+								<span id="tot207"></span>
+							</div>
+							<div class="pagebar inline"
+								style="position: absolute; right: 30px; height: 29px;">
+								<ul class="pagination pagination-sm" style="margin: 0;">
+									<li id = "pages17"></li>
+									
+									<li id = "pages7"></li>	
+				            		
+									<li id = "pages27"></li>
+									</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--固话信息展示 -->
+			<div class="col-md-10" id="d3">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<span>信息展示</span>
+					</div>
+					<div class="panel-body" style="padding: 0 0 635px;">
+						<table id="datatable" class="table table-striped table-hover"
+							style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+							<thead>
+								 <tr>
+							<th class="alcenter" >电话号码</th>
+							<th class="alcenter" >次数</th>
+						</tr>
+							</thead>
+							<tbody id="tbcont206">
+							</tbody>
+						</table>
+						<div class="alcenter" style="font-size: 14px">
+							<div class="pagecount inline" style="height: 29px;">
+								<span id="tot206"></span>
+							</div>
+							<div class="pagebar inline"
+								style="position: absolute; right: 30px; height: 29px;">
+								<ul class="pagination pagination-sm" style="margin: 0;">
+									<li id = "pages16"></li>
+									
+									<li id = "pages6"></li>	
+				            		
+									<li id = "pages26"></li>
+									</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--银行卡号信息展示 -->
+			<div class="col-md-10" id="d4">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<span>信息展示</span>
+					</div>
+					<div class="panel-body" style="padding: 0 0 635px;">
+						<table id="datatable" class="table table-striped table-hover"
+							style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+							<thead>
+								 <tr>
+							<th class="alcenter" >银行卡号</th>
+							<th class="alcenter" >次数</th>
+						</tr>
+							</thead>
+							<tbody id="tbcont205">
+								
+							</tbody>
+						</table>
+					<div class="alcenter" style="font-size: 14px">
+							<div class="pagecount inline" style="height: 29px;">
+								<span id="tot205"></span>
+							</div>
+							<div class="pagebar inline"
+								style="position: absolute; right: 30px; height: 29px;">
+								<ul class="pagination pagination-sm" style="margin: 0;">
+									<li id = "pages15"></li>
+									
+									<li id = "pages5"></li>	
+				            		
+									<li id = "pages25"></li>
+									</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--邮箱账号信息展示 -->
+			<div class="col-md-10" id="d5">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<span>信息展示</span>
+					</div>
+					<div class="panel-body" style="padding: 0 0 635px;">
+						<table id="datatable" class="table table-striped table-hover"
+							style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+							<thead>
+								 <tr>
+							<th class="alcenter" >邮箱账号</th>
+							<th class="alcenter" >次数</th>
+						</tr>
+							</thead>
+							<tbody id="tbcont204">
+								
+							</tbody>
+						</table>
+						<div class="alcenter" style="font-size: 14px">
+							<div class="pagecount inline" style="height: 29px;">
+								<span id="tot204"></span>
+							</div>
+							<div class="pagebar inline"
+								style="position: absolute; right: 30px; height: 29px;">
+								<ul class="pagination pagination-sm" style="margin: 0;">
+									<li id = "pages14"></li>
+									
+									<li id = "pages4"></li>	
+				            		
+									<li id = "pages24"></li>
+									</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--车牌信息展示 -->
+			<div class="col-md-10" id="d6">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<span>信息展示</span>
+					</div>
+					<div class="panel-body" style="padding: 0 0 635px;">
+						<table id="datatable" class="table table-striped table-hover"
+							style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+							<thead>
+								 <tr>
+							<th class="alcenter">车牌</th>
+							<th class="alcenter">次数</th>
+						</tr>
+							</thead>
+							<tbody id="tbcont203">
+								
+							</tbody>
+						</table>
+						<div class="alcenter" style="font-size: 14px">
+							<div class="pagecount inline" style="height: 29px;">
+								<span id="tot203"></span>
+							</div>
+							<div class="pagebar inline"
+								style="position: absolute; right: 30px; height: 29px;">
+								<ul class="pagination pagination-sm" style="margin: 0;">
+									<li id = "pages13"></li>
+									
+									<li id = "pages33"></li>	
+				            		
+									<li id = "pages23"></li>
+									</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+				<!--护照信息展示 -->
+			<div class="col-md-10" id="d7">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<span>信息展示</span>
+					</div>
+					<div class="panel-body" style="padding: 0 0 635px;">
+						<table id="datatable" class="table table-striped table-hover"
+							style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+							<thead>
+								 <tr>
+							<th class="alcenter">护照账号</th>
+							
+							<th class="alcenter">次数</th>
+						</tr>
+							</thead>
+							<tbody id="tbcont202202">
+								
+							</tbody>
+						</table>
+						<div class="alcenter" style="font-size: 14px">
+							<div class="pagecount inline" style="height: 29px;">
+								<span id="tot202202"></span>
+							</div>
+							<div class="pagebar inline"
+								style="position: absolute; right: 30px; height: 29px;">
+								<ul class="pagination pagination-sm" style="margin: 0;">
+									<li id = "pages129"></li>
+									
+									<li id = "pages29"></li>	
+				            		
+									<li id = "pages229"></li>
+									</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+				<!--信用证信息展示 -->
+			<div class="col-md-10" id="d13">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<span>信息展示</span>
+					</div>
+					<div class="panel-body" style="padding: 0 0 635px;">
+						<table id="datatable" class="table table-striped table-hover"
+							style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+							<thead>
+								 <tr>
+							<th class="alcenter">信用证账号</th>
+							<th class="alcenter">次数</th>
+						</tr>
+							</thead>
+							<tbody id="tbcont20213">
+								
+							</tbody>
+						</table>
+						<div class="alcenter" style="font-size: 14px">
+							<div class="pagecount inline" style="height: 29px;">
+								<span id="tot20213"></span>
+							</div>
+							<div class="pagebar inline"
+								style="position: absolute; right: 30px; height: 29px;">
+								<ul class="pagination pagination-sm" style="margin: 0;">
+									<li id = "pages1213"></li>
+									
+									<li id = "pages213"></li>	
+				            		
+									<li id = "pages2213"></li>
+									</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+				<!--集装箱号信息展示 -->
+			<div class="col-md-10" id="d14">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<span>信息展示</span>
+					</div>
+					<div class="panel-body" style="padding: 0 0 635px;">
+						<table id="datatable" class="table table-striped table-hover"
+							style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+							<thead>
+								 <tr>
+							<th class="alcenter">集装箱号</th>
+							
+							<th class="alcenter">次数</th>
+						</tr>
+							</thead>
+							<tbody id="tbcont20214">
+								
+							</tbody>
+						</table>
+						<div class="alcenter" style="font-size: 14px">
+							<div class="pagecount inline" style="height: 29px;">
+								<span id="tot20214"></span>
+							</div>
+							<div class="pagebar inline"
+								style="position: absolute; right: 30px; height: 29px;">
+								<ul class="pagination pagination-sm" style="margin: 0;">
+									<li id = "pages1214"></li>
+									
+									<li id = "pages214"></li>	
+				            		
+									<li id = "pages2214"></li>
+									</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+				<!--运输车号信息展示 -->
+			<div class="col-md-10" id="d17">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<span>信息展示</span>
+					</div>
+					<div class="panel-body" style="padding: 0 0 635px;">
+						<table id="datatable" class="table table-striped table-hover"
+							style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+							<thead>
+								 <tr>
+							<th class="alcenter">运输车号</th>
+							
+							<th class="alcenter">次数</th>
+						</tr>
+							</thead>
+							<tbody id="tbcont20217">
+								
+							</tbody>
+						</table>
+						<div class="alcenter" style="font-size: 14px">
+							<div class="pagecount inline" style="height: 29px;">
+								<span id="tot20217"></span>
+							</div>
+							<div class="pagebar inline"
+								style="position: absolute; right: 30px; height: 29px;">
+								<ul class="pagination pagination-sm" style="margin: 0;">
+									<li id = "pages1217"></li>
+									
+									<li id = "pages217"></li>	
+				            		
+									<li id = "pages2217"></li>
+									</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+				<!--电汇号信息展示 -->
+			<div class="col-md-10" id="d19">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<span>信息展示</span>
+					</div>
+					<div class="panel-body" style="padding: 0 0 635px;">
+						<table id="datatable" class="table table-striped table-hover"
+							style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+							<thead>
+								 <tr>
+							<th class="alcenter">电汇号</th>
+							
+							<th class="alcenter">次数</th>
+						</tr>
+							</thead>
+							<tbody id="tbcont20219">
+								
+							</tbody>
+						</table>
+						<div class="alcenter" style="font-size: 14px">
+							<div class="pagecount inline" style="height: 29px;">
+								<span id="tot20219"></span>
+							</div>
+							<div class="pagebar inline"
+								style="position: absolute; right: 30px; height: 29px;">
+								<ul class="pagination pagination-sm" style="margin: 0;">
+									<li id = "pages1219"></li>
+									
+									<li id = "pages219"></li>	
+				            		
+									<li id = "pages2219"></li>
+									</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="modal right fade" id="myModal" tabindex="-1"
+				style="width: 100%; height: 100%; margin: auto;">
+				<div class="panel panel-default"
+					style="width: 30%; height: 80%; margin: 3% auto;">
+					<div class="panel-heading">命中文件列表</div>
+					<div class="panel-body" style="width: 100%; height: 90%; overflow-y :auto;">
+						<table id="datatable" class="table table-striped table-hover"
+							style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+							<thead>
+								<tr >
+									<th style="text-align: left">名称</th>
+								</tr>
+							</thead>
+							<tbody id="clues2">
+
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			
+		<script src="<%=basePath%>template/js/jquery/jquery-2.0.3.min.js"></script>
+		<script
+			src="<%=basePath%>template/js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+		<script src="<%=basePath%>template/bootstrap-dist/js/bootstrap.min.js"></script>
+		<!-- JAVASCRIPTS -->
+		<!-- Placed at the end of the document so the pages load faster -->
+		<!-- JQUERY UI-->
+		<script
+			src="<%=basePath%>template/js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+		<!-- COOKIE -->
+		<script type="text/javascript"
+			src="<%=basePath%>template/js/jQuery-Cookie/jquery.cookie.min.js"></script>
+		<!-- CUSTOM SCRIPT -->
+		<script src="<%=basePath%>template/js/script_left.js"></script>
+		<script src="<%=basePath%>template/js/cutover/js.js"></script>
+		<script src="<%=basePath%>template/js/cutover/echarts.js"></script>
+		<script src="<%=basePath%>template/js/cutover/dataTool.min.js"></script>
+		
+		<script type="text/javascript">
+		//正则判断标签
+		$(function () {
+            $("#d1").show();
+            $("#d2").hide();
+            $("#d3").hide();
+            $("#d4").hide();
+            $("#d5").hide();
+            $("#d6").hide();
+            $("#d7").hide();
+			$("#d13").hide();
+			$("#d14").hide();
+			$("#d17").hide();
+			$("#d19").hide();
+        })
+	
+		function d1() {
+			$("#d1").show();
+			$("#d2").hide();
+			$("#d3").hide();
+			$("#d4").hide();
+			$("#d5").hide();
+			$("#d6").hide();
+			$("#d7").hide();
+			$("#d13").hide();
+			$("#d14").hide();
+			$("#d17").hide();
+			$("#d19").hide();
+			searchAll('1');
+		}
+
+		function d2() {
+			$("#d1").hide();
+			$("#d2").show();
+			$("#d3").hide();
+			$("#d4").hide();
+			$("#d5").hide();
+			$("#d6").hide();
+			$("#d7").hide();
+			$("#d13").hide();
+			$("#d14").hide();
+			$("#d17").hide();
+			$("#d19").hide();
+			searchsfzAll('1');
+		}
+		function d3() {
+			$("#d1").hide();
+			$("#d2").hide();
+			$("#d3").show();
+			$("#d4").hide();
+			$("#d5").hide();
+			$("#d6").hide();
+			$("#d7").hide();
+			$("#d13").hide();
+			$("#d14").hide();
+			$("#d17").hide();
+			$("#d19").hide();
+			searchgddhAll('1');
+		}
+		function d4() {
+			$("#d1").hide();
+			$("#d2").hide();
+			$("#d3").hide();
+			$("#d4").show();
+			$("#d5").hide();
+			$("#d6").hide();
+			$("#d7").hide();
+			$("#d13").hide();
+			$("#d14").hide();
+			$("#d17").hide();
+			$("#d19").hide();
+			searchyhAll('1');
+		}
+		
+
+		function d5() {
+			$("#d1").hide();
+			$("#d2").hide();
+			$("#d3").hide();
+			$("#d4").hide();
+			$("#d5").show();
+			$("#d6").hide();
+			$("#d7").hide();
+			$("#d13").hide();
+			$("#d14").hide();
+			$("#d17").hide();
+			$("#d19").hide();
+			searchyxAll('1');
+		}
+		function d6() {
+			$("#d1").hide();
+			$("#d2").hide();
+			$("#d3").hide();
+			$("#d4").hide();
+			$("#d5").hide();
+			$("#d6").show();
+			$("#d7").hide();
+			$("#d13").hide();
+			$("#d14").hide();
+			$("#d17").hide();
+			$("#d19").hide();
+			searchcpAll('1');
+		}
+		function d7() {
+			$("#d1").hide();
+			$("#d2").hide();
+			$("#d3").hide();
+			$("#d4").hide();
+			$("#d5").hide();
+			$("#d6").hide();
+			$("#d7").show();
+			$("#d13").hide();
+			$("#d14").hide();
+			$("#d17").hide();
+			$("#d19").hide();
+			searchhzAll('1');
+		}
+		function d13() {
+			$("#d1").hide();
+			$("#d2").hide();
+			$("#d3").hide();
+			$("#d4").hide();
+			$("#d5").hide();
+			$("#d6").hide();
+			$("#d7").hide();
+			$("#d13").show();
+			$("#d14").hide();
+			$("#d17").hide();
+			$("#d19").hide();
+			searchxyzAll('1');
+		}
+		function d14() {
+			$("#d1").hide();
+			$("#d2").hide();
+			$("#d3").hide();
+			$("#d4").hide();
+			$("#d5").hide();
+			$("#d6").hide();
+			$("#d7").hide();
+			$("#d13").hide();
+			$("#d14").show();
+			$("#d17").hide();
+			$("#d19").hide();
+			searchjzxAll('1');
+		}
+		function d17() {
+			$("#d1").hide();
+			$("#d2").hide();
+			$("#d3").hide();
+			$("#d4").hide();
+			$("#d5").hide();
+			$("#d6").hide();
+			$("#d7").hide();
+			$("#d13").hide();
+			$("#d14").hide();
+			$("#d17").show();
+			$("#d19").hide();
+			searchysAll('1');
+		}
+		function d19() {
+			$("#d1").hide();
+			$("#d2").hide();
+			$("#d3").hide();
+			$("#d4").hide();
+			$("#d5").hide();
+			$("#d6").hide();
+			$("#d7").hide();
+			$("#d13").hide();
+			$("#d14").hide();
+			$("#d17").hide();
+			$("#d19").show();
+			searchdhAll('1');
+		}
+		
+		//左侧案件列表
+		window.onload = showcase();
+		function showcase(){
+			$("#caseSuspect").empty();	
+			var casenumorname = document.getElementById("caseinfo").value;
+			$.ajax({
+				type : "POST",
+				url : "<%=basePath%>admin/getCasecriminalSuspect.php",
+				data : {
+					"casenumorname":casenumorname
+				},
+				dataType : "json",
+				async: true,
+				success : function(data) {
+					$.each(data,function(i,item){
+						var html1=' <ul id="uli'+i+'" style="border: 1px solid #f6f8f8;border-width: 1px 0 1px 0; padding:10px;">'+
+										'<li class="has-sub" style="">'+
+												'<a href="#" class=""  onclick="setCaseId('+item.id+')"> '+
+													'<img src="<%=basePath %>template/img/anj.png" style="margin-left:;">'+
+													'<span class="menu-text" style="color: #989898;padding-left:;">'+item.caseName+'</span>'+
+													'<span style="float:right;padding-right:10px; "><input id ="id'+i+'" style=" display:none;" name="ids" value="'+item.id+'"  style="margin-left: 20px" /></span>'+
+												'</a>'+
+											'<ul id ="caseSuspect'+i+'" style="list-style: none; display: none; padding-left: 0px;">'+
+											'</ul>'+
+										'</li>'+
+									'</ul>';
+						$("#caseSuspect").append(html1);
+					});
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+				}
+			});
+		} 
+		//案件给予ID
+		var suspectNumsStr="";
+		function setCaseId(caseid) { 
+			suspectNumsStr=caseid;
+			searchAll('1');
+			searchsfzAll('1');
+			searchgddhAll('1');
+			searchyhAll('1');
+			searchyxAll('1');
+			searchcpAll('1');
+			searchhzAll('1');
+			searchxyzAll('1');
+			searchjzxAll('1');
+			searchysAll('1');
+			searchdhAll('1');
+		};
+		window.onload = myfun(1);//不要括号
+		//获取电话list
+		function myfun(pageno) { 
+			$.ajax({
+				type: "POST",
+				url: "<%=basePath %>admin/phone_list.php",
+				dataType : "json",
+				data : {
+					"caseId":suspectNumsStr,
+					"pageno":pageno
+				},							    
+				success : function(data) {
+					var pagesum=data.totalNum;
+					$("#sj").empty();
+					$("#sj").text(pagesum);
+					$("#sfz").empty();
+					$("#sfz").text(data.sfztotal);
+					$("#gddh").empty();
+					$("#gddh").text(data.gddhtotal);
+					
+					$("#yh").empty();
+					$("#yh").text(data.yhtotal);
+					$("#yx").empty();
+					$("#yx").text(data.yxtotal);
+					$("#cp").empty();
+					$("#cp").text(data.cptotal);
+					
+					$("#hz").empty();
+					$("#hz").text(data.hztotal);
+					$("#xyz").empty();
+					$("#xyz").text(data.xyztotal);
+					$("#jzx").empty();
+					$("#jzx").text(data.jzxtotal);
+					
+					$("#ys").empty();
+					$("#ys").text(data.ysctotal);
+					$("#dh").empty();
+					$("#dh").text(data.dhtotal);
+					var sizes=10;
+					var pagenum = pagesum / sizes;
+					var length=10;  //要显示的分页页数
+						
+					if(pagenum%1!=0){
+							pagenum=pagenum+(1-pagenum%1);
+					}
+					$("#pages").empty();
+					//用于删除之前显示的页数，动态添加时id名均设为order
+					for(var i=1;i<=length;i++)
+						  $("#order").remove();
+					
+					if(pagesum<sizes){
+						var html2 = '<li class="active" id="order"><a href="#" onclick="myfun(1,)">1</a></li >';
+						$("#pages").after(html2);	
+						
+					}else{
+					if(pageno<pagenum){
+						if(pageno+length-1<=pagenum){
+							var html2="";
+							if(pageno-2>0){
+								for(var i =pageno-2;i<=pageno+length-1-2;i++){	
+									if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="myfun('+i+',)">'+i+'</a></li >';
+										else
+							
+											html2 += '<li id="order"><a href="#" onclick="myfun('+i+',)">'+i+'</a></li >';  
+							   				   }
+								}
+							else{
+								for(var i =1;i<=length;i++){	
+									if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="myfun('+i+',)">'+i+'</a></li >';
+										else
+							
+											html2 += '<li id="order"><a href="#" onclick="myfun('+i+',)">'+i+'</a></li >';  
+							   				   }
+							}
+						$("#pages").after(html2);
+						}/* if */
+						else{
+							var html2="";
+							if(pagenum>=length){
+							for(var i =pageno-(length-1-pagenum+pageno);i<=pagenum;i++){	
+								 if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="myfun('+i+',)">'+i+'</a></li >';
+								else
+									html2 += '<li id="order"><a href="#" onclick="myfun('+i+',)">'+i+'</a></li >'; 
+								
+							   }
+							$("#pages").after(html2);	
+							}
+							else{
+								
+								for(var i =1;i<=pagenum;i++){	
+									
+									  
+									 if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="myfun('+i+',)">'+i+'</a></li >';
+									else
+										html2 += '<li id="order"><a href="#" onclick="myfun('+i+',)">'+i+'</a></li >';
+								   }
+								$("#pages").after(html2);	
+							}
+								
+						}
+					}
+					else{
+						if(pageno==pagenum){
+							var html2="";
+						
+							for(var i =pageno-length+1>0?pageno-length+1:1;i<=pagenum;i++){	
+							 if(i==pageno)
+								html2 += '<li class="active" id="order"><a href="#" onclick="myfun('+i+',)">'+i+'</a></li >';
+							else
+								html2 += '<li id="order"><a href="#" onclick="myfun('+i+',)">'+i+'</a></li >';
+						   }
+							$("#pages").after(html2);
+						}/* if */
+					}
+				}
+
+					$("#tot520").empty();
+					$("#pages1").empty();
+					$("#pages2").empty();
+					var html3 ='<span >共'+pagesum+'条，当前'+pageno+'/'+pagenum+'页</span>';
+					$("#tot520").append(html3);
+					
+					var html5 = '<a href="#" onclick="myfun('+pageno+'-1<1?1:'+pageno+'-1,)"><</a>';
+					$("#pages1").append(html5);
+					
+					var html4 = '<a href="#" onclick="myfun('+pageno+'+1>'+pagenum+'?'+pagenum+':'+pageno+'+1,)">></a>';
+					$("#pages2").append(html4);
+					
+					$("#emails").empty();
+					var logs=data.logs;
+					 $.each(logs,function(i,item){
+								var html20 = '+<tr>'+
+								'<th class="alcenter" >'+item.teleNum+'</th>'+
+								'<th class="alcenter" ><a data-target="#myModal" data-toggle="modal" type="button"  onclick="showteleFile('+i+')">'+item.count+'</a>'+
+								'<span class="alcenter" id="emailstal'+i+'" style=" display:none;" >'+item.evid+'</span></th>'+
+							    '</tr>+';
+								$("#emails").append(html20);	
+					 }); 
+				},						
+				error : function(data) {
+					alert("获取失败，请重试!");
+				}
+			});
+			} 
+		
+		//电话
+		function searchAll(pageno){
+			$("#emails").empty();
+			$.ajax({
+				type : "POST",
+				url : "<%=basePath%>admin/phone_list.php",
+				data : {
+					"caseId":suspectNumsStr,
+					"pageno":pageno
+				},
+				dataType : "json",
+				async: true,
+				success : function(data) {
+					var pagesum=data.totalNum;
+					$("#sj").empty();
+					$("#sj").text(pagesum);
+					var sizes=10;
+					var pagenum = pagesum / sizes;
+					var length=10;  //要显示的分页页数
+						
+					if(pagenum%1!=0){
+							pagenum=pagenum+(1-pagenum%1);
+					}
+					$("#pages").empty();
+					//用于删除之前显示的页数，动态添加时id名均设为order
+					for(var i=1;i<=length;i++)
+						  $("#order").remove();
+					
+					if(pagesum<sizes){
+						var html2 = '<li class="active" id="order"><a href="#" onclick="searchAll(1,)">1</a></li >';
+						$("#pages").after(html2);	
+						
+					}else{
+					if(pageno<pagenum){
+						if(pageno+length-1<=pagenum){
+							var html2="";
+							if(pageno-2>0){
+								for(var i =pageno-2;i<=pageno+length-1-2;i++){	
+									if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="searchAll('+i+',)">'+i+'</a></li >';
+										else
+							
+											html2 += '<li id="order"><a href="#" onclick="searchAll('+i+',)">'+i+'</a></li >';  
+							   				   }
+								}
+							else{
+								for(var i =1;i<=length;i++){	
+									if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="searchAll('+i+',)">'+i+'</a></li >';
+										else
+							
+											html2 += '<li id="order"><a href="#" onclick="searchAll('+i+',)">'+i+'</a></li >';  
+							   				   }
+							}
+						$("#pages").after(html2);
+						}/* if */
+						else{
+							var html2="";
+							if(pagenum>=length){
+							for(var i =pageno-(length-1-pagenum+pageno);i<=pagenum;i++){	
+								 if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="searchAll('+i+',)">'+i+'</a></li >';
+								else
+									html2 += '<li id="order"><a href="#" onclick="searchAll('+i+',)">'+i+'</a></li >'; 
+								
+							   }
+							$("#pages").after(html2);	
+							}
+							else{
+								
+								for(var i =1;i<=pagenum;i++){	
+									
+									  
+									 if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="searchAll('+i+',)">'+i+'</a></li >';
+									else
+										html2 += '<li id="order"><a href="#" onclick="searchAll('+i+',)">'+i+'</a></li >';
+								   }
+								$("#pages").after(html2);	
+							}
+								
+						}
+					}
+					else{
+						if(pageno==pagenum){
+							var html2="";
+						
+							for(var i =pageno-length+1>0?pageno-length+1:1;i<=pagenum;i++){	
+							 if(i==pageno)
+								html2 += '<li class="active" id="order"><a href="#" onclick="searchAll('+i+',)">'+i+'</a></li >';
+							else
+								html2 += '<li id="order"><a href="#" onclick="searchAll('+i+',)">'+i+'</a></li >';
+						   }
+							$("#pages").after(html2);
+						}/* if */
+					}
+				}
+
+					$("#tot520").empty();
+					$("#pages1").empty();
+					$("#pages2").empty();
+					var html3 ='<span >共'+pagesum+'条，当前'+pageno+'/'+pagenum+'页</span>';
+					$("#tot520").append(html3);
+					
+					var html5 = '<a href="#" onclick="searchAll('+pageno+'-1<1?1:'+pageno+'-1,)"><</a>';
+					$("#pages1").append(html5);
+					
+					var html4 = '<a href="#" onclick="searchAll('+pageno+'+1>'+pagenum+'?'+pagenum+':'+pageno+'+1,)">></a>';
+					$("#pages2").append(html4);
+					
+					$("#emails").empty();
+					var logs=data.logs;
+					 $.each(logs,function(i,item){
+								var html20 = '+<tr>'+
+								'<th class="alcenter" >'+item.teleNum+'</th>'+
+								'<th class="alcenter" ><a data-target="#myModal" data-toggle="modal" type="button"  onclick="showteleFile('+i+')">'+item.count+'</a>'+
+								'<span class="alcenter" id="emailstal'+i+'" style=" display:none;" >'+item.evid+'</span></th>'+
+							    '</tr>+';
+								$("#emails").append(html20);	
+					 }); 
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+					alert("失败");
+				}
+			});
+		} 
+
+		//手机号点击命中次数 显示文件列表
+		function showteleFile(num) {
+			$("#clues2").empty();
+			var fileNames = $("#emailstal"+num).html();
+			var files=fileNames.split("/");
+			var html="";
+		   	 $.each(files,function(i,item){
+		   		 html+='<tr >'+
+							'<td style="text-align: left">'+item+'</td>'+
+						'</tr>';
+		   	 });
+		    $("#clues2").append(html);	
+
+		}
+		
+		//身份证号查询
+		function searchsfzAll(pageno){
+			$("#emails207").empty();
+			$.ajax({
+				type : "POST",
+				url : "<%=basePath%>admin/sfz_list.php",
+				data : {
+					"caseId":suspectNumsStr,
+					"pageno":pageno
+				},
+				dataType : "json",
+				async: true,
+				success : function(data) {
+					var pagesum=data.totalNum;
+					$("#sfz").empty();
+					$("#sfz").text(pagesum);
+					var sizes=10;
+					var pagenum = pagesum / sizes;
+					var length=10;  //要显示的分页页数
+						
+					if(pagenum%1!=0){
+							pagenum=pagenum+(1-pagenum%1);
+					}
+					$("#pages7").empty();
+					//用于删除之前显示的页数，动态添加时id名均设为order
+					for(var i=1;i<=length;i++)
+						  $("#order").remove();
+					
+					if(pagesum<sizes){
+						var html2 = '<li class="active" id="order"><a href="#" onclick="searchsfzAll(1,)">1</a></li >';
+						$("#pages7").after(html2);	
+						
+					}else{
+					if(pageno<pagenum){
+						if(pageno+length-1<=pagenum){
+							var html2="";
+							if(pageno-2>0){
+								for(var i =pageno-2;i<=pageno+length-1-2;i++){	
+									if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="searchsfzAll('+i+',)">'+i+'</a></li >';
+										else
+							
+											html2 += '<li id="order"><a href="#" onclick="searchsfzAll('+i+',)">'+i+'</a></li >';  
+							   				   }
+								}
+							else{
+								for(var i =1;i<=length;i++){	
+									if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="searchsfzAll('+i+',)">'+i+'</a></li >';
+										else
+							
+											html2 += '<li id="order"><a href="#" onclick="searchsfzAll('+i+',)">'+i+'</a></li >';  
+							   				   }
+							}
+						$("#pages7").after(html2);
+						}/* if */
+						else{
+							var html2="";
+							if(pagenum>=length){
+							for(var i =pageno-(length-1-pagenum+pageno);i<=pagenum;i++){	
+								 if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="searchsfzAll('+i+',)">'+i+'</a></li >';
+								else
+									html2 += '<li id="order"><a href="#" onclick="searchsfzAll('+i+',)">'+i+'</a></li >'; 
+								
+							   }
+							$("#pages7").after(html2);	
+							}
+							else{
+								
+								for(var i =1;i<=pagenum;i++){	
+									
+									  
+									 if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="searchsfzAll('+i+',)">'+i+'</a></li >';
+									else
+										html2 += '<li id="order"><a href="#" onclick="searchsfzAll('+i+',)">'+i+'</a></li >';
+								   }
+								$("#pages7").after(html2);	
+							}
+								
+						}
+					}
+					else{
+						if(pageno==pagenum){
+							var html2="";
+						
+							for(var i =pageno-length+1>0?pageno-length+1:1;i<=pagenum;i++){	
+							 if(i==pageno)
+								html2 += '<li class="active" id="order"><a href="#" onclick="searchsfzAll('+i+',)">'+i+'</a></li >';
+							else
+								html2 += '<li id="order"><a href="#" onclick="searchsfzAll('+i+',)">'+i+'</a></li >';
+						   }
+							$("#pages7").after(html2);
+						}/* if */
+					}
+				}
+
+					$("#tot207").empty();
+					$("#pages17").empty();
+					$("#pages27").empty();
+					var html3 ='<span >共'+pagesum+'条，当前'+pageno+'/'+pagenum+'页</span>';
+					$("#tot207").append(html3);
+					
+					var html5 = '<a href="#" onclick="searchsfzAll('+pageno+'-1<1?1:'+pageno+'-1,)"><</a>';
+					$("#pages17").append(html5);
+					
+					var html4 = '<a href="#" onclick="searchsfzAll('+pageno+'+1>'+pagenum+'?'+pagenum+':'+pageno+'+1,)">></a>';
+					$("#pages27").append(html4);
+					
+					$("#emails7").empty();
+					var logs=data.logs;
+					 $.each(logs,function(i,item){
+								var html207 = '+<tr>'+
+								'<th class="alcenter" >'+item.identityNum+'</th>'+
+								'<th class="alcenter" ><a data-target="#myModal" data-toggle="modal" type="button"  onclick="showidentityFile('+i+')">'+item.count+'</a>'+
+								'<span class="alcenter" id="emails7'+i+'" style=" display:none;" >'+item.evid+'</span></th>'+
+							    '</tr>+';
+								$("#emails207").append(html207);	
+					 }); 
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+					alert("失败");
+				}
+			});
+		} 
+		//身份证号点击命中次数 显示文件列表
+		function showidentityFile(num) {
+			$("#clues2").empty();
+			var fileNames = $("#emails7"+num).html();
+			var files=fileNames.split("/");
+			var html="";
+		   	 $.each(files,function(i,item){
+		   		 html+='<tr >'+
+							'<td style="text-align: left">'+item+'</td>'+
+						'</tr>';
+		   	 });
+		    $("#clues2").append(html);	
+
+		}
+		
+		//固话信息查询
+		function searchgddhAll(pageno){
+			$("#tbcont206").empty();
+			$.ajax({
+				type : "POST",
+				url : "<%=basePath%>admin/gddh_list.php",
+				data : {
+					"caseId":suspectNumsStr,
+					"pageno":pageno
+				},
+				dataType : "json",
+				async: true,
+				success : function(data) {
+					var pagesum=data.totalNum;
+					$("#gddh").empty();
+					$("#gddh").text(pagesum);
+					var sizes=10;
+					var pagenum = pagesum / sizes;
+					var length=10;  //要显示的分页页数
+						
+					if(pagenum%1!=0){
+							pagenum=pagenum+(1-pagenum%1);
+					}
+					$("#pages6").empty();
+					//用于删除之前显示的页数，动态添加时id名均设为order
+					for(var i=1;i<=length;i++)
+						  $("#order").remove();
+					
+					if(pagesum<sizes){
+						var html2 = '<li class="active" id="order"><a href="#" onclick="searchgddhAll(1,)">1</a></li >';
+						$("#pages6").after(html2);	
+						
+					}else{
+					if(pageno<pagenum){
+						if(pageno+length-1<=pagenum){
+							var html2="";
+							if(pageno-2>0){
+								for(var i =pageno-2;i<=pageno+length-1-2;i++){	
+									if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="searchgddhAll('+i+',)">'+i+'</a></li >';
+										else
+							
+											html2 += '<li id="order"><a href="#" onclick="searchgddhAll('+i+',)">'+i+'</a></li >';  
+							   				   }
+								}
+							else{
+								for(var i =1;i<=length;i++){	
+									if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="searchgddhAll('+i+',)">'+i+'</a></li >';
+										else
+							
+											html2 += '<li id="order"><a href="#" onclick="searchgddhAll('+i+',)">'+i+'</a></li >';  
+							   				   }
+							}
+						$("#pages6").after(html2);
+						}/* if */
+						else{
+							var html2="";
+							if(pagenum>=length){
+							for(var i =pageno-(length-1-pagenum+pageno);i<=pagenum;i++){	
+								 if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="searchgddhAll('+i+',)">'+i+'</a></li >';
+								else
+									html2 += '<li id="order"><a href="#" onclick="searchgddhAll('+i+',)">'+i+'</a></li >'; 
+								
+							   }
+							$("#pages6").after(html2);	
+							}
+							else{
+								
+								for(var i =1;i<=pagenum;i++){	
+									
+									  
+									 if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="searchgddhAll('+i+',)">'+i+'</a></li >';
+									else
+										html2 += '<li id="order"><a href="#" onclick="searchgddhAll('+i+',)">'+i+'</a></li >';
+								   }
+								$("#pages6").after(html2);	
+							}
+								
+						}
+					}
+					else{
+						if(pageno==pagenum){
+							var html2="";
+						
+							for(var i =pageno-length+1>0?pageno-length+1:1;i<=pagenum;i++){	
+							 if(i==pageno)
+								html2 += '<li class="active" id="order"><a href="#" onclick="searchgddhAll('+i+',)">'+i+'</a></li >';
+							else
+								html2 += '<li id="order"><a href="#" onclick="searchgddhAll('+i+',)">'+i+'</a></li >';
+						   }
+							$("#pages6").after(html2);
+						}/* if */
+					}
+				}
+
+					$("#tot206").empty();
+					$("#pages16").empty();
+					$("#pages26").empty();
+					var html3 ='<span >共'+pagesum+'条，当前'+pageno+'/'+pagenum+'页</span>';
+					$("#tot206").append(html3);
+					
+					var html5 = '<a href="#" onclick="searchgddhAll('+pageno+'-1<1?1:'+pageno+'-1,)"><</a>';
+					$("#pages16").append(html5);
+					
+					var html4 = '<a href="#" onclick="searchgddhAll('+pageno+'+1>'+pagenum+'?'+pagenum+':'+pageno+'+1,)">></a>';
+					$("#pages26").append(html4);
+					
+					$("#tbcont206").empty();
+					var logs=data.logs;
+					 $.each(logs,function(i,item){
+								var html206 = '+<tr>'+
+								'<th class="alcenter" >'+item.fixednum+'</th>'+
+								'<th class="alcenter" ><a data-target="#myModal" data-toggle="modal" type="button"  onclick="showfixedFile('+i+')">'+item.count+'</a>'+
+								'<span class="alcenter" id="tbcont206'+i+'" style=" display:none;" >'+item.evid+'</span></th>'+
+							    '</tr>+';
+								$("#tbcont206").append(html206);	
+					 }); 
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+					alert("失败");
+				}
+			});
+		} 
+	
+		//固话信息点击命中次数 显示文件列表
+		function showfixedFile(num) {
+			$("#clues2").empty();
+			var fileNames = $("#tbcont206"+num).html();
+			var files=fileNames.split("/");
+			var html="";
+		   	 $.each(files,function(i,item){
+		   		 html+='<tr >'+
+							'<td style="text-align: left">'+item+'</td>'+
+						'</tr>';
+		   	 });
+		    $("#clues2").append(html);	
+		}
+		
+		//银行卡号信息查询
+		function searchyhAll(pageno){
+			$("#tbcont205").empty();
+			$.ajax({
+				type : "POST",
+				url : "<%=basePath%>admin/yhk_list.php",
+				data : {
+					"caseId":suspectNumsStr,
+					"pageno":pageno
+				},
+				dataType : "json",
+				async: true,
+				success : function(data) {
+					var pagesum=data.totalNum;
+					$("#yh").empty();
+					$("#yh").text(pagesum);
+					var sizes=10;
+					var pagenum = pagesum / sizes;
+					var length=10;  //要显示的分页页数
+						
+					if(pagenum%1!=0){
+							pagenum=pagenum+(1-pagenum%1);
+					}
+					$("#pages5").empty();
+					//用于删除之前显示的页数，动态添加时id名均设为order
+					for(var i=1;i<=length;i++)
+						  $("#order").remove();
+					
+					if(pagesum<sizes){
+						var html2 = '<li class="active" id="order"><a href="#" onclick="searchyxAll(1,)">1</a></li >';
+						$("#pages5").after(html2);	
+						
+					}else{
+					if(pageno<pagenum){
+						if(pageno+length-1<=pagenum){
+							var html2="";
+							if(pageno-2>0){
+								for(var i =pageno-2;i<=pageno+length-1-2;i++){	
+									if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="searchyxAll('+i+',)">'+i+'</a></li >';
+										else
+							
+											html2 += '<li id="order"><a href="#" onclick="searchyxAll('+i+',)">'+i+'</a></li >';  
+							   				   }
+								}
+							else{
+								for(var i =1;i<=length;i++){	
+									if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="searchyxAll('+i+',)">'+i+'</a></li >';
+										else
+							
+											html2 += '<li id="order"><a href="#" onclick="searchyxAll('+i+',)">'+i+'</a></li >';  
+							   				   }
+							}
+						$("#pages5").after(html2);
+						}/* if */
+						else{
+							var html2="";
+							if(pagenum>=length){
+							for(var i =pageno-(length-1-pagenum+pageno);i<=pagenum;i++){	
+								 if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="searchyxAll('+i+',)">'+i+'</a></li >';
+								else
+									html2 += '<li id="order"><a href="#" onclick="searchyxAll('+i+',)">'+i+'</a></li >'; 
+								
+							   }
+							$("#pages5").after(html2);	
+							}
+							else{
+								
+								for(var i =1;i<=pagenum;i++){	
+									
+									  
+									 if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="searchyxAll('+i+',)">'+i+'</a></li >';
+									else
+										html2 += '<li id="order"><a href="#" onclick="searchyxAll('+i+',)">'+i+'</a></li >';
+								   }
+								$("#pages5").after(html2);	
+							}
+								
+						}
+					}
+					else{
+						if(pageno==pagenum){
+							var html2="";
+						
+							for(var i =pageno-length+1>0?pageno-length+1:1;i<=pagenum;i++){	
+							 if(i==pageno)
+								html2 += '<li class="active" id="order"><a href="#" onclick="searchyxAll('+i+',)">'+i+'</a></li >';
+							else
+								html2 += '<li id="order"><a href="#" onclick="searchyxAll('+i+',)">'+i+'</a></li >';
+						   }
+							$("#pages5").after(html2);
+						}/* if */
+					}
+				}
+
+					$("#tot205").empty();
+					$("#pages15").empty();
+					$("#pages25").empty();
+					var html3 ='<span >共'+pagesum+'条，当前'+pageno+'/'+pagenum+'页</span>';
+					$("#tot205").append(html3);
+					
+					var html5 = '<a href="#" onclick="searchyxAll('+pageno+'-1<1?1:'+pageno+'-1,)"><</a>';
+					$("#pages15").append(html5);
+					
+					var html4 = '<a href="#" onclick="searchyxAll('+pageno+'+1>'+pagenum+'?'+pagenum+':'+pageno+'+1,)">></a>';
+					$("#pages25").append(html4);
+					
+					$("#tbcont205").empty();
+					var logs=data.logs;
+					 $.each(logs,function(i,item){
+								var html205 = '+<tr>'+
+								'<th class="alcenter" >'+item.banknum+'</th>'+
+								'<th class="alcenter" ><a data-target="#myModal" data-toggle="modal" type="button"  onclick="showbankFile('+i+')">'+item.count+'</a>'+
+								'<span class="alcenter" id="tbcont205'+i+'" style=" display:none;" >'+item.evid+'</span></th>'+
+							    '</tr>+';
+								$("#tbcont205").append(html205);	
+					 }); 
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+					alert("失败");
+				}
+			});
+		} 
+		
+		//银行卡号点击命中次数 显示文件列表
+		function showbankFile(num) {
+			$("#clues2").empty();
+			var fileNames = $("#tbcont205"+num).html();
+			var files=fileNames.split("/");
+			var html="";
+		   	 $.each(files,function(i,item){
+		   		 html+='<tr >'+
+							'<td style="text-align: left">'+item+'</td>'+
+						'</tr>';
+		   	 });
+		    $("#clues2").append(html);	
+		}
+		
+		//邮箱信息查询
+		function searchyxAll(pageno){
+			$("#tbcont204").empty();
+			$.ajax({
+				type : "POST",
+				url : "<%=basePath%>admin/yx_list.php",
+				data : {
+					"caseId":suspectNumsStr,
+					"pageno":pageno
+				},
+				dataType : "json",
+				async: true,
+				success : function(data) {
+					var pagesum=data.totalNum;
+					$("#yx").empty();
+					$("#yx").text(pagesum);
+					var sizes=10;
+					var pagenum = pagesum / sizes;
+					var length=10;  //要显示的分页页数
+						
+					if(pagenum%1!=0){
+							pagenum=pagenum+(1-pagenum%1);
+					}
+					$("#pages4").empty();
+					//用于删除之前显示的页数，动态添加时id名均设为order
+					for(var i=1;i<=length;i++)
+						  $("#order").remove();
+					
+					if(pagesum<sizes){
+						var html2 = '<li class="active" id="order"><a href="#" onclick="searchyxAll(1,)">1</a></li >';
+						$("#pages4").after(html2);	
+						
+					}else{
+					if(pageno<pagenum){
+						if(pageno+length-1<=pagenum){
+							var html2="";
+							if(pageno-2>0){
+								for(var i =pageno-2;i<=pageno+length-1-2;i++){	
+									if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="searchyxAll('+i+',)">'+i+'</a></li >';
+										else
+							
+											html2 += '<li id="order"><a href="#" onclick="searchyxAll('+i+',)">'+i+'</a></li >';  
+							   				   }
+								}
+							else{
+								for(var i =1;i<=length;i++){	
+									if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="searchyxAll('+i+',)">'+i+'</a></li >';
+										else
+							
+											html2 += '<li id="order"><a href="#" onclick="searchyxAll('+i+',)">'+i+'</a></li >';  
+							   				   }
+							}
+						$("#pages4").after(html2);
+						}/* if */
+						else{
+							var html2="";
+							if(pagenum>=length){
+							for(var i =pageno-(length-1-pagenum+pageno);i<=pagenum;i++){	
+								 if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="searchyxAll('+i+',)">'+i+'</a></li >';
+								else
+									html2 += '<li id="order"><a href="#" onclick="searchyxAll('+i+',)">'+i+'</a></li >'; 
+								
+							   }
+							$("#pages4").after(html2);	
+							}
+							else{
+								
+								for(var i =1;i<=pagenum;i++){	
+									
+									  
+									 if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="searchyxAll('+i+',)">'+i+'</a></li >';
+									else
+										html2 += '<li id="order"><a href="#" onclick="searchyxAll('+i+',)">'+i+'</a></li >';
+								   }
+								$("#pages4").after(html2);	
+							}
+								
+						}
+					}
+					else{
+						if(pageno==pagenum){
+							var html2="";
+						
+							for(var i =pageno-length+1>0?pageno-length+1:1;i<=pagenum;i++){	
+							 if(i==pageno)
+								html2 += '<li class="active" id="order"><a href="#" onclick="searchyxAll('+i+',)">'+i+'</a></li >';
+							else
+								html2 += '<li id="order"><a href="#" onclick="searchyxAll('+i+',)">'+i+'</a></li >';
+						   }
+							$("#pages4").after(html2);
+						}/* if */
+					}
+				}
+
+					$("#tot204").empty();
+					$("#pages14").empty();
+					$("#pages24").empty();
+					var html3 ='<span >共'+pagesum+'条，当前'+pageno+'/'+pagenum+'页</span>';
+					$("#tot204").append(html3);
+					
+					var html5 = '<a href="#" onclick="searchyxAll('+pageno+'-1<1?1:'+pageno+'-1,)"><</a>';
+					$("#pages14").append(html5);
+					
+					var html4 = '<a href="#" onclick="searchyxAll('+pageno+'+1>'+pagenum+'?'+pagenum+':'+pageno+'+1,)">></a>';
+					$("#pages24").append(html4);
+					
+					$("#tbcont204").empty();
+					var logs=data.logs;
+					 $.each(logs,function(i,item){
+								var html205 = '+<tr>'+
+								'<th class="alcenter" >'+item.emlnum+'</th>'+
+								'<th class="alcenter" ><a data-target="#myModal" data-toggle="modal" type="button"  onclick="showemlFile('+i+')">'+item.count+'</a>'+
+								'<span class="alcenter" id="tbcont204'+i+'" style=" display:none;" >'+item.evid+'</span></th>'+
+							    '</tr>+';
+								$("#tbcont204").append(html205);	
+					 }); 
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+					alert("失败");
+				}
+			});
+		} 	
+		
+		//邮箱点击命中次数 显示文件列表
+		function showemlFile(num) {
+			$("#clues2").empty();
+			var fileNames = $("#tbcont204"+num).html();
+			var files=fileNames.split("/");
+			var html="";
+		   	 $.each(files,function(i,item){
+		   		 html+='<tr >'+
+							'<td style="text-align: left">'+item+'</td>'+
+						'</tr>';
+		   	 });
+		    $("#clues2").append(html);	
+		}
+		
+		//车牌信息查询
+		function searchcpAll(pageno){
+			$("#tbcont203").empty();
+			$.ajax({
+				type : "POST",
+				url : "<%=basePath%>admin/cp_list.php",
+				data : {
+					"caseId":suspectNumsStr,
+					"pageno":pageno
+				},
+				dataType : "json",
+				async: true,
+				success : function(data) {
+					var pagesum=data.totalNum;
+					$("#cp").empty();
+					$("#cp").text(pagesum);
+					var sizes=10;
+					var pagenum = pagesum / sizes;
+					var length=10;  //要显示的分页页数
+						
+					if(pagenum%1!=0){
+							pagenum=pagenum+(1-pagenum%1);
+					}
+					$("#pages33").empty();
+					//用于删除之前显示的页数，动态添加时id名均设为order
+					for(var i=1;i<=length;i++)
+						  $("#order").remove();
+					
+					if(pagesum<sizes){
+						var html2 = '<li class="active" id="order"><a href="#" onclick="searchcpAll(1,)">1</a></li >';
+						$("#pages33").after(html2);	
+						
+					}else{
+					if(pageno<pagenum){
+						if(pageno+length-1<=pagenum){
+							var html2="";
+							if(pageno-2>0){
+								for(var i =pageno-2;i<=pageno+length-1-2;i++){	
+									if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="searchcpAll('+i+',)">'+i+'</a></li >';
+										else
+							
+											html2 += '<li id="order"><a href="#" onclick="searchcpAll('+i+',)">'+i+'</a></li >';  
+							   				   }
+								}
+							else{
+								for(var i =1;i<=length;i++){	
+									if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="searchcpAll('+i+',)">'+i+'</a></li >';
+										else
+							
+											html2 += '<li id="order"><a href="#" onclick="searchcpAll('+i+',)">'+i+'</a></li >';  
+							   				   }
+							}
+						$("#pages33").after(html2);
+						}/* if */
+						else{
+							var html2="";
+							if(pagenum>=length){
+							for(var i =pageno-(length-1-pagenum+pageno);i<=pagenum;i++){	
+								 if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="searchcpAll('+i+',)">'+i+'</a></li >';
+								else
+									html2 += '<li id="order"><a href="#" onclick="searchcpAll('+i+',)">'+i+'</a></li >'; 
+								
+							   }
+							$("#pages33").after(html2);	
+							}
+							else{
+								
+								for(var i =1;i<=pagenum;i++){	
+									
+									  
+									 if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="searchcpAll('+i+',)">'+i+'</a></li >';
+									else
+										html2 += '<li id="order"><a href="#" onclick="searchcpAll('+i+',)">'+i+'</a></li >';
+								   }
+								$("#pages33").after(html2);	
+							}
+								
+						}
+					}
+					else{
+						if(pageno==pagenum){
+							var html2="";
+						
+							for(var i =pageno-length+1>0?pageno-length+1:1;i<=pagenum;i++){	
+							 if(i==pageno)
+								html2 += '<li class="active" id="order"><a href="#" onclick="searchcpAll('+i+',)">'+i+'</a></li >';
+							else
+								html2 += '<li id="order"><a href="#" onclick="searchcpAll('+i+',)">'+i+'</a></li >';
+						   }
+							$("#pages33").after(html2);
+						}/* if */
+					}
+				}
+
+					$("#tot203").empty();
+					$("#pages13").empty();
+					$("#pages23").empty();
+					var html3 ='<span >共'+pagesum+'条，当前'+pageno+'/'+pagenum+'页</span>';
+					$("#tot203").append(html3);
+					
+					var html5 = '<a href="#" onclick="searchcpAll('+pageno+'-1<1?1:'+pageno+'-1,)"><</a>';
+					$("#pages13").append(html5);
+					
+					var html4 = '<a href="#" onclick="searchcpAll('+pageno+'+1>'+pagenum+'?'+pagenum+':'+pageno+'+1,)">></a>';
+					$("#pages23").append(html4);
+					
+					$("#tbcont203").empty();
+					var logs=data.logs;
+					 $.each(logs,function(i,item){
+								var html205 = '+<tr>'+
+								'<th class="alcenter" >'+item.platenum+'</th>'+
+								'<th class="alcenter" ><a data-target="#myModal" data-toggle="modal" type="button"  onclick="showplateFile('+i+')">'+item.count+'</a>'+
+								'<span class="alcenter" id="tbcont203'+i+'" style=" display:none;" >'+item.evid+'</span></th>'+
+							    '</tr>+';
+								$("#tbcont203").append(html205);	
+					 }); 
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+					alert("失败");
+				}
+			});
+		} 
+		
+		//车牌信息点击命中次数 显示文件列表
+		function showplateFile(num) {
+			$("#clues2").empty();
+			var fileNames = $("#tbcont203"+num).html();
+			var files=fileNames.split("/");
+			var html="";
+		   	 $.each(files,function(i,item){
+		   		 html+='<tr >'+
+							'<td style="text-align: left">'+item+'</td>'+
+						'</tr>';
+		   	 });
+		    $("#clues2").append(html);	
+		}
+		
+		//护照信息查询
+		function searchhzAll(pageno){
+			$("#tbcont202202").empty();
+			$.ajax({
+				type : "POST",
+				url : "<%=basePath%>admin/hz_list.php",
+				data : {
+					"caseId":suspectNumsStr,
+					"pageno":pageno
+				},
+				dataType : "json",
+				async: true,
+				success : function(data) {
+					var pagesum=data.totalNum;
+					$("#hz").empty();
+					$("#hz").text(pagesum);
+					var sizes=10;
+					var pagenum = pagesum / sizes;
+					var length=10;  //要显示的分页页数
+						
+					if(pagenum%1!=0){
+							pagenum=pagenum+(1-pagenum%1);
+					}
+					$("#pages29").empty();
+					//用于删除之前显示的页数，动态添加时id名均设为order
+					for(var i=1;i<=length;i++)
+						  $("#order").remove();
+					
+					if(pagesum<sizes){
+						var html2 = '<li class="active" id="order"><a href="#" onclick="searchhzAll(1,)">1</a></li >';
+						$("#pages29").after(html2);	
+						
+					}else{
+					if(pageno<pagenum){
+						if(pageno+length-1<=pagenum){
+							var html2="";
+							if(pageno-2>0){
+								for(var i =pageno-2;i<=pageno+length-1-2;i++){	
+									if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="searchhzAll('+i+',)">'+i+'</a></li >';
+										else
+							
+											html2 += '<li id="order"><a href="#" onclick="searchhzAll('+i+',)">'+i+'</a></li >';  
+							   				   }
+								}
+							else{
+								for(var i =1;i<=length;i++){	
+									if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="searchhzAll('+i+',)">'+i+'</a></li >';
+										else
+							
+											html2 += '<li id="order"><a href="#" onclick="searchhzAll('+i+',)">'+i+'</a></li >';  
+							   				   }
+							}
+						$("#pages29").after(html2);
+						}/* if */
+						else{
+							var html2="";
+							if(pagenum>=length){
+							for(var i =pageno-(length-1-pagenum+pageno);i<=pagenum;i++){	
+								 if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="searchhzAll('+i+',)">'+i+'</a></li >';
+								else
+									html2 += '<li id="order"><a href="#" onclick="searchhzAll('+i+',)">'+i+'</a></li >'; 
+								
+							   }
+							$("#pages29").after(html2);	
+							}
+							else{
+								
+								for(var i =1;i<=pagenum;i++){	
+									
+									  
+									 if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="searchhzAll('+i+',)">'+i+'</a></li >';
+									else
+										html2 += '<li id="order"><a href="#" onclick="searchhzAll('+i+',)">'+i+'</a></li >';
+								   }
+								$("#pages29").after(html2);	
+							}
+								
+						}
+					}
+					else{
+						if(pageno==pagenum){
+							var html2="";
+						
+							for(var i =pageno-length+1>0?pageno-length+1:1;i<=pagenum;i++){	
+							 if(i==pageno)
+								html2 += '<li class="active" id="order"><a href="#" onclick="searchhzAll('+i+',)">'+i+'</a></li >';
+							else
+								html2 += '<li id="order"><a href="#" onclick="searchhzAll('+i+',)">'+i+'</a></li >';
+						   }
+							$("#pages29").after(html2);
+						}/* if */
+					}
+				}
+
+					$("#tot202202").empty();
+					$("#pages129").empty();
+					$("#pages229").empty();
+					var html3 ='<span >共'+pagesum+'条，当前'+pageno+'/'+pagenum+'页</span>';
+					$("#tot202202").append(html3);
+					
+					var html5 = '<a href="#" onclick="searchxyzAll('+pageno+'-1<1?1:'+pageno+'-1,)"><</a>';
+					$("#pages129").append(html5);
+					
+					var html4 = '<a href="#" onclick="searchxyzAll('+pageno+'+1>'+pagenum+'?'+pagenum+':'+pageno+'+1,)">></a>';
+					$("#pages229").append(html4);
+					
+					$("#tbcont202202").empty();
+					var logs=data.logs;
+					 $.each(logs,function(i,item){
+								var html205 = '+<tr>'+
+								'<th class="alcenter" >'+item.passportnum+'</th>'+
+								'<th class="alcenter" ><a data-target="#myModal" data-toggle="modal" type="button"  onclick="showpassportFile('+i+')">'+item.count+'</a>'+
+								'<span class="alcenter" id="tbcont202202'+i+'" style=" display:none;" >'+item.evid+'</span></th>'+
+							    '</tr>+';
+								$("#tbcont202202").append(html205);	
+					 }); 
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+					alert("失败");
+				}
+			});
+		} 
+		
+		
+		//护照信息点击命中次数 显示文件列表
+		function showpassportFile(num) {
+			$("#clues2").empty();
+			var fileNames = $("#tbcont202202"+num).html();
+			var files=fileNames.split("/");
+			var html="";
+		   	 $.each(files,function(i,item){
+		   		 html+='<tr >'+
+							'<td style="text-align: left">'+item+'</td>'+
+						'</tr>';
+		   	 });
+		    $("#clues2").append(html);	
+		}
+		
+		//信用证信息查询
+		function searchxyzAll(pageno){
+			$("#tbcont20213").empty();
+			$.ajax({
+				type : "POST",
+				url : "<%=basePath%>admin/xyz_list.php",
+				data : {
+					"caseId":suspectNumsStr,
+					"pageno":pageno
+				},
+				dataType : "json",
+				async: true,
+				success : function(data) {
+					var pagesum=data.totalNum;
+					$("#xyz").empty();
+					$("#xyz").text(pagesum);
+					var sizes=10;
+					var pagenum = pagesum / sizes;
+					var length=10;  //要显示的分页页数
+						
+					if(pagenum%1!=0){
+							pagenum=pagenum+(1-pagenum%1);
+					}
+					$("#pages213").empty();
+					//用于删除之前显示的页数，动态添加时id名均设为order
+					for(var i=1;i<=length;i++)
+						  $("#order").remove();
+					
+					if(pagesum<sizes){
+						var html2 = '<li class="active" id="order"><a href="#" onclick="searchxyzAll(1,)">1</a></li >';
+						$("#pages213").after(html2);	
+						
+					}else{
+					if(pageno<pagenum){
+						if(pageno+length-1<=pagenum){
+							var html2="";
+							if(pageno-2>0){
+								for(var i =pageno-2;i<=pageno+length-1-2;i++){	
+									if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="searchxyzAll('+i+',)">'+i+'</a></li >';
+										else
+							
+											html2 += '<li id="order"><a href="#" onclick="searchxyzAll('+i+',)">'+i+'</a></li >';  
+							   				   }
+								}
+							else{
+								for(var i =1;i<=length;i++){	
+									if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="searchxyzAll('+i+',)">'+i+'</a></li >';
+										else
+							
+											html2 += '<li id="order"><a href="#" onclick="searchxyzAll('+i+',)">'+i+'</a></li >';  
+							   				   }
+							}
+						$("#pages213").after(html2);
+						}/* if */
+						else{
+							var html2="";
+							if(pagenum>=length){
+							for(var i =pageno-(length-1-pagenum+pageno);i<=pagenum;i++){	
+								 if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="searchxyzAll('+i+',)">'+i+'</a></li >';
+								else
+									html2 += '<li id="order"><a href="#" onclick="searchxyzAll('+i+',)">'+i+'</a></li >'; 
+								
+							   }
+							$("#pages213").after(html2);	
+							}
+							else{
+								
+								for(var i =1;i<=pagenum;i++){	
+									
+									  
+									 if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="searchxyzAll('+i+',)">'+i+'</a></li >';
+									else
+										html2 += '<li id="order"><a href="#" onclick="searchxyzAll('+i+',)">'+i+'</a></li >';
+								   }
+								$("#pages213").after(html2);	
+							}
+								
+						}
+					}
+					else{
+						if(pageno==pagenum){
+							var html2="";
+						
+							for(var i =pageno-length+1>0?pageno-length+1:1;i<=pagenum;i++){	
+							 if(i==pageno)
+								html2 += '<li class="active" id="order"><a href="#" onclick="searchxyzAll('+i+',)">'+i+'</a></li >';
+							else
+								html2 += '<li id="order"><a href="#" onclick="searchxyzAll('+i+',)">'+i+'</a></li >';
+						   }
+							$("#pages213").after(html2);
+						}/* if */
+					}
+				}
+
+					$("#tot20213").empty();
+					$("#pages1213").empty();
+					$("#pages2213").empty();
+					var html3 ='<span >共'+pagesum+'条，当前'+pageno+'/'+pagenum+'页</span>';
+					$("#tot20213").append(html3);
+					
+					var html5 = '<a href="#" onclick="searchxyzAll('+pageno+'-1<1?1:'+pageno+'-1,)"><</a>';
+					$("#pages1213").append(html5);
+					
+					var html4 = '<a href="#" onclick="searchxyzAll('+pageno+'+1>'+pagenum+'?'+pagenum+':'+pageno+'+1,)">></a>';
+					$("#pages2213").append(html4);
+					
+					$("#tbcont20213").empty();
+					var logs=data.logs;
+					 $.each(logs,function(i,item){
+								var html205 = '+<tr>'+
+								'<th class="alcenter" >'+item.creditnum+'</th>'+
+								'<th class="alcenter" ><a data-target="#myModal" data-toggle="modal" type="button"  onclick="showcreditFile('+i+')">'+item.count+'</a>'+
+								'<span class="alcenter" id="tbcont20213'+i+'" style=" display:none;" >'+item.evid+'</span></th>'+
+							    '</tr>+';
+								$("#tbcont20213").append(html205);	
+					 }); 
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+					alert("失败");
+				}
+			});
+		} 
+	
+		//信用证信息点击命中次数 显示文件列表
+		function showcreditFile(num) {
+			$("#clues2").empty();
+			var fileNames = $("#tbcont20213"+num).html();
+			var files=fileNames.split("/");
+			var html="";
+		   	 $.each(files,function(i,item){
+		   		 html+='<tr >'+
+							'<td style="text-align: left">'+item+'</td>'+
+						'</tr>';
+		   	 });
+		    $("#clues2").append(html);	
+		}
+		
+		
+		
+		//集装箱信息查询
+		function searchjzxAll(pageno){
+			$("#tbcont20214").empty();
+			$.ajax({
+				type : "POST",
+				url : "<%=basePath%>admin/jzx_list.php",
+				data : {
+					"caseId":suspectNumsStr,
+					"pageno":pageno
+				},
+				dataType : "json",
+				async: true,
+				success : function(data) {
+					var pagesum=data.totalNum;
+					$("#jzx").empty();
+					$("#jzx").text(pagesum);
+					var sizes=10;
+					var pagenum = pagesum / sizes;
+					var length=10;  //要显示的分页页数
+						
+					if(pagenum%1!=0){
+							pagenum=pagenum+(1-pagenum%1);
+					}
+					$("#pages214").empty();
+					//用于删除之前显示的页数，动态添加时id名均设为order
+					for(var i=1;i<=length;i++)
+						  $("#order").remove();
+					
+					if(pagesum<sizes){
+						var html2 = '<li class="active" id="order"><a href="#" onclick="searchjzxAll(1,)">1</a></li >';
+						$("#pages214").after(html2);	
+						
+					}else{
+					if(pageno<pagenum){
+						if(pageno+length-1<=pagenum){
+							var html2="";
+							if(pageno-2>0){
+								for(var i =pageno-2;i<=pageno+length-1-2;i++){	
+									if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="searchjzxAll('+i+',)">'+i+'</a></li >';
+										else
+							
+											html2 += '<li id="order"><a href="#" onclick="searchjzxAll('+i+',)">'+i+'</a></li >';  
+							   				   }
+								}
+							else{
+								for(var i =1;i<=length;i++){	
+									if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="searchjzxAll('+i+',)">'+i+'</a></li >';
+										else
+							
+											html2 += '<li id="order"><a href="#" onclick="searchjzxAll('+i+',)">'+i+'</a></li >';  
+							   				   }
+							}
+						$("#pages214").after(html2);
+						}/* if */
+						else{
+							var html2="";
+							if(pagenum>=length){
+							for(var i =pageno-(length-1-pagenum+pageno);i<=pagenum;i++){	
+								 if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="searchjzxAll('+i+',)">'+i+'</a></li >';
+								else
+									html2 += '<li id="order"><a href="#" onclick="searchjzxAll('+i+',)">'+i+'</a></li >'; 
+								
+							   }
+							$("#pages214").after(html2);	
+							}
+							else{
+								
+								for(var i =1;i<=pagenum;i++){	
+									
+									  
+									 if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="searchjzxAll('+i+',)">'+i+'</a></li >';
+									else
+										html2 += '<li id="order"><a href="#" onclick="searchjzxAll('+i+',)">'+i+'</a></li >';
+								   }
+								$("#pages214").after(html2);	
+							}
+								
+						}
+					}
+					else{
+						if(pageno==pagenum){
+							var html2="";
+						
+							for(var i =pageno-length+1>0?pageno-length+1:1;i<=pagenum;i++){	
+							 if(i==pageno)
+								html2 += '<li class="active" id="order"><a href="#" onclick="searchjzxAll('+i+',)">'+i+'</a></li >';
+							else
+								html2 += '<li id="order"><a href="#" onclick="searchjzxAll('+i+',)">'+i+'</a></li >';
+						   }
+							$("#pages214").after(html2);
+						}/* if */
+					}
+				}
+
+					$("#tot20214").empty();
+					$("#pages1214").empty();
+					$("#pages2214").empty();
+					var html3 ='<span >共'+pagesum+'条，当前'+pageno+'/'+pagenum+'页</span>';
+					$("#tot20214").append(html3);
+					
+					var html5 = '<a href="#" onclick="searchjzxAll('+pageno+'-1<1?1:'+pageno+'-1,)"><</a>';
+					$("#pages1214").append(html5);
+					
+					var html4 = '<a href="#" onclick="searchjzxAll('+pageno+'+1>'+pagenum+'?'+pagenum+':'+pageno+'+1,)">></a>';
+					$("#pages2214").append(html4);
+					
+					$("#tbcont20214").empty();
+					var logs=data.logs;
+					 $.each(logs,function(i,item){
+								var html205 = '+<tr>'+
+								'<th class="alcenter" >'+item.containernum+'</th>'+
+								'<th class="alcenter" ><a data-target="#myModal" data-toggle="modal" type="button"  onclick="showcontainerFile('+i+')">'+item.count+'</a>'+
+								'<span class="alcenter" id="tbcont20214'+i+'" style=" display:none;" >'+item.evid+'</span></th>'+
+							    '</tr>+';
+								$("#tbcont20214").append(html205);	
+					 }); 
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+					alert("失败");
+				}
+			});
+		} 	
+		//集装箱信息点击命中次数 显示文件列表
+		function showcontainerFile(num) {
+			$("#clues2").empty();
+			var fileNames = $("#tbcont20214"+num).html();
+			var files=fileNames.split("/");
+			var html="";
+		   	 $.each(files,function(i,item){
+		   		 html+='<tr >'+
+							'<td style="text-align: left">'+item+'</td>'+
+						'</tr>';
+		   	 });
+		    $("#clues2").append(html);	
+		}
+		
+		
+		
+		//运输车号信息查询
+		function searchysAll(pageno){
+			$("#tbcont20217").empty();
+			$.ajax({
+				type : "POST",
+				url : "<%=basePath%>admin/ys_list.php",
+				data : {
+					"caseId":suspectNumsStr,
+					"pageno":pageno
+				},
+				dataType : "json",
+				async: true,
+				success : function(data) {
+					var pagesum=data.totalNum;
+					$("#ys").empty();
+					$("#ys").text(pagesum);
+					var sizes=10;
+					var pagenum = pagesum / sizes;
+					var length=10;  //要显示的分页页数
+						
+					if(pagenum%1!=0){
+							pagenum=pagenum+(1-pagenum%1);
+					}
+					$("#pages217").empty();
+					//用于删除之前显示的页数，动态添加时id名均设为order
+					for(var i=1;i<=length;i++)
+						  $("#order").remove();
+					
+					if(pagesum<sizes){
+						var html2 = '<li class="active" id="order"><a href="#" onclick="searchysAll(1,)">1</a></li >';
+						$("#pages217").after(html2);	
+						
+					}else{
+					if(pageno<pagenum){
+						if(pageno+length-1<=pagenum){
+							var html2="";
+							if(pageno-2>0){
+								for(var i =pageno-2;i<=pageno+length-1-2;i++){	
+									if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="searchysAll('+i+',)">'+i+'</a></li >';
+										else
+							
+											html2 += '<li id="order"><a href="#" onclick="searchysAll('+i+',)">'+i+'</a></li >';  
+							   				   }
+								}
+							else{
+								for(var i =1;i<=length;i++){	
+									if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="searchysAll('+i+',)">'+i+'</a></li >';
+										else
+							
+											html2 += '<li id="order"><a href="#" onclick="searchysAll('+i+',)">'+i+'</a></li >';  
+							   				   }
+							}
+						$("#pages217").after(html2);
+						}/* if */
+						else{
+							var html2="";
+							if(pagenum>=length){
+							for(var i =pageno-(length-1-pagenum+pageno);i<=pagenum;i++){	
+								 if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="searchysAll('+i+',)">'+i+'</a></li >';
+								else
+									html2 += '<li id="order"><a href="#" onclick="searchysAll('+i+',)">'+i+'</a></li >'; 
+								
+							   }
+							$("#pages217").after(html2);	
+							}
+							else{
+								
+								for(var i =1;i<=pagenum;i++){	
+									
+									  
+									 if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="searchysAll('+i+',)">'+i+'</a></li >';
+									else
+										html2 += '<li id="order"><a href="#" onclick="searchysAll('+i+',)">'+i+'</a></li >';
+								   }
+								$("#pages217").after(html2);	
+							}
+								
+						}
+					}
+					else{
+						if(pageno==pagenum){
+							var html2="";
+						
+							for(var i =pageno-length+1>0?pageno-length+1:1;i<=pagenum;i++){	
+							 if(i==pageno)
+								html2 += '<li class="active" id="order"><a href="#" onclick="searchysAll('+i+',)">'+i+'</a></li >';
+							else
+								html2 += '<li id="order"><a href="#" onclick="searchysAll('+i+',)">'+i+'</a></li >';
+						   }
+							$("#pages217").after(html2);
+						}/* if */
+					}
+				}
+
+					$("#tot20217").empty();
+					$("#pages1217").empty();
+					$("#pages2217").empty();
+					var html3 ='<span >共'+pagesum+'条，当前'+pageno+'/'+pagenum+'页</span>';
+					$("#tot20217").append(html3);
+					
+					var html5 = '<a href="#" onclick="searchysAll('+pageno+'-1<1?1:'+pageno+'-1,)"><</a>';
+					$("#pages1217").append(html5);
+					
+					var html4 = '<a href="#" onclick="searchysAll('+pageno+'+1>'+pagenum+'?'+pagenum+':'+pageno+'+1,)">></a>';
+					$("#pages2217").append(html4);
+					
+					$("#tbcont20217").empty();
+					var logs=data.logs;
+					 $.each(logs,function(i,item){
+								var html205 = '+<tr>'+
+								'<th class="alcenter" >'+item.transportnum+'</th>'+
+								'<th class="alcenter" ><a data-target="#myModal" data-toggle="modal" type="button"  onclick="showtransportFile('+i+')">'+item.count+'</a>'+
+								'<span class="alcenter" id="tbcont20217'+i+'" style=" display:none;" >'+item.evid+'</span></th>'+
+							    '</tr>+';
+								$("#tbcont20217").append(html205);	
+					 }); 
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+					alert("失败");
+				}
+			});
+		} 
+	
+		//运输车号信息点击命中次数 显示文件列表
+		function showtransportFile(num) {
+			$("#clues2").empty();
+			var fileNames = $("#tbcont20217"+num).html();
+			var files=fileNames.split("/");
+			var html="";
+		   	 $.each(files,function(i,item){
+		   		 html+='<tr >'+
+							'<td style="text-align: left">'+item+'</td>'+
+						'</tr>';
+		   	 });
+		    $("#clues2").append(html);	
+		}
+		
+		
+		
+		
+		
+		//电汇信息查询
+		function searchdhAll(pageno){
+			$("#tbcont20219").empty();
+			$.ajax({
+				type : "POST",
+				url : "<%=basePath%>admin/dh_list.php",
+				data : {
+					"caseId":suspectNumsStr,
+					"pageno":pageno
+				},
+				dataType : "json",
+				async: true,
+				success : function(data) {
+					var pagesum=data.totalNum;
+					$("#dh").empty();
+					$("#dh").text(pagesum);
+					var sizes=10;
+					var pagenum = pagesum / sizes;
+					var length=10;  //要显示的分页页数
+						
+					if(pagenum%1!=0){
+							pagenum=pagenum+(1-pagenum%1);
+					}
+					$("#pages219").empty();
+					//用于删除之前显示的页数，动态添加时id名均设为order
+					for(var i=1;i<=length;i++)
+						  $("#order").remove();
+					
+					if(pagesum<sizes){
+						var html2 = '<li class="active" id="order"><a href="#" onclick="searchdhAll(1,)">1</a></li >';
+						$("#pages219").after(html2);	
+						
+					}else{
+					if(pageno<pagenum){
+						if(pageno+length-1<=pagenum){
+							var html2="";
+							if(pageno-2>0){
+								for(var i =pageno-2;i<=pageno+length-1-2;i++){	
+									if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="searchdhAll('+i+',)">'+i+'</a></li >';
+										else
+							
+											html2 += '<li id="order"><a href="#" onclick="searchdhAll('+i+',)">'+i+'</a></li >';  
+							   				   }
+								}
+							else{
+								for(var i =1;i<=length;i++){	
+									if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="searchdhAll('+i+',)">'+i+'</a></li >';
+										else
+							
+											html2 += '<li id="order"><a href="#" onclick="searchdhAll('+i+',)">'+i+'</a></li >';  
+							   				   }
+							}
+						$("#pages219").after(html2);
+						}/* if */
+						else{
+							var html2="";
+							if(pagenum>=length){
+							for(var i =pageno-(length-1-pagenum+pageno);i<=pagenum;i++){	
+								 if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="searchdhAll('+i+',)">'+i+'</a></li >';
+								else
+									html2 += '<li id="order"><a href="#" onclick="searchdhAll('+i+',)">'+i+'</a></li >'; 
+								
+							   }
+							$("#pages219").after(html2);	
+							}
+							else{
+								
+								for(var i =1;i<=pagenum;i++){	
+									
+									  
+									 if(i==pageno)
+										html2 += '<li class="active" id="order"><a href="#" onclick="searchdhAll('+i+',)">'+i+'</a></li >';
+									else
+										html2 += '<li id="order"><a href="#" onclick="searchdhAll('+i+',)">'+i+'</a></li >';
+								   }
+								$("#pages219").after(html2);	
+							}
+								
+						}
+					}
+					else{
+						if(pageno==pagenum){
+							var html2="";
+						
+							for(var i =pageno-length+1>0?pageno-length+1:1;i<=pagenum;i++){	
+							 if(i==pageno)
+								html2 += '<li class="active" id="order"><a href="#" onclick="searchdhAll('+i+',)">'+i+'</a></li >';
+							else
+								html2 += '<li id="order"><a href="#" onclick="searchdhAll('+i+',)">'+i+'</a></li >';
+						   }
+							$("#pages219").after(html2);
+						}/* if */
+					}
+				}
+
+					$("#tot20219").empty();
+					$("#pages1219").empty();
+					$("#pages2219").empty();
+					var html3 ='<span >共'+pagesum+'条，当前'+pageno+'/'+pagenum+'页</span>';
+					$("#tot20219").append(html3);
+					
+					var html5 = '<a href="#" onclick="searchdhAll('+pageno+'-1<1?1:'+pageno+'-1,)"><</a>';
+					$("#pages1219").append(html5);
+					
+					var html4 = '<a href="#" onclick="searchdhAll('+pageno+'+1>'+pagenum+'?'+pagenum+':'+pageno+'+1,)">></a>';
+					$("#pages2219").append(html4);
+					
+					$("#tbcont20219").empty();
+					var logs=data.logs;
+					 $.each(logs,function(i,item){
+								var html205 = '+<tr>'+
+								'<th class="alcenter" >'+item.transfernum+'</th>'+
+								'<th class="alcenter" ><a data-target="#myModal" data-toggle="modal" type="button"  onclick="showtransferFile('+i+')">'+item.count+'</a>'+
+								'<span class="alcenter" id="tbcont20219'+i+'" style=" display:none;" >'+item.evid+'</span></th>'+
+								'</tr>+';
+								$("#tbcont20219").append(html205);	
+					 }); 
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+					alert("失败");
+				}
+			});
+		} 
+
+		//电汇信息点击命中次数 显示文件列表
+		function showtransferFile(num) {
+			$("#clues2").empty();
+			var fileNames = $("#tbcont20219"+num).html();
+			var files=fileNames.split("/");
+			var html="";
+		   	 $.each(files,function(i,item){
+		   		 html+='<tr >'+
+							'<td style="text-align: left">'+item+'</td>'+
+						'</tr>';
+		   	 });
+		    $("#clues2").append(html);	
+		}
+		
+		</script>
+</body>
+</html>

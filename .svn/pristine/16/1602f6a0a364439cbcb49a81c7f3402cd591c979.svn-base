@@ -1,0 +1,79 @@
+package com.xl.cloud.common;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class Global {
+
+	static java.util.ResourceBundle bundle = java.util.ResourceBundle
+			.getBundle("path");
+	public static String DBhostIP = bundle.getString("DBhostIP");
+	public static int pageSize = 20; //分页数据每页显示条数
+	public static int overTime=3;
+	public static String workspace=System.getProperty("user.dir");
+	public static String path;
+	public static String filePath = path+":/temp";
+	public static String order=filePath+"/order.txt";
+	public static String copyOrder=filePath+"/CopyOrder.txt";
+	public static String onceonly=filePath+"/onceonly.txt";
+	public static String imgPath=path+"pic/";
+	public static String statue;
+	public static String userName;
+	public static String TYPE = bundle.getString("TYPE");
+	public static String FingerIP = bundle.getString("FingerIP");   //指纹库IP
+	
+	public static String MainCollectionIP = bundle.getString("MainCollectionIP");
+	public static String NameNodeHostName = bundle.getString("NameNodeHostName");
+	public static String NameNodeIP = bundle.getString("NameNodeIP");
+	public static String ZKHost = bundle.getString("ZKHost");
+	public static String DockerHostIP = bundle.getString("DockerHostIP");
+	public static String JAR = bundle.getString("JAR");
+	public static String CmfIP = bundle.getString("CmfIP");
+	public static String HOST = "http://"+bundle.getString("NameNodeIP")+":8983/solr/";
+	public static String administrator="xunli";
+	public static String administratorpass="pass";
+	public static String tomcatPath = "";
+	
+	public static String regContainer = "([a-z,A-Z]{4}[0-9]{7})\\W+"; //集装箱号
+    public static String regPhone = "(0?(13|14|15|17|18)[0-9]{9})"; //手机号
+    public static String regEmail = "(^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$)"; //邮箱
+    public static String regCard = "([0-9]{16,19}|[0-9]{4}[- ][0-9]{4}[- ][0-9]{4}[- ][0-9]{4,7})";//"(\\d{16,19}|^\\d{6}[- ]\\d{10,13}|\\d{4}[- ]\\d{4}[- ]\\d{4}[- ]\\d{4,7})"; //银行卡号
+    public static String regContract = "(合同[^0-9]{0,5}[0-9a-zA-Z-]{5,20})"; //合同编号
+    public static String regStamp = "((发票代码:).[0-2][0-9]{11})";//"([0-2]\\d{11}|\\d{6}[1-4]\\d{3})"; //发票代码
+    public static String regPacking = "([0-9a-zA-Z-]{8,20})"; //装箱单
+    public static String regBill = "([0-9a-zA-Z-]{8,20}|B\\/L)"; //提单号
+    public static String regPrice = "(((￥|\\$|CNY|RMB)[0-9\\.]+)|([0-9\\.]+元))"; //价格
+    public static String regModel = "([a-zA-Z][a-zA-Z0-9]{8,14})"; //运输车号
+    public static String regLicense = "([京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领]{1}[A-Z]{1}[A-Z0-9]{4}[A-Z0-9挂学警港澳]{1})"; //车牌号
+    public static String regLC = "((信用证L/C).[0-9a-zA-z]{5,11})"; //信用证
+    public static String regTT = "((电汇:).[0-9a-zA-z]{5,11})"; //电汇
+    public static String regSFZ = "( ^[1-9]\\d{5}(18|19|([23]\\d))\\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\\d{3}[0-9Xx]$)|(^[1-9]\\d{5}\\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\\d{2}$)"; //身份证号
+    public static String regGPS = "([0-9]{0,3}\\.[0-9]{1,6},[0-9]{0,3}\\.[0-9]{1,6})"; //GPS
+    public static String regTel = "([0-9]{3,4}-[0-9]{8}|[0-9]{8})"; //固定电话
+    public static String QQnumber = "((QQ:|qq:).[1-9]{5,9})";  //QQ号码
+    public static String weChat = "([a-zA-Z\\d_]{5,})"; //微信号
+    public static String twitter = "([a-zA-Z]{1}[-_a-zA-Z0-9]{5,19}+)";//推特号
+    public static String passport = "(^1[45][0-9]{7}|G[0-9]{8}|P[0-9]{7}|S[0-9]{7,8}|D[0-9]+$)";  //护照编号
+    public static String zfbpay = "(1(3[0-9]|4[57]|5[0-35-9]|8[0-9]|70)[0-9]{8}|[a-zA-Z0-9]+\\@[a-zA-Z0-9]+\\.[a-zA-Z0-9]+)";
+    public static String regUP = "(支付宝:).[(13|14|15|17|18)][0-9]{9}|(支付宝:).([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+";//支付宝
+    public static Map<String, Integer> PRIMAP = new HashMap<String, Integer>();
+	
+	static{
+		System.out.println("数据库IP："+DBhostIP);
+		PRIMAP.put("局长", 2);
+		PRIMAP.put("副局长", 2);
+		PRIMAP.put("分局局长", 2);
+		PRIMAP.put("分局副局长", 2);
+		PRIMAP.put("处长", 2);
+		PRIMAP.put("副处长", 2);
+		PRIMAP.put("调研员", 0);
+		PRIMAP.put("副调研员", 0);
+		PRIMAP.put("科长", 1);
+		PRIMAP.put("主任科员兼副科长", 1);
+		PRIMAP.put("副科长", 1);
+		PRIMAP.put("主任科员", 0);
+		PRIMAP.put("副主任科员", 0);
+		PRIMAP.put("科员", 0);
+	}
+	
+}

@@ -1,0 +1,214 @@
+p{margin:0px;padding:0px;}
+.wish-tree {
+  max-width: 240px;
+  min-height: 450px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  position: relative;
+  background-color: #fff;
+}
+.wish-tree > ul {
+  position: absolute;
+  left: 0px;
+  /* for li`s padding-left 25*/
+  top: 0px;
+}
+.wish-tree ul,
+.wish-tree li {
+  list-style: none;
+  display: block;
+}
+.wish-tree li {
+  padding-left: 13px;
+}
+.wish-tree i,
+.wish-tree p,
+.wish-tree h1,
+.wish-tree a,
+.wish-tree span {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* IE 9 */
+  user-select: none;
+}
+.wish-tree p,
+.wish-tree h1 {
+  padding-right: 5em;
+  padding-left: 0.7em;
+  display: inline-block;
+  position: relative;
+  white-space: nowrap;
+  font-size: 14px;
+  height: 30px;
+  line-height: 30px;
+}
+.wish-tree p a {
+  text-decoration: none;
+  color: #333;
+  cursor: pointer;
+}
+.wish-tree p .del,
+.wish-tree p .edd {
+  display: none;
+  position: absolute;
+  top: 10px;
+  width: 20px;
+  height: 20px;
+  background-image: url('../img/treeEdit.jpg');
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+.wish-tree p .del {
+  background-position: left center;
+  right: 30px;
+}
+.wish-tree p .edd {
+  background-position: right center;
+  right: 5px;
+}
+.wish-tree i {
+  vertical-align: middle;
+  cursor: default;
+  display: inline-block;
+  width: 18px;
+  height: 13px;
+}
+.wish-tree h1 {
+  padding-right: 0em;
+}
+.wish-tree .title {
+  display: block;
+  white-space: nowrap;
+  background-color: #fff;
+}
+.wish-tree .open > .title > i {
+  background: url('../img/treeOpen.gif') left center no-repeat;
+  cursor: pointer;
+}
+.wish-tree .closed > .title > i {
+  background: url('../img/treeClose.gif') left center no-repeat;
+  cursor: pointer;
+}
+.wish-tree .closed > ul {
+  display: none;
+}
+/* .wish-tree .selected {
+  background-color: #b01d2d;
+  color: #fff;
+}
+.wish-tree .selected a {
+  color: #fff;
+} */
+.wish-tree .selected a:hover {
+  text-decoration: underline;
+}
+.wish-tree .selected .del,
+.wish-tree .selected .edd {
+  display: block;
+}
+.wish-tree .selected:hover a {
+  color: #fff;
+}
+.wish-tree .selected:hover .del,
+.wish-tree .selected:hover .edd {
+  display: block;
+}
+.wish-tree p:hover {
+  /*background-color:#b01d2d;*/
+  color: #fff;
+}
+/* .wish-tree p:hover a {
+  color: #b01d2d;
+} */
+.wish-tree p:hover a:hover {
+  text-decoration: underline;
+}
+.wish-tree p:hover .del,
+.wish-tree p:hover .edd {
+  display: none;
+}
+.wish-tree div[data-check="checked"] {
+  background: url('../img/treeChecked.jpg') left center no-repeat;
+}
+.wish-tree div[data-check="check"] {
+  background: url('../img/treeCheck.jpg') left center no-repeat;
+}
+.wish-tree p[data-check="checked"] {
+  background: url('../img/treeChecked.jpg') left center no-repeat;
+}
+.wish-tree p[data-check="check"] {
+  background: url('../img/treeCheck.jpg') left center no-repeat;
+}
+.wish-tree div[data-check] {
+  cursor: pointer;
+}
+.wish-tree .allwidth > li.open {
+  background: url('../img/treeLine.png') 18px -20px repeat-y;
+}
+.wish-tree ul.allwidth {
+  width: 100%;
+}
+.wish-tree .title[data-laynum] {
+ /*  border-bottom: 1px solid #ccc */
+  /*box-shadow:1px 1px 5px gray;*/
+}
+/* .wish-tree .title[data-laynum]:hover a {
+  color: #ffffff;
+} */
+.wish-tree .title[data-laynum*="0"] {
+  /* background-color: darken(#f2f2f2,   @tem);*/
+}
+.wish-tree .title[data-laynum*="0"]:hover {
+/*   background-color: #b01e2d */ 
+  /*darken(#ea6161,   @temH);*/
+}
+.wish-tree .title[data-laynum*="1"] {
+  /* background-color: darken(#f2f2f2,   @tem);*/
+}
+.wish-tree .title[data-laynum*="1"]:hover {
+/*   background-color: #b01e2d */ 
+  /*darken(#ea6161,   @temH);*/
+}
+.wish-tree .title[data-laynum*="2"] {
+  /* background-color: darken(#f2f2f2,   @tem);*/
+}
+.wish-tree .title[data-laynum*="2"]:hover {
+/*   background-color: #b01e2d  */
+  /*darken(#ea6161,   @temH);*/
+}
+.wish-tree .title[data-laynum*="3"] {
+  /* background-color: darken(#f2f2f2,   @tem);*/
+}
+.wish-tree .title[data-laynum*="3"]:hover {
+/*   background-color: #b01e2d  */
+  /*darken(#ea6161,   @temH);*/
+}
+.wish-tree .title[data-laynum*="4"] {
+  /* background-color: darken(#f2f2f2,   @tem);*/
+}
+.wish-tree .title[data-laynum*="4"]:hover {
+/*   background-color: #b01e2d  */
+  /*darken(#ea6161,   @temH);*/
+}
+
+* {
+  margin: 0px;
+  padding: 0px;
+  font-family: Microsoft Yahei, arial, verdana, sans-serif;
+  border: 0px;
+}
+body {
+  background-color: #f6f6f6;
+}
+input[readonly="readonly"] {
+  -webkit-user-select: none;
+  /* Safari 和 Chrome */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* IE 9 */
+  user-select: none;
+}
+

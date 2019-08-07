@@ -1,0 +1,4325 @@
+<%@ page language="java" contentType="text/html; charset=utf-8"
+	pageEncoding="utf-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%
+	String path = request.getContextPath();
+	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
+			+ path + "/";
+%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport"
+	content=" height = device-height,
+                    width = device-width,
+                    initial-scale = 1.0,
+                    minimum-scale = 1.0,
+                    maximum-scale = 1.0,
+                    user-scalable = no" />
+<title></title>
+<link href="<%=basePath%>template/css/cloud-admin.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css"
+	href="<%=basePath%>template/css/responsive.css">
+<link rel="stylesheet" type="text/css"
+	href="<%=basePath%>template/css/bootstrap.css">
+<link rel="stylesheet" type="text/css"
+	href="<%=basePath%>template/css/app.css">
+<script src="<%=basePath%>template/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=1.3"></script>
+
+<!--  用于下载echarts图-->
+ <script src="<%=basePath%>template/js/html2canvas.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="<%=basePath%>template/js/jspdf.min.js" type="text/javascript" charset="utf-8"></script>
+  
+
+<style>
+* {
+	margin: 0;
+	padding: 0;
+	-webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+	-webkit-overflow-scrolling: touch;
+	overflow-scrolling: touch;
+}
+
+ul {
+	list-style: none;
+}
+
+a {
+	text-decoration: none;
+}
+
+.find_nav {
+	background-color: #f9f9f9;
+	position: relative;
+	top: 0;
+	z-index: 99;
+	border-bottom: 1px solid #ddd;
+	display: -moz-box;
+	display: -webkit-box;
+	display: box;
+	
+}
+
+.find_nav_left {
+	height: 46px;
+	position: relative;
+	overflow: hidden;
+	-moz-box-flex: 1;
+	-webkit-box-flex: 1;
+	box-flex: 1;
+}
+
+.find_nav_list {
+	position: absolute;
+	/* */
+	left: 0;
+	width:100%;
+}
+
+.find_nav_list ul {
+	position: relative;
+	white-space: nowrap;
+	font-size: 0;
+}
+
+.find_nav_list ul li {
+	display: inline-block;
+	padding: 0 13px;
+}
+
+.find_nav_list ul li a {
+	display: block;
+	width: 100%;
+	height: 100%;
+	line-height: 46px;
+	font-size: 14px;
+	text-align: center;
+	color: #666;
+}
+
+.find_nav_cur a {
+	color: #48a5f4 !important;
+}
+
+.sideline {
+	display: block;
+	position: absolute;
+	border: 0;
+	height: 2px;
+	background-color: #48a5f4;
+	left: 0;
+	top: 43px;
+	pointer-events: none;
+}
+
+.alcenter {
+	text-align: center;
+}
+
+.inline {
+	display: inline-block;
+}
+
+.form-inline .form-control {
+	width: auto;
+}
+
+.clabel {
+	margin-right: 14px;
+}
+
+.mybtn {
+	position: fixed;
+	right: 10px;
+	bottom: 20px;
+	display: block;
+	width: 50px;
+	height: 50px;
+	border-radius: 50px;
+	padding: 0px;
+	text-align: center;
+	line-height: 50px;
+}
+
+.modal.left .modal-dialog, .modal.right .modal-dialog {
+	position: fixed;
+	margin: auto;
+	width: 620px;
+	height: 100%;
+	-webkit-transform: translate3d(0%, 0, 0);
+	-ms-transform: translate3d(0%, 0, 0);
+	-o-transform: translate3d(0%, 0, 0);
+	transform: translate3d(0%, 0, 0);
+}
+
+.modal.left .modal-content, .modal.right .modal-content {
+	height: 100%;
+	overflow-y: auto;
+}
+
+.modal.left .modal-body, .modal.right .modal-body {
+	padding: 15px 15px 80px;
+}
+
+/*Left*/
+.modal.left.fade .modal-dialog {
+	left: -320px;
+	-webkit-transition: opacity 0.3s linear, left 0.3s ease-out;
+	-moz-transition: opacity 0.3s linear, left 0.3s ease-out;
+	-o-transition: opacity 0.3s linear, left 0.3s ease-out;
+	transition: opacity 0.3s linear, left 0.3s ease-out;
+}
+
+.modal.left.fade.in .modal-dialog {
+	left: 0;
+}
+
+/*Right*/
+.modal.right.fade .modal-dialog {
+	right: -320px;
+	-webkit-transition: opacity 0.3s linear, right 0.3s ease-out;
+	-moz-transition: opacity 0.3s linear, right 0.3s ease-out;
+	-o-transition: opacity 0.3s linear, right 0.3s ease-out;
+	transition: opacity 0.3s linear, right 0.3s ease-out;
+}
+
+.modal.right.fade.in .modal-dialog {
+	right: 0;
+}
+
+/* ----- MODAL STYLE ----- */
+.modal-content {
+	border-radius: 0;
+	border: none;
+}
+.span-1 {
+	display: inline-block;
+	background-color: #f0f3f4;
+	font-size: 15px;
+	line-height: 30px;
+	/* border:1px solid black; */
+}
+.modal-header {
+	border-bottom-color: #EEEEEE;
+	background-color: #FAFAFA;
+}
+
+.td_left {
+	text-align: left;
+}
+
+.td_right {
+	text-align: right;
+}
+
+.red_num {
+	color: #fff;
+	background-color: red;
+	width: 15px;
+	height: 15px;
+	border-radius: 50%;
+	float: right;
+	text-align: center;
+}
+
+.hover {
+	background-color: red;
+}
+
+.menu_l {
+	margin-top: -2px;
+}
+
+.menu-text {
+	margin-left: 12px;
+}
+
+.menu_arrow {
+	margin-top: -3px;
+	margin-left: 100px;
+	width: 5px;
+}
+
+.has-sub.open .menu_arrow {
+	transform: rotateZ(90deg);
+	-ms-transform: rotateZ(90deg); /* IE 9 */
+	-moz-transform: rotateZ(90deg); /* Firefox */
+	-webkit-transform: rotateZ(90deg); /* Safari 和 Chrome */
+	-o-transform: rotateZ(90deg);
+}
+
+.sidebar-collapse {
+	text-align: center;
+	margin-top: 20px;
+}
+
+body>div:nth-child(13)>div.col-md-2>div>div>div.panel-body>div>ul>li>a {
+	background-color: #f6f8f8;
+	padding-left: 0px;
+	padding-right: 0px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+</style>
+
+</head>
+<body>
+	<jsp:include page="common.jsp"></jsp:include>
+	<div class="bg-light lter b-b wrapper-md">
+		<h1 class="m-n h4">话单智能分析</h1>
+	</div>
+	<div class="col-md-5">
+		
+	</div>
+	
+	<div class="row"
+			style="height:; width: 98%; margin-left: 1%; margin-top: 1%;">
+		<div class="panel panel-default">
+		<div class="panel-heading">选择案件</div>
+		
+			<div class="panel-body" style="">
+				<div class="form-group" style="float: left;margin-left: 20px;">
+					<span class="alcenter" style="float: left;margin-top: 10px;">已选案件：</span>
+					<div id="spans" style="margin-left: 75px; margin-top: ;background-color: ;width: 1300px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
+				</div>
+				
+				<div>
+					<button data-target="#myModals" data-toggle="modal" type='button' class="btn btn-info" style="width:120px;float: right; margin-top: 1px;" onclick="showcase()" >选择案件</button>
+				</div>
+			</div>	
+		</div>
+	</div>
+	
+	
+	<div class="modal right fade" id="myModals" tabindex="-1"
+				style="width: 100%; height: 100%; margin: auto;">
+				<div class="panel panel-default"
+					style="width: 50%; height: 80%; margin: 3% auto;">
+					<div class="panel-heading">更改案件</div>
+					<div class="panel-body" style="width: 100%; height: 100%;">
+						<div class="panel-body" style="width: 100%">
+							<input id="caseinfo" name="caseinfo" class="form-control"
+								placeholder="搜索案件名称/案件编号" type="text"
+								style="float: left; width: 82%;" />
+							<button type='button' class="btn btn-info"
+								style="width: 70px; margin-left: 10px; height: 34px"
+								onclick="showcase()">搜索</button>
+						</div>
+<!-- 						<div class="panel-body" style="width: 100%">
+							<span style="float: left;">已选案件：</span>
+							<div id="spans1" style="margin-left: 65px; margin-top: -9px;"></div>
+						</div> -->
+						<div class="panel-body" style="height: 65%;overflow-y: scroll;">
+							<table id="datatable" class="table table-striped table-hover"
+								style="border: 1px solid #DDDDDD;">
+								<tbody id="tbcont">
+									<tr>
+										<td class="td_left"><input type="checkbox" id="ckall"
+											onclick="selectAll()" /></td>
+										<td class="td_left">案件编号</td>
+										<td class="td_right">案件名称</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<button type='button' class="btn btn-info"
+							style="width: 70px; height: 34px; margin-left: 40%; margin-top: 3%"
+							onclick="checkCase();">选择</button>
+					</div>
+				</div>
+			</div>
+	<div class="row"
+			style="height:; width: 98%; margin-left: 1%;">
+		<div class="panel panel-default">
+		<div class="panel panel-default">
+				<div class="find_nav">
+					<div class="find_nav_left">
+						<div class="find_nav_list">
+							<ul style="">
+								<li class="find_nav_cur "><a href="javascript:void(0)"
+									onclick="d1()">通话次数分析</a></li>
+								<li><a href="javascript:void(0)" onclick="d2()">联系人分析</a></li>
+								<li><a href="javascript:void(0)" onclick="d3()">通话统计</a></li>
+								<li><a href="javascript:void(0)" onclick="d4()">活动地图</a></li>
+								<li><a href="javascript:void(0)" onclick="d5()">相互通话</a></li>
+								<li><a href="javascript:void(0)" onclick="d6()">疑似居住地</a></li>
+								<li class="sideline"></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+
+				<!-- <div class="panel-body" style="width:100%;">
+					<form class="form-inline" role="form" id="searchForm"
+						action="" method="post">
+						<input type="hidden" name="pageno" id="pageno" />
+						<div class="form-group">
+							<label for="" class="clabel">日期范围:</label>
+									<input id="startDate" name="startDate" 
+											class="form-control" placeholder="请输入起始时间" type="text" style="width:150px;" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'endDate\')||\'new Date()\'}'});"/> 	
+											<label for="" class="clabel">&nbsp;&nbsp;至</label>
+									<input id="endDate" name="endDate" 
+										    class="form-control" placeholder="请输入结束时间" type="text" style="width:150px;" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'startDate\')}',maxDate:new Date()});"/>
+											</div>
+											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<div class="form-group">
+							<label for="" class="clabel">精确日期:</label>
+								<input id="posstartTime" name="posstartTime"
+										    class="form-control" placeholder="请输入时间" type="text" style="width:150px;" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'startDate\')}',maxDate:new Date()});"/>
+						</div>
+						&nbsp;&nbsp;&nbsp;
+					
+							<a id="url1" href="#"><div class="btn btn-info" style="width:80px;"onclick="showAllTicket(1)">分析</div></a>
+							&nbsp;&nbsp;
+							<a id="url2" href="#"><div class="btn btn-info" style="width:80px;"onclick="showAllTicket(1)">导出</div></a>
+						
+					</form>
+				</div> -->
+			</div>
+			<div class="panel-body">
+	<!-- <div class="wrapper-md" style="background-color: red;"> -->
+<!--  		<div class="col-md-2" style="height: 800px">
+			<div class="row">
+				<div class="panel panel-default">
+					<div class="panel-heading">搜索案件</div>
+						<div class="panel-body" style="width:100%">
+							<input id="caseinfo" name="caseinfo" class="form-control" placeholder="案件名称" type="text" style="float:left;width:66%;"/>
+							<button type='button' class="btn btn-info" style="width: 70px;margin-left: 10px;height: 34px" onclick="showcase()">搜索</button>
+						</div>
+					<div class="panel-body">
+
+						<div id = "caseSuspect" class="sidebar-menu2" style="position:relative; height:700px; overflow-y :auto">
+						
+						</div>
+
+					</div>
+				</div>
+			</div>
+
+		</div> -->
+
+		<div id="d1" style="width:100%;">
+				<div class="panel-body" style="width:100%;">
+					<form class="form-inline" role="form" id="searchForm"
+						action="" method="post">
+						<input type="hidden" name="pageno" id="pageno" />
+						<div class="form-group">
+							<label for="" class="clabel">日期范围:</label>
+									<input id="startDate" name="startDate" 
+											class="form-control" placeholder="请输入起始时间" type="text" style="width:150px;" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'endDate\')||\'new Date()\'}'});"/> 	
+											<label for="" class="clabel">&nbsp;&nbsp;至</label>
+									<input id="endDate" name="endDate" 
+										    class="form-control" placeholder="请输入结束时间" type="text" style="width:150px;" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'startDate\')}',maxDate:new Date()});"/>
+						</div>
+											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<div class="form-group">
+																				<a id="url1" href="#"><div class="btn btn-info" style="width:80px;"onclick="showAllTicket(1)">执行分析</div></a>
+							&nbsp;&nbsp;
+							<a id="url12" href="#"><div class="btn btn-info" style="width:80px;"onclick="exportFile()">导出结果</div></a>
+						</div>
+
+					</form>
+				</div>
+			<div class="col-md-5"  style="width:50%;">
+				<div class="panel panel-default">
+					<div class="panel-heading">通话次数TOP10</div>
+
+					<div class="panel-body" style="padding-top: 0px">
+						<div id="main" style="width: 600px; height: 300px;"></div>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-5" style="width:50%;">
+				<div class="panel panel-default" style="position:relative; height:360px; overflow-y :auto" >
+					<div class="panel-heading">通话次数统计</div>
+					<table id="datatable" class="table table-striped table-hover"
+						style="text-align: center; border-bottom: 1px solid #DDDDDD;">&nbsp;&nbsp;&nbsp;
+
+						<thead>
+							<tr>
+								<th style="text-align: left">日期</th>
+								<th style="text-align: right">汇总</th>
+							</tr>
+						</thead>
+						<tbody id="degree">
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+			<div class="col-md-10" style="width:100%;">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<span>通话记录</span>
+					</div>
+					<div class="panel-body" style="padding: 0 0 15px;">
+						<table id="datatable" class="table table-striped table-hover"
+							style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+							<thead>
+								 <tr>
+							<th class="alcenter" id="startTime" name="startTime">通话时间</th>
+							<th class="alcenter" id="name" name="name">嫌疑人姓名</th>
+							<th class="alcenter" id="localNum" name="localNum">嫌疑人号码</th>
+							<th class="alcenter" id="dialNumber" name="dialNumber">对方号码</th>
+							<th class="alcenter" id="callDuration" name="callDuration">通信时长</th>
+							<th class="alcenter" id="position" name="position">通信地点</th>
+							<th class="alcenter" id="method" name="method">通信类型</th>
+
+						</tr>
+							</thead>
+							<tbody id="tbcont20">
+								
+							</tbody>
+						</table>
+						<div class="alcenter" style="font-size: 14px">
+							<div class="pagecount inline" style="height: 29px;">
+								<span id="tot"></span>
+							</div>
+							<div class="pagebar inline"
+								style="position: absolute; right: 30px; height: 29px;">
+								<ul class="pagination pagination-sm" style="margin: 0;">
+									<li id = "pages1"></li>
+									
+									<li id = "pages"></li>	
+				            		
+									<li id = "pages2"></li>
+									</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	<div id="d2">
+		<div class="panel panel-default" style="background-color: ;">
+			<div class="panel-heading">通讯录</div>
+			<div class="panel-body">
+					<div>
+						<form class="form-inline" role="form" id="searchForm" action="<%=basePath%>admin/getEvidence.php" method="post">
+								<input type="hidden" name="pageno" id="pageno"/>
+								<div class="form-group">
+								<label for="" class="clabel">通话日期范围:</label>
+									<input id="posstartTime12" name="posstartTime12"
+											    class="form-control" placeholder="请输入时间" type="text" style="width:350px;" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'startDate\')}',maxDate:new Date()});"/>
+								</div>
+								<div class="form-group">
+									<label for="" class="clabel">嫌疑人姓名/手机号:</label><input id="xingmingshouji" name="xingmingshouji" value=""
+										class="form-control" placeholder="请输入..." type="text" style="width:390px;"/>
+								</div>
+								
+								<button type="button" class="btn btn-info" style="width:80px;" onclick="ContactAnalysis()">搜索</button>
+								<!-- <a id="url" href="#"><button type="button2" class="btn btn-info" style="width:80px;" onclick="exportDoc()" >导出</button></a> -->
+								<!-- <a id="url" href="#"><div  class="btn btn-info" style="width:80px;"onclick="exportDoc()">导出</div></a> -->
+								<a id="url13" href="#"><div class="btn btn-info" style="width:80px;"onclick="exportFile()">导出</div></a>
+						</form>
+					</div>
+			<div class="col-md-5"  style="height:260px; overflow-y :auto;width:50%;">
+				<div class="panel panel-default" style="height:260px;">
+					<table id="datatable" class="table table-striped table-hover"
+						style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+						<thead>
+							<tr>
+								<th style="text-align: left">嫌疑人姓名</th>
+								<th style="text-align: right">嫌疑人手机号码</th>
+							</tr>
+						</thead>
+						<tbody id="tbcont111">
+						
+						</tbody>
+					</table>
+				</div>
+				</div>
+			<div class="col-md-5"  style="height:260px; overflow-y :auto;width:50%;">
+				<div class="panel panel-default"  style="height:260px;">
+					<table id="datatable" class="table table-striped table-hover"
+						style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+						<thead>
+							<tr>
+								<th style="text-align: left">对方号码</th>
+								<th style="text-align: right">通话次数</th>
+							</tr>
+						</thead>
+						<tbody id="tbcont333">
+
+						</tbody>
+					</table>
+				</div>
+				</div>
+			</div>	
+		</div>
+		<div class="panel panel-default" style="background-color: ;">
+			<div class="panel-heading">共同联系人</div>
+			<div class="panel-body">
+					<div>
+						<form class="form-inline" role="form" id="searchForm" action="<%=basePath%>admin/getEvidence.php" method="post">
+								<input type="hidden" name="pageno" id="pageno"/>
+<!-- 								<div class="form-group">
+									<label for="" class="clabel">共同联系人个数:</label><select
+										class="form-control" style="width: 430px; margin-left: 16px;"
+										id="sortType">
+										<option>1</option>
+										<option>2</option>
+										<option>3</option>
+										<option>4</option>
+										<option>5</option>
+										<option>6</option>
+									</select>
+								</div> -->
+								<div class="form-group">
+									<label for="" class="clabel">共同联系人手机号:</label><input id="gongtong" name="gongtong" value=""
+										class="form-control" placeholder="请输入..." type="text" style="width:390px;"/>
+								</div>
+								
+								<button type="button" class="btn btn-info" style="width:80px;" onclick="ContactAnalysis()">搜索</button>
+								<!-- <a id="url" href="#"><button type="button2" class="btn btn-info" style="width:80px;" onclick="exportDoc()" >导出</button></a> -->
+								<!-- <a id="url" href="#"><div  class="btn btn-info" style="width:80px;" onclick="exportDoc()">选择嫌疑人</div></a> -->
+						</form>
+					</div>
+		<div style="float: left;width: 48%;height: 520px;">
+			<div class=""  style="height:520px; overflow-y :auto;width:;">
+				<div class="panel panel-default" style="height:520px;">
+					<table id="datatable" class="table table-striped table-hover"
+						style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+						<thead>
+							<tr>
+								<th style="text-align: left">对方号码</th>
+								<th style="text-align: right">通话总次数</th>
+							</tr>
+						</thead>
+						<tbody id="tbcont555">
+
+						</tbody>
+					</table>
+					</div>
+				</div>
+			</div>
+		<div class="panel panel-default" style="background-color: ;width: 50%;float: right;height: 520px;">
+			<div class="panel-heading">共同联系人关系图</div>
+			<div class="panel-body">
+				<div id="main_d22" style="width: 100%; height: 450px;background-color: ; overflow-y :auto;"></div>
+				</div>
+				</div>	
+				
+
+			</div>	
+		</div>
+			<div class="panel panel-default" style="background-color: ;">
+			<div class="panel-heading">通话记录</div>
+			<div class="panel-body">
+					<div>
+						<form class="form-inline" role="form" id="searchForm" action="<%=basePath%>admin/getEvidence.php" method="post">
+								<input type="hidden" name="pageno" id="pageno"/>
+																<div class="form-group">
+								<label for="" class="clabel">通话日期范围:</label>
+									<input id="posstartTime13" name="posstartTime13"
+											    class="form-control" placeholder="请输入时间" type="text" style="width:350px;" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'startDate\')}',maxDate:new Date()});"/>
+								</div>
+								<div class="form-group">
+									<label for="" class="clabel">嫌疑人姓名/手机号:</label><input id="caseName13" name="caseName13" value=""
+										class="form-control" placeholder="请输入..." type="text" style="width:390px;"/>
+								</div>
+								<div class="form-group">
+									<label for="" class="clabel">对方号码:</label><input id="haoma" name="haoma" value=""
+										class="form-control" placeholder="请输入..." type="text" style="width:390px;"/>
+								</div>
+								<!-- 联系人分析-通话记录搜索 -->
+								<button type="button" class="btn btn-info" style="width:80px;" onclick="showAllTicketCount1(1)">搜索</button>
+						</form>
+					</div>	
+		
+				<div class="col-md-10" style="width:100%;">
+				<div class="panel panel-default">
+					<div class="panel-body" style="padding: 0 0 15px;">
+						<table id="datatable" class="table table-striped table-hover"
+							style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+							<thead>
+								 <tr>
+							<th class="alcenter" id="startTime" name="startTime">通话时间</th>
+							<th class="alcenter" id="startTime" name="startTime">嫌疑人姓名</th>
+							<th class="alcenter" id="startTime" name="startTime">嫌疑人号码</th>
+							<th class="alcenter" id="dialNumber" name="dialNumber">对方号码</th>
+							<th class="alcenter" id="callDuration" name="callDuration">通信时长</th>
+							<th class="alcenter" id="position" name="position">通信地点</th>
+							<th class="alcenter" id="method" name="method">通信类型</th>
+						</tr>
+							</thead>
+							<tbody id="tbcont20Count1">
+								
+							</tbody>
+						</table>
+						<div class="alcenter" style="font-size: 14px">
+							<div class="pagecount inline" style="height: 29px;">
+								<span id="totCount1"></span>
+							</div>
+							<div class="pagebar inline"
+								style="position: absolute; right: 30px; height: 29px;">
+								<ul class="pagination pagination-sm" style="margin: 0;">
+									<li id = "pages1Count1"></li>
+									
+									<li id = "pagesCount1"></li>	
+				            		
+									<li id = "pages2Count1"></li>
+									</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		</div>
+		</div>		
+		<div id="d3">
+			<div class="col-md-5"  style="width:33%;">
+				<div class="panel panel-default" >
+					<div class="panel-heading">选择日期</div>
+					<div class="panel-body" style="width:100%;">
+					<form class="form-inline" role="form" id="searchForm"
+						action="" method="post">
+						<input type="hidden" name="pageno" id="pageno" />
+					
+											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<div class="form-group">
+							<label for="" class="clabel">精确日期:</label>
+								<input id="posstartTime" name="posstartTime"
+										    class="form-control" placeholder="请输入时间" type="text" style="width:150px;" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'startDate\')}',maxDate:new Date()});"/>
+						</div>
+						<a id="url1" href="#" class="btn btn-info" style="width:15%;"onclick="showAllTicketCount(1)">执行统计</a>
+					</form>
+				</div>
+					<div class="panel-body" style="">
+						<div id="mains" style="width: 100%; height: 250px;margin-top: -44px;"></div>
+					</div>
+
+				</div>
+			</div>
+						<div class="col-md-5"  style="width:33%;">
+				<div class="panel panel-default" >
+					<div class="panel-heading">周通话趋势图</div>
+					
+					<div class="panel-body" style="">
+						<div id="main2s" style="width: 100%; height: 250px;margin-top: 20px;"></div>
+					</div>
+
+				</div>
+			</div>
+			<div class="col-md-5"  style="width:33%;">
+				<div class="panel panel-default" >
+					<div class="panel-heading">通话时段趋势图</div>
+				
+					<div class="panel-body">
+						<div id="main3s" style="width: 100%; height: 250px;margin-top: 20px;"></div>
+					</div>
+				</div>
+			</div>
+			<div class="panel panel-default" style="background-color: ;">
+			<div class="panel-heading">通话记录</div>
+			<div class="panel-body">
+					<div>
+						<form class="form-inline" role="form" id="searchForm" action="<%=basePath%>admin/getEvidence.php" method="post">
+								<input type="hidden" name="pageno" id="pageno"/>
+																<div class="form-group">
+								<label for="" class="clabel">通话日期范围:</label>
+									<input id="callLogStatisticsDate" name="callLogStatisticsDate"
+											    class="form-control" placeholder="请输入时间" type="text" style="width:350px;" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'startDate\')}',maxDate:new Date()});"/>
+								</div>
+								<div class="form-group">
+									<label for="" class="clabel">嫌疑人姓名/手机号:</label><input id="callLogStatisticsSuspectName" name="callLogStatisticsSuspectName" value=""
+										class="form-control" placeholder="请输入..." type="text" style="width:390px;"/>
+								</div>
+								<div class="form-group">
+									<label for="" class="clabel">对方号码:</label><input id="callLogStatisticsContactorNumber" name="callLogStatisticsContactorNumber" value=""
+										class="form-control" placeholder="请输入..." type="text" style="width:390px;"/>
+								</div>
+								
+								<button type="button" class="btn btn-info" style="width:80px;" onclick="showAllTicketCount(1)">搜索</button>
+						</form>
+					</div>	
+		
+				<div class="col-md-10" style="width:100%;">
+				<div class="panel panel-default" style="margin-top: 20px;">
+					<div class="panel-body" style="padding: 0 0 15px;">
+						<table id="datatable" class="table table-striped table-hover"
+							style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+							<thead>
+								 <tr>
+							<th class="alcenter" id="startTime" name="startTime">通话时间</th>
+							<th class="alcenter" id="startTime" name="startTime">嫌疑人姓名</th>
+							<th class="alcenter" id="startTime" name="startTime">嫌疑人号码</th>
+							<th class="alcenter" id="dialNumber" name="dialNumber">对方号码</th>
+							<th class="alcenter" id="callDuration" name="callDuration">通信时长</th>
+							<th class="alcenter" id="position" name="position">通信地点</th>
+							<th class="alcenter" id="method" name="method">通信类型</th>
+
+						</tr>
+							</thead>
+							<tbody id="tbcont20Count">
+							
+							</tbody>
+						</table>
+						<div class="alcenter" style="font-size: 14px">
+							<div class="pagecount inline" style="height: 29px;">
+								<span id="totCount"></span>
+							</div>
+							<div class="pagebar inline"
+								style="position: absolute; right: 30px; height: 29px;">
+								<ul class="pagination pagination-sm" style="margin: 0;">
+									<li id = "pages1Count"></li>
+									
+									<li id = "pagesCount"></li>	
+				            		
+									<li id = "pages2Count"></li>
+									</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		</div>
+			 </div>
+		<div id="d4">
+			
+			<form class="form-inline col-md-offset-3" role="form" id="searchForm" style="margin-top:-30px;margin-bottom:5px"
+						action="" method="post">
+						&nbsp;&nbsp;<input type="hidden" name="pageno" id="pageno" />
+						<div class="form-group">
+							<label for="" class="clabel">日期范围:</label>
+									<input id="startDate_d4" name="startDate" 
+											class="form-control" placeholder="请输入起始时间" type="text" style="width:150px;" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'endDate\')||\'new Date()\'}'});"/> 	
+											<label for="" class="clabel">&nbsp;&nbsp;至</label>
+									<input id="endDate_d4" name="endDate" 
+										    class="form-control" placeholder="请输入结束时间" type="text" style="width:150px;" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'startDate\')}',maxDate:new Date()});"/>
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+											<!-- 嫌疑人手机号：<input id="suspectNums_d4" class="form-control" placeholder="请输入..." /> -->
+											
+									<label for="" class="clabel">选择嫌疑人:</label><select
+										class="form-control" style="width: 200px; margin-left: 16px;"
+										id="select_d4">
+										<!-- <option>1</option>
+										<option>2</option>
+										<option>3</option>
+										<option>4</option>
+										<option>5</option>
+										<option>6</option> -->
+									</select>
+								
+						</div>
+											
+											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<button type="button" class="btn btn-info" style="width:80px;" onclick="contactMap(1)">搜索</button>
+						
+					</form>
+			
+			<div style="margin:auto;" class="col-md-12">   
+    
+         <input type="button" value="查询" onclick="searchByStationName('上海');"/> 
+        <div id="container" 
+            style="
+           	  
+              margin-bottom:15px;
+                height: 300px; 
+                 width: 100%;
+                border: 1px solid gray;
+                ">
+        </div>
+       </div>
+       
+       <script type="text/javascript">
+///////////////////地图显示///////////////////////////////////////////
+    var map = new BMap.Map("container");
+    map.centerAndZoom("上海黄浦区", 12);
+    map.enableScrollWheelZoom();    //启用滚轮放大缩小，默认禁用
+    map.enableContinuousZoom();    //启用地图惯性拖拽，默认禁用
+
+    map.addControl(new BMap.NavigationControl());  //添加默认缩放平移控件
+    map.addControl(new BMap.OverviewMapControl()); //添加默认缩略地图控件
+    map.addControl(new BMap.OverviewMapControl({ isOpen: true, anchor: BMAP_ANCHOR_BOTTOM_RIGHT }));   //右下角，打开
+
+    var localSearch = new BMap.LocalSearch(map);
+    localSearch.enableAutoViewport(); //允许自动调节窗体大小
+function searchByStationName(addr) {
+    map.clearOverlays();//清空原来的标注
+ //   alert(addr);
+    var keyword = addr;
+//    alert(keyword);
+    localSearch.setSearchCompleteCallback(function (searchResult) {
+        var poi = searchResult.getPoi(0);
+        
+        map.centerAndZoom(poi.point, 13);
+        var marker = new BMap.Marker(new BMap.Point(poi.point.lng, poi.point.lat));  // 创建标注，为要查询的地方对应的经纬度
+        map.addOverlay(marker);
+        var content =  "<br/><br/>经度：" + poi.point.lng + "<br/>纬度：" + poi.point.lat;
+        var infoWindow = new BMap.InfoWindow("<p style='font-size:14px;'>" + content + "</p>");
+        marker.addEventListener("click", function () { this.openInfoWindow(infoWindow); });
+        // marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
+    });
+    localSearch.search(keyword);
+} 
+    
+    
+</script>
+       
+       <div class="col-md-6">
+
+
+				<div class="panel panel-default" style="position:relative; height:420px; overflow-y :auto" >
+					<div class="panel-heading">通话次数统计列表</div>
+					<table id="datatabled4" class="table table-striped table-hover"
+						style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+						<thead>
+							<tr>
+								<th style="text-align: left">本机号码</th>
+								<th style="text-align: left">次数</th>
+								<th style="text-align: left">通信地点</th>
+								<th style="text-align: left">基站地址</th>
+								
+							</tr>
+						</thead>
+						<tbody id="tbcont1_d4">
+							<tr data-toggle="modal" data-target="#myModal"
+								onclick="searchone(this)">
+								<td style="text-align: left">13584852566</td>
+								<td style="text-align: left">3</td>
+								<td style="text-align: left">60</td>
+								<td style="text-align: left"><a href="javascript:void(0)" onclick="searchByStationName('上海市');">上海市</a></td>
+								<td style="text-align: left">中国移动</td>
+							</tr>
+							<tr data-toggle="modal" data-target="#myModal"
+								onclick="searchone(this)">
+								<td style="text-align: left">13584852566</td>
+								<td style="text-align: left">3</td>
+								<td style="text-align: left">60</td>
+								<td style="text-align: left"><a href="javascript:void(0)" onclick="searchByStationName('江苏无锡');">江苏无锡</a></td>
+								<td style="text-align: left">中国联通</td>
+							</tr>
+							<tr data-toggle="modal" data-target="#myModal"
+								onclick="searchone(this)">
+								<td style="text-align: left">13584852566</td>
+								<td style="text-align: left">3</td>
+								<td style="text-align: left">60</td>
+								<td style="text-align: left"><a href="javascript:void(0)" onclick="searchByStationName('江苏南京');">江苏南京</a></td>
+								<td style="text-align: left">中国电信</td>
+							</tr>
+						</tbody>
+					</table>
+
+				</div>
+
+
+
+			</div>
+
+
+
+			<div class="col-md-6">
+
+				<div class="panel panel-default" style="position:relative; height:420px; overflow-y :auto">
+					<div class="panel-heading">详细通话列表</div>
+					<table id="datatable" class="table table-striped table-hover"
+						style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+						<thead>
+							<tr>
+								<th style="text-align: left">对方号码</th>
+								
+								<th style="text-align: left">通话时间</th>
+									<th style="text-align: left">通话时长（秒）</th>
+								<th style="text-align: left">通信类型</th>
+							</tr>
+						</thead>
+						<tbody id="tbcont2_d4">
+							<tr data-toggle="modal" data-target="#myModal"
+								onclick="searchone(this)">
+								<td style="text-align: left">13625486542</td>
+								<td style="text-align: left">13584852566</td>
+								<td style="text-align: left">主叫</td>
+								<td style="text-align: left">2017-6-5</td>
+								<td style="text-align: left">13</td>
+								<td style="text-align: left"><a href="javascript:void(0)" onclick="searchByStationName('上海市');">上海市</a></td>
+							</tr>
+							<tr data-toggle="modal" data-target="#myModal"
+								onclick="searchone(this)">
+								<td style="text-align: left">13625486542</td>
+								<td style="text-align: left">13584852566</td>
+								<td style="text-align: left">被叫</td>
+								<td style="text-align: left">2017-6-5</td>
+								<td style="text-align: left">13</td>
+								<td style="text-align: left"><a href="javascript:void(0)" onclick="searchByStationName('上海市');">上海市</a></td>
+							</tr>
+							<tr data-toggle="modal" data-target="#myModal"
+								onclick="searchone(this)">
+								<td style="text-align: left">13625486542</td>
+								<td style="text-align: left">13584852566</td>
+								<td style="text-align: left">主叫</td>
+								<td style="text-align: left">2017-6-5</td>
+								<td style="text-align: left">13</td>
+								<td style="text-align: left"><a href="javascript:void(0)" onclick="searchByStationName('上海市');">上海市</a></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<!-- -----------------页脚------------------  -->
+			
+						<div class="alcenter" style="font-size: 14px">
+					<div id="total" class="pagecount inline" style="height: 29px;">
+						<span id="tot_d4"></span>
+					</div>
+					<div class="pagebar inline"
+						 style="position: absolute; right: 14px; height: 29px;">
+						<ul class="pagination pagination-sm" style="margin: 0;">
+							<li id = "pages1_d4"></li>
+
+							<li id = "pages_d4"></li>
+
+							<li id = "pages2_d4"></li>
+						</ul>
+					</div>
+				</div>
+			
+			<!-- -----------------页脚-end-------------------  -->
+			</div>
+			
+			
+			</div>
+
+		<div id="d5">
+		
+		<form class="form-inline col-md-offset-3" role="form" id="searchForm" style="margin-top:-30px;margin-bottom:5px"
+						action="" method="post">
+						&nbsp;&nbsp;<input type="hidden" name="pageno" id="pageno" />
+						<div class="form-group">
+							<label for="" class="clabel">日期范围:</label>
+									<input id="startDate_d5" name="startDate" 
+											class="form-control" placeholder="请输入起始时间" type="text" style="width:150px;" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'endDate\')||\'new Date()\'}'});"/> 	
+											<label for="" class="clabel">&nbsp;&nbsp;至</label>
+									<input id="endDate_d5" name="endDate" 
+										    class="form-control" placeholder="请输入结束时间" type="text" style="width:150px;" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'startDate\')}',maxDate:new Date()});"/>
+						<!-- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+											嫌疑人手机号：<input id="suspectNums_d5" class="form-control" placeholder="请输入..." /> -->
+						</div>
+											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<button type="button" class="btn btn-info" style="width:80px;" onclick="showAllTicket_d5(1,1)">搜索</button>
+						
+					</form>
+		<!-- <div id="main_d5" style="width: 600px; height: 700px;margin-left: 30%"></div> -->
+		<div class="col-md-12">
+			
+				<div class="panel panel-default">
+					<div class="panel-heading" style="height:45px">
+					<div class="col-md-10">相互通话详情图</div>
+					<!-- <div class="col-md-2"><button type="button" class="btn btn-info" style="width:80px;" onclick="convertCanvasToImage()">打印</button>
+						
+					</div> -->
+					
+					</div>
+					
+					<div id="main_d5"  style="height:400px;background-color:#b0c4de;display:;">
+					
+					</div>
+					<!-- <div id="main_d52"  style="height:800px;background-color:#b0c4de;display:;">
+					
+					</div> -->
+					<div class="panel-heading" style="text-align:center"><img id="imgRotate" onclick="showBigPic()" height=15px width=40px alt="" src="<%=basePath%>template/img/drop_down_ticketanalysis.png" style="transform:;" /></div>
+					<!-- <div id="roght_d5" style="height:400px"><br/>最近联系：<br/>最多联系：</div> -->
+				</div>
+				
+				
+			</div>
+			
+			<div class="col-md-12" id="callList_d5" style="display:;">
+				<div class="panel panel-default">
+					<div class="panel-heading" style="height:45px">
+					<div class="col-md-10">相互通话详情图</div>
+					<a id="url12_d5" href="#"><div class="btn btn-info" style="width:80px;"onclick="Exporthd_each()">导出结果</div></a>
+					
+					
+					</div>
+					<div class="panel-body" style="padding: 0 0 15px;">
+						<table id="datatable_d5" class="table table-striped table-hover"
+							style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+							<thead>
+								 <tr>
+								 <th class="alcenter" id="suspectcost_d5" name="suspectcost">本机号码</th>
+							<th class="alcenter" id="startTime_d5" name="startTime">通话时间</th>
+							<th class="alcenter" id="dialNumber_d5" name="dialNumber">对方号码</th>
+							<th class="alcenter" id="callDuration_d5" name="callDuration">通信时长（秒）</th>
+							<th class="alcenter" id="position_d5" name="position">通信地点</th>
+							<th class="alcenter" id="method_d5" name="method">通信类型</th>
+							
+						</tr>
+							</thead>
+							<tbody id="tbcont20_d5">
+								
+							</tbody>
+						</table>
+						<div class="alcenter" style="font-size: 14px">
+							<div class="pagecount inline" style="height: 29px;">
+								<span id="tot_d5"></span>
+							</div>
+							<div class="pagebar inline"
+								style="position: absolute; right: 30px; height: 29px;">
+								<ul class="pagination pagination-sm" style="margin: 0;">
+									<li id = "pages1_d5"></li>
+									
+									<li id = "pages_d5"></li>	
+				            		
+									<li id = "pages2_d5"></li>
+									</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			
+			
+		</div>
+		<div id="d6">
+		
+		<form class="form-inline col-md-offset-3" role="form" id="searchForm" style="margin-top:-30px;margin-bottom:5px"
+						action="" method="post">
+						&nbsp;&nbsp;<input type="hidden" name="pageno" id="pageno" />
+						<div class="form-group">
+							<label for="" class="clabel">日期范围:</label>
+									<input id="startDate_d6" name="startDate" 
+											class="form-control" placeholder="请输入起始时间" type="text" style="width:150px;" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'endDate\')||\'new Date()\'}'});"/> 	
+											<label for="" class="clabel">&nbsp;&nbsp;至</label>
+									<input id="endDate_d6" name="endDate" 
+										    class="form-control" placeholder="请输入结束时间" type="text" style="width:150px;" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'startDate\')}',maxDate:new Date()});"/>
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+											<!-- 嫌疑人手机号：<input id="suspectNums_d6" class="form-control" placeholder="请输入..." /> -->
+											<label for="" class="clabel">选择嫌疑人:</label><select
+										class="form-control" style="width: 200px; margin-left: 16px;"
+										id="select_d6">
+										<!-- <option>1</option>
+										<option>2</option>
+										<option>3</option>
+										<option>4</option>
+										<option>5</option>
+										<option>6</option> -->
+									</select>
+						</div>
+											&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<button type="button" class="btn btn-info" style="width:80px;" onclick="addressMap(1)">搜索</button>
+						
+					</form>
+		<!-- ///////////////////疑似居住地地图显示/////////////////////////////////////////// -->
+		<div style="margin:auto;" class="col-md-12">   
+    
+        <!--  <input type="button" value="查询" onclick="searchByStationName('上海');"/>  -->
+        <div id="container_d6" 
+            style="
+           	  
+              margin-bottom:15px;
+                height: 300px; 
+                 width: 100%;
+                border: 1px solid gray;
+                ">
+        </div>
+       </div>
+       
+       <script type="text/javascript">
+     //  window.onload = init_test_ford6; 
+     	var init_d6_flag=0;
+       function init_for_d6(){
+    	   
+    	  
+    	   
+    	   addrs_index=1;		//地址信息索引
+    	   /* addrs.push("上海世博馆");
+    	   addrs.push("上海外滩");
+    	   addrs.push("上海徐家汇");
+    	   addrs.push("上海长宁区"); */
+    	  // alert(addrs);
+    	   if(init_d6_flag==0){
+    	   searchByStationName_d6(addrs[0]);
+    	   init_d6_flag=1;
+    	   }
+    	   
+    	   
+    	
+    	   
+       }
+       
+       
+       var markerArr = []; 
+       var addr2=new Array();
+       var addrMark=0;//用于显示位置信息显示的控制
+       //var synFlag=0;
+       //var item={ title: "天河公园", point: "113.372867,23.134274", address: "广东省广州市天河公园" };
+      /*  { title: "广州火车站", point: "113.264531,23.157003", address: "广东省广州市广州火车站" },  
+       { title: "广州塔（赤岗塔）", point: "113.330934,23.113401", address: "广东省广州市广州塔（赤岗塔） " },  
+       { title: "广州动物园", point: "113.312213,23.147267", address: "广东省广州市广州动物园" }  */
+         
+
+   
+     //  markerArr.push(item);
+       
+    var map_d6 = new BMap.Map("container_d6");
+   // map.centerAndZoom("上海黄浦区", 12);
+  // var point = new BMap.Point(113.312213, 23.147267); //地图中心点，广州市
+    map_d6.centerAndZoom(point, 12);
+   
+    map_d6.enableScrollWheelZoom();    //启用滚轮放大缩小，默认禁用
+    map_d6.enableContinuousZoom();    //启用地图惯性拖拽，默认禁用
+
+    map_d6.addControl(new BMap.NavigationControl());  //添加默认缩放平移控件
+    map_d6.addControl(new BMap.OverviewMapControl()); //添加默认缩略地图控件
+    map_d6.addControl(new BMap.OverviewMapControl({ isOpen: true, anchor: BMAP_ANCHOR_BOTTOM_RIGHT }));   //右下角，打开
+
+////////////////////////////////////
+function showAddr(){	//显示疑似居住地
+	 var point = new Array(); //存放标注点经纬信息的数组  
+    var marker = new Array(); //存放标注点对象的数组  
+    var info = new Array(); //存放提示信息窗口对象的数组  
+    for (var i = 0; i < markerArr.length; i++) {  
+                           var p0 = markerArr[i].point.split(",")[0]; //  
+                           var p1 = markerArr[i].point.split(",")[1]; //按照原数组的point格式将地图点坐标的经纬度分别提出来  
+                           point[i] = new window.BMap.Point(p0, p1); //循环生成新的地图点  
+                           marker[i] = new window.BMap.Marker(point[i]); //按照地图点坐标生成标记  
+                           map_d6.addOverlay(marker[i]);  
+                          
+                           marker[i].setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画    
+                           info[i] = new window.BMap.InfoWindow("<p style=’font-size:12px;lineheight:1.8em;’>"  + /*markerArr[i].title +  */"地址：" + markerArr[i].address + "</p>"); // 创建信息窗口对象  
+                           if(addrs_index<addrs.length){
+                  			 
+                  		        searchByStationName_d6(addrs[addrs_index]);
+                  		        addrs_index++;
+                  			 }
+                           map_d6.enableScrollWheelZoom(true);    //启用滚轮放大缩小，默认禁用
+                           map_d6.enableContinuousZoom();    //启用地图惯性拖拽，默认禁用
+
+                           map_d6.addControl(new BMap.NavigationControl());  //添加默认缩放平移控件
+                           map_d6.addControl(new BMap.OverviewMapControl()); //添加默认缩略地图控件
+                           map_d6.addControl(new BMap.OverviewMapControl({ isOpen: true, anchor: BMAP_ANCHOR_BOTTOM_RIGHT }));   //右下角，打开
+                           
+                       }  
+                       marker[0].addEventListener("mouseover", function () {  
+                           this.openInfoWindow(info[0]);  
+                       });  
+                       marker[1].addEventListener("mouseover", function () {  
+                           this.openInfoWindow(info[1]);  
+                       });  
+                       marker[2].addEventListener("mouseover", function () {  
+                           this.openInfoWindow(info[2]);  
+                       });  
+						 marker[3].addEventListener("mouseover", function () {  
+                           this.openInfoWindow(info[3]);  
+                       }); 
+						 
+    }
+	/////////////////////////////////////
+    var localSearch = new BMap.LocalSearch(map);
+    localSearch.enableAutoViewport(); //允许自动调节窗体大小
+    
+function searchByStationName_d6(addr) {
+	
+
+    map_d6.clearOverlays();//清空原来的标注
+   // alert("addr++++++"+addr);
+    //var addr=new array();
+    var keyword = addr; 
+    addr2.push(addr);
+  // alert("addrMark++++++++"+addrMark);
+   localSearch.search(keyword);
+   //  alert("keyword1+++++++++++++"+keyword);
+   
+    localSearch.setSearchCompleteCallback(function (searchResult) {
+        var poi = searchResult.getPoi(0);
+        
+        map_d6.centerAndZoom(poi.point, 13);
+        
+        var marker = new BMap.Marker(new BMap.Point(poi.point.lng, poi.point.lat));  // 创建标注，为要查询的地方对应的经纬度
+       
+        
+        
+        point_lng=""+poi.point.lng;
+        point_lat=""+poi.point.lat;
+      
+        
+    	
+        var item={ title: addr2[addrMark], point: point_lng+","+point_lat, address: addr2[addrMark]};
+        addrMark++;
+        markerArr.push(item);
+        
+        /* addrs;
+ 	   addrs_index=1; */
+        showAddr();
+        
+        
+      //  var content =  "<br/><br/>经度：" + poi.point.lng + "<br/>纬度：" + poi.point.lat;
+      //  var infoWindow = new BMap.InfoWindow("<p style='font-size:14px;'>" + content + "</p>");
+      // marker.addEventListener("click", function () { this.openInfoWindow(infoWindow); });
+        // marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
+    });
+    
+    
+} 
+    
+    
+</script>
+		
+			<div class="col-md-6">
+
+
+				<div class="panel panel-default" style="position:relative; height:420px; overflow-y :auto" >
+					<div class="panel-heading">通话次数统计列表</div>
+					<table id="datatable" class="table table-striped table-hover"
+						style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+						<thead>
+							<tr>
+								<th style="text-align: left">本机号码</th>
+								<th style="text-align: left">次数</th>
+								<th style="text-align: left">通信地点</th>
+								<th style="text-align: left">基站地址</th>
+								
+							</tr>
+						</thead>
+						<tbody id="tb60_d6">
+						</tbody>
+					</table>
+					
+					<div class="alcenter" style="font-size: 14px">
+						<div id="total" class="pagecount inline" style="height: 29px;">
+							<span id="tot"></span>
+						</div>
+						<div class="pagebar inline"
+							style="position: absolute; right: 14px; height: 29px;">
+						<ul class="pagination pagination-sm" style="margin: 0;">
+							<li id = "pages1"></li>
+									
+							<li id = "pages"></li>	
+				            		
+							<li id = "pages2"></li>
+						</ul>
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+
+			<div class="col-md-6">
+
+				<div class="panel panel-default" style="position:relative; height:420px; overflow-y :auto" >
+					<div class="panel-heading">详细通话列表</div>
+					<table id="datatable" class="table table-striped table-hover"
+						style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+						<thead>
+							<tr>
+								<th style="text-align: left">对方号码</th>
+								<th style="text-align: left">通话时间</th>
+									<th style="text-align: left">通话时长</th>
+								<th style="text-align: left">通信类型</th>
+									
+							</tr>
+						</thead>
+						<tbody id="tb6_d6">
+						</tbody>
+					</table>
+					
+					<div class="alcenter" style="font-size: 14px">
+						<div id="total" class="pagecount inline" style="height: 29px;">
+							<span id="tot"></span>
+						</div>
+						<div class="pagebar inline"
+							style="position: absolute; right: 14px; height: 29px;">
+						<ul class="pagination pagination-sm" style="margin: 0;">
+							<li id = "pages1"></li>
+									
+							<li id = "pages"></li>	
+				            		
+							<li id = "pages2"></li>
+						</ul>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+			
+			<!-- <div class="col-md-10">
+				<div class="panel panel-default">
+			<div class="panel-heading">通话时段详情图</div>
+			<div id="main6" style="height:500px"></div>
+			
+			</div>
+
+			</div> -->
+			
+		</div>
+
+	</div>
+
+	</div>
+	</div>
+	<script type="text/javascript">
+			/*下载图片以PDF格式。现改用下载图片的方式
+			function convertCanvasToImage() {
+	            html2canvas(document.getElementById('main_d5'), {
+	                onrendered: function(canvas) {
+	                   // document.body.appendChild(canvas);
+	                    createPDFObject(canvas.toDataURL("image/jpeg"));
+	                }
+	            });
+	        }
+
+	        function createPDFObject(imgData) {
+	            var doc = new jsPDF('p', 'pt');
+	            doc.addImage(imgData, 5, 5, 600, 300, 'img');
+	            doc.save('话单.pdf')
+	        } */
+			
+			var bigPicFlag=0;
+			function showBigPic(){
+				var imgRotate = document.getElementById("imgRotate");
+			     if(bigPicFlag==0){
+			        imgRotate.style.transform="rotate(180deg)";
+			       
+			        $("#main_d5").css("height","700px");
+			        $("canvas").css("height","700px");
+			        
+			        $("#main_d5").find("div").css("height","700px");
+			       
+			       // ContactAnalysis_d5();
+			        //$("#runoob").attr("href","http://www.runoob.com/jquery");
+			        
+			        $("#callList_d5").css("display","none");
+			        
+			        //$("#testd5").css("display","");
+			        
+			        bigPicFlag=1;
+			     }
+			     else{
+			    	 imgRotate.style.transform="";
+				       
+			    	 $("#main_d5").css("height","400px");
+			    	 $("canvas").css("height","400px");
+				     $("#main_d5").find("div").css("height","400px")   
+				        
+				      
+				        $("#callList_d5").css("display","");
+			    	 bigPicFlag=0;
+			     }
+			    
+			       			
+			}
+			var nums_eachticket=0;	//用于导出时检查话单是否有通话记录
+			function Exporthd_each(){
+				var CaseInfo = document.getElementsByName("ids_call");
+				    var suspectNums = [];
+				     var suspectNumsStr="";
+				    for(i=0;i<CaseInfo.length;i++){
+				        if(CaseInfo[i].checked){
+				        	//suspectNums.push(CaseInfo[i].value);
+				        	if(suspectNumsStr.length==0){
+				        		suspectNumsStr=CaseInfo[i].value;
+				        	}else{
+				        	suspectNumsStr=suspectNumsStr+","+CaseInfo[i].value;
+				        	}
+				        }
+				    }
+				    
+				    if(suspectNumsStr=="")
+				    	if(CaseInfo.length>0)
+				    		suspectNumsStr=CaseInfo[0].value;
+				    var startDate =document.getElementById('startDate_d5').value;	
+					var endDate =document.getElementById('endDate_d5').value;
+				    ///////////////////////
+				   alert(suspectNumsStr);
+				//确认导出
+				if(nums_eachticket>0){
+				 	var rs = confirm("确定导出?");
+				 	
+					if(rs) { 
+					
+					$("#url12_d5").attr("href","<%=basePath %>admin/Exporthd_each.php?suspectNumsStr="+suspectNumsStr+"&startDate="+startDate+"&endDate="+endDate); 
+					
+					 } 
+				}else{
+					alert("没有导出的数据");
+				}
+			}
+			function select_d4(){	//d4嫌疑人选项
+				var CaseInfo = document.getElementsByName("ids_call");
+				$("#select_d4").empty();
+			    for(i=0;i<CaseInfo.length;i++){
+			    	
+			        if(CaseInfo[i].checked){
+			        	var str="<option value="+CaseInfo[i].value+">"+CaseInfo[i].id+"("+CaseInfo[i].value+")</option>";
+			        	$("#select_d4").append(str);
+			        }
+			    }
+				
+			}
+			function select_d6(){	//d4嫌疑人选项
+				var CaseInfo = document.getElementsByName("ids_call");
+				$("#select_d6").empty();
+			    for(i=0;i<CaseInfo.length;i++){
+			    	
+			        if(CaseInfo[i].checked){
+			        	var str="<option value="+CaseInfo[i].value+">"+CaseInfo[i].id+"("+CaseInfo[i].value+")</option>";
+			        	$("#select_d6").append(str);
+			        }
+			    }
+				
+			}
+			</script>
+	<script>
+	
+		d5_flag=0;	//第一次加载时显示d5函数中的插件
+		$(function () {
+			d5_flag=0;
+            $("#d1").show();
+            $("#d2").hide();
+            $("#d3").hide();
+            $("#d4").hide();
+            $("#d5").hide();
+            $("#d6").hide();
+            $("#d20").hide();
+           
+        })
+	
+		function d1() {
+			$("#d1").show();
+			$("#d2").hide();
+			$("#d3").hide();
+			$("#d4").hide();
+			$("#d5").hide();
+			$("#d6").hide();
+			$("#d20").hide();
+			showAllTicket(1)
+		}
+
+		function d2() {
+			$("#d1").hide();
+			$("#d2").show();
+			$("#d20").show();
+			$("#d3").hide();
+			$("#d4").hide();
+			$("#d5").hide();
+			$("#d6").hide();
+			ContactAnalysis();
+		}
+		function d3() {
+			$("#d1").hide();
+			$("#d2").hide();
+			$("#d3").show();
+			$("#d4").hide();
+			$("#d5").hide();
+			$("#d6").hide();
+			$("#d20").hide();
+			showAllTicketCount(1);
+		}
+		function d4() {
+			$("#d1").hide();
+			$("#d2").hide();
+			$("#d3").hide();
+			$("#d4").show();
+			$("#d5").hide();
+			$("#d6").hide();
+			$("#d20").hide();
+			select_d4();
+			contactMap(0);
+		}
+		
+
+		function d5() {
+			$("#d1").hide();
+			$("#d2").hide();
+			$("#d3").hide();
+			$("#d4").hide();
+			$("#d5").show();
+			$("#d6").hide();
+			$("#d20").hide();
+			if(d5_flag==0){
+			ContactAnalysis_d5();
+			showAllTicket_d5(1,0);
+			d5_flag=1;
+			}
+		}
+		function d6() {
+			$("#d1").hide();
+			$("#d2").hide();
+			$("#d3").hide();
+			$("#d4").hide();
+			$("#d5").hide();
+			$("#d6").show();
+			$("#d20").hide();
+			//init_for_d6();
+			addrs=new Array();	//在showAddr中调用，用于显示地址信息
+			select_d6();
+			addressMap(0);
+		}
+		
+		
+	</script>
+	
+	<script src="<%=basePath%>template/js/jquery/jquery-2.0.3.min.js"></script>
+	<script
+		src="<%=basePath%>template/js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+	<script src="<%=basePath%>template/bootstrap-dist/js/bootstrap.min.js"></script>
+	<!-- JAVASCRIPTS -->
+	<!-- Placed at the end of the document so the pages load faster -->
+	<!-- JQUERY UI-->
+	<script
+		src="<%=basePath%>template/js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+	<!-- COOKIE -->
+	<script type="text/javascript"
+		src="<%=basePath%>template/js/jQuery-Cookie/jquery.cookie.min.js"></script>
+	<!-- CUSTOM SCRIPT -->
+	<script src="<%=basePath%>template/js/script_left.js"></script>
+	<script src="<%=basePath%>template/js/cutover/js.js"></script>
+	<script src="<%=basePath%>template/js/cutover/echarts.js"></script>
+	<script src="<%=basePath%>template/js/cutover/dataTool.min.js"></script>
+	
+	<script>
+		$("#tbcont tr").hover(function() {
+			$(this).addClass("hover");
+		}, function() {
+			$(this).removeClass("hover");
+		});
+	
+		jQuery(document).ready(function() {
+			App.setPage("index"); //Set current page
+			App.init(); //Initialise plugins and elements
+		});
+	</script>
+		<script src="http://echarts.baidu.com/build/dist/echarts.js"></script>
+	<script type="text/javascript">
+	 
+	 
+	 var myChart2 = echarts.init(document.getElementById('mains'));
+
+		// 指定图表的配置项和数据
+
+		var option = {
+			color : [ '#3398DB' ],
+			tooltip : {
+				trigger : 'axis',
+				axisPointer : { // 坐标轴指示器，坐标轴触发有效
+					type : 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+				}
+			},
+			grid : {
+				left : '3%',
+				right : '4%',
+				bottom : '3%',
+				containLabel : true
+			},
+			xAxis : [ {
+				type : 'category',
+				data : [ '2017/04/01', '2017/04/11', '2017/04/07',
+						'2017/04/10', '2017/04/15', '2017/04/18', '2017/04/19',
+						'2017/04/25', '2017/04/23', '2017/04/27' ],
+				axisTick : {
+					alignWithLabel : true
+				}
+			} ],
+			yAxis : [ {
+				type : 'value'
+			} ],
+			series : [ {
+				name : '通话次数',
+				type : 'bar',
+				barWidth : '40%',
+				data : [ 325, 200, 110, 90, 70, 50, 45, 30, 20, 10 ]
+			} ]
+		};
+		 //异步加载数据
+	    $.get('<%=basePath%>admin/getTicketCount.php').done(function (data) {
+	        data = eval('('+data+')'); 
+	    	var dateTime = [];
+	    	var datesum = [];
+	    	var ticketDTOList =data.ticketDTOList;
+	    	$.each(ticketDTOList,function(i,item){				
+	    		dateTime.push(item.posstartTime);
+	    		datesum.push(item.degreesum);
+			});
+	        myChart2.setOption({                
+	            xAxis:{
+	                data:dateTime
+	            },                
+	            series:[
+	                {    
+	                    //根据名字对应到相应的系列
+	                    name:"通话次数",
+	                    data:datesum
+	                }
+	            ]
+	        })
+	    });
+		// 使用刚指定的配置项和数据显示图表。
+		myChart2.setOption(option);
+		
+		
+		 var myChart23 = echarts.init(document.getElementById('main2s'));
+
+			// 指定图表的配置项和数据
+
+			var option = {
+				color : [ '#3398DB' ],
+				tooltip : {
+					trigger : 'axis',
+					axisPointer : { // 坐标轴指示器，坐标轴触发有效
+						type : 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+					}
+				},
+				grid : {
+					left : '3%',
+					right : '4%',
+					bottom : '3%',
+					containLabel : true
+				},
+				xAxis : [ {
+					type : 'category',
+					data : [ '星期一', '星期二', '星期三','星期四', '星期五', '星期六', '星期日'],
+					axisTick : {
+						alignWithLabel : true
+					}
+				} ],
+				yAxis : [ {
+					type : 'value'
+				} ],
+				series : [ {
+					name : '通话次数',
+					type : 'bar',
+					barWidth : '40%',
+					data : [ 325, 200, 110, 90, 70, 50, 45 ]
+				} ]
+			};
+			 //异步加载数据
+		    $.get('<%=basePath%>admin/getTicketCount.php').done(function (data) {
+		        data = eval('('+data+')'); 
+		        var one =data.星期一;
+		    	var two =data.星期二;
+		    	var three =data.星期三;
+		    	var four =data.星期四;
+		    	var five =data.星期五;
+		    	var six =data.星期六;
+		    	var seven =data.星期日;
+		    	var ticketDTOList = data.ticketDTOList;
+		    	var dateTime = ['星期一', '星期二', '星期三','星期四', '星期五', '星期六', '星期日'];
+		    	var datesum = [one,two,three,four,five,six,seven];
+		    	$.each(ticketDTOList,function(i,item){				
+				});
+		        myChart23.setOption({                
+		            xAxis:{
+		                data:dateTime
+		            },                
+		            series:[
+		                {    
+		                    //根据名字对应到相应的系列
+		                    name:"通话次数",
+		                    data:datesum
+		                }
+		            ]
+		        })
+		    });
+			// 使用刚指定的配置项和数据显示图表。
+			myChart23.setOption(option);
+		
+		
+			 var myChart24 = echarts.init(document.getElementById('main3s'));
+
+				// 指定图表的配置项和数据
+
+				var option = {
+					color : [ '#3398DB' ],
+					tooltip : {
+						trigger : 'axis',
+						axisPointer : { // 坐标轴指示器，坐标轴触发有效
+							type : 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+						}
+					},
+					grid : {
+						left : '3%',
+						right : '4%',
+						bottom : '3%',
+						containLabel : true
+					},
+					xAxis : [ {
+						type : 'category',
+						data : [ '08:00-15:59', '16:00-23：59', '00:00-07:59' ],
+						axisTick : {
+							alignWithLabel : true
+						}
+					} ],
+					yAxis : [ {
+						type : 'value'
+					} ],
+					series : [ {
+						name : '通话次数',
+						type : 'bar',
+						barWidth : '40%',
+						data : [ 325, 200, 110, 90, 70, 50, 45, 30, 20, 10 ]
+					} ]
+				};
+				 //异步加载数据
+			    $.get('<%=basePath%>admin/getTicketCount.php').done(function (data) {
+			        data = eval('('+data+')'); 
+			        var ticketDTOList = data.ticketDTOList;
+			        var one =data.上午;
+			    	var two =data.下午;
+			    	var three =data.晚上;
+			    	var dateTime = ['08:00-15:59', '16:00-23：59', '00:00-07:59'];
+			    	var datesum = [one,two,three];
+			    	$.each(ticketDTOList,function(i,item){				
+					});
+			        myChart24.setOption({                
+			            xAxis:{
+			                data:dateTime
+			            },                
+			            series:[
+			                {    
+			                    //根据名字对应到相应的系列
+			                    name:"通话次数",
+			                    data:datesum
+			                }
+			            ]
+			        })
+			    });
+				// 使用刚指定的配置项和数据显示图表。
+				myChart24.setOption(option);
+			
+	// 通话次数分析的插件显示
+
+
+	
+	// 相互通话的插件显示
+	var myChart5 = echarts.init(document.getElementById('main5'));
+
+	myChart.showLoading();
+	$.get('<%=basePath%>template/js/cutover/les-miserables.gexf', function(xml) {
+		myChart.hideLoading();
+
+		var graph = echarts.dataTool.gexf.parse(xml);
+		var categories = [];
+		for (var i = 0; i < 9; i++) {
+			categories[i] = {
+				/* name : '类目' + i */
+			};
+		}
+		graph.nodes.forEach(function(node) {
+			node.itemStyle = null;
+			node.symbolSize = 10;
+			node.value = node.symbolSize;
+			node.category = node.attributes.modularity_class;
+			// Use random x, y
+			node.x = node.y = null;
+			node.draggable = true;
+		});
+		var option = {
+			series : [ {
+				name : 'Les Miserables',
+				type : 'graph',
+				layout : 'force',
+				data : graph.nodes,
+				links : graph.links,
+				categories : categories,
+				roam : true,
+				label : {
+					normal : {
+						position : 'right'
+					}
+				},
+				force : {
+					repulsion : 100
+				}
+			} ]
+		};
+
+		myChart5.setOption(option);
+	}, 'xml');
+	
+	
+	
+	// 疑似居住地的插件显示
+	var myChart6 = echarts.init(document.getElementById('main6'));
+	var colors = ['#5793f3', '#d14a61', '#675bba'];
+	
+	option = {
+	    color: colors,
+
+	    tooltip: {
+	        trigger: 'none',
+	        axisPointer: {
+	            type: 'cross'
+	        }
+	    },
+	    legend: {
+	        data:[ '2016 话单详情']
+	    },
+	    grid: {
+	        top: 70,
+	        bottom: 50
+	    },
+	    xAxis: [
+	        {
+	            type: 'category',
+	            axisTick: {
+	                alignWithLabel: true
+	            },
+	            axisLine: {
+	                onZero: false,
+	                lineStyle: {
+	                    color: colors[2]
+	                }
+	            },
+	            axisPointer: {
+	                label: {
+	                    formatter: function (params) {
+	                        return '话单详情  ' + params.value
+	                            + (params.seriesData.length ? '：' + params.seriesData[0].data : '');
+	                    }
+	                }
+	            },
+	            data: ["2016-1", "2016-2", "2016-3", "2016-4", "2016-5", "2016-6", "2016-7", "2016-8", "2016-9", "2016-10", "2016-11", "2016-12"]
+	        },
+	        
+	    ],
+	    yAxis: [
+	        {
+	            type: 'value'
+	        }
+	    ],
+	   
+	};
+	myChart6.setOption(option);
+	
+	 $.get('<%=basePath%>admin/getNumberTicket.php').done(function (data) {
+	        data = eval('('+data+')'); 
+	    	var dateTime = [];
+	    	var datesum = [];
+	    	$.each(data,function(i,item){				
+	    		dateTime.push(item.posstartTime);
+	    		datesum.push(item.degreesum);
+			});
+	        myChart6.setOption({                
+	            xAxis:{
+	                data:dateTime
+	            },                
+	            series:[
+	                {    
+	                    //根据名字对应到相应的系列
+	                    name:'2016 通话次数',
+	                    type:'line',
+	    	            smooth: true,
+	                    data:datesum
+	                }
+	            ]
+	        })
+	    });
+
+	</script>
+	
+	<script src="http://echarts.baidu.com/build/dist/echarts.js"></script>
+	  <script src="template/js/cutover/echarts.js"></script>
+	<script>
+        // 路径配置
+        require.config({
+            paths: {
+                echarts: 'http://echarts.baidu.com/build/dist'
+            }
+        });
+        
+        // 使用
+        require(
+            [
+                'echarts',
+                'echarts/chart/line' // 使用柱状图就加载bar模块，按需加载
+            ]
+        );
+
+        window.onload = showAllFile2(1);
+        function showAllFile2(pageno){
+            var sortType =$("#sortType").val();
+            $.ajax({
+                type : "POST",
+                url : "<%=basePath%>admin/getPhoneInfo.php",
+                data : {
+                    "pageno":pageno,
+                    "sortType":sortType
+                },
+                dataType : "json",
+                async: true,
+                success : function(data) {
+                    var docs=data.hits.hits;
+                    var sizes=2;
+                    var pagesum=data.hits.total;
+                    var pagenum = pagesum / sizes;
+                    var length=5;  //要显示的分页页数
+
+                    if(pagenum%1!=0){
+                        pagenum=pagenum+(1-pagenum%1);
+                    }
+
+                    //	alert(evName);
+                    $("#pagesA").empty();
+
+                    //用于删除之前显示的页数，动态添加时id名均设为order
+                    for(var i=1;i<=length;i++)
+                        $("#orderA").remove();
+
+                    if(pagesum<sizes){
+                        var html2 = '<li class="active" id="orderA"><a href="#" onclick="showAllFile2(1)">1</a></li >';
+                        $("#pagesA").after(html2);
+
+
+                    }else{
+
+                        if(pageno<pagenum){
+                            if(pageno+length-1<=pagenum){
+                                var html2="";
+                                if(pageno-2>0){
+                                    for(var i =pageno-2;i<=pageno+length-1-2;i++){
+                                        if(i==pageno)
+                                            html2 += '<li class="active" id="orderA"><a href="#" onclick="showAllFile2('+i+')">'+i+'</a></li >';
+                                        else
+
+                                            html2 += '<li id="orderA"><a href="#" onclick="showAllFile2('+i+')">'+i+'</a></li >';
+                                    }
+                                }
+                                else{
+                                    for(var i =1;i<=length;i++){
+                                        if(i==pageno)
+                                            html2 += '<li class="active" id="orderA"><a href="#" onclick="showAllFile2('+i+')">'+i+'</a></li >';
+                                        else
+
+                                            html2 += '<li id="orderA"><a href="#" onclick="showAllFile2('+i+')">'+i+'</a></li >';
+                                    }
+                                }
+                                //alert(html2);
+                                $("#pagesA").after(html2);
+
+                            }/* if */
+                            else{
+                                var html2="";
+                                if(pagenum>=length){
+                                    for(var i =pageno-(length-1-pagenum+pageno);i<=pagenum;i++){
+
+
+                                        if(i==pageno)
+                                            html2 += '<li class="active" id="orderA"><a href="#" onclick="showAllFile2('+i+')">'+i+'</a></li >';
+                                        else
+                                            html2 += '<li id="orderA"><a href="#" onclick="showAllFile2('+i+')">'+i+'</a></li >';
+
+                                    }
+                                    //alert(html2);
+                                    $("#pagesA").after(html2);
+                                }
+                                else{
+                                    for(var i =1;i<=pagenum;i++){
+                                        if(i==pageno)
+                                            html2 += '<li class="active" id="orderA"><a href="#" onclick="showAllFile2('+i+')">'+i+'</a></li >';
+                                        else
+                                            html2 += '<li id="orderA"><a href="#" onclick="showAllFile2('+i+')">'+i+'</a></li >';
+                                    }
+                                    $("#pagesA").after(html2);
+                                }
+                            }
+                        }
+                        else{
+                            if(pageno==pagenum){
+                                var html2="";
+                                for(var i =pageno-length+1>0?pageno-length+1:1;i<=pagenum;i++){
+                                    if(i==pageno)
+                                        html2 += '<li class="active" id="orderA"><a href="#" onclick="showAllFile2('+i+')">'+i+'</a></li >';
+                                    else
+                                        html2 += '<li id="orderA"><a href="#" onclick="showAllFile2('+i+')">'+i+'</a></li >';
+                                }
+                                $("#pagesA").after(html2);
+                            }/* if */
+                        }
+                    }
+
+                    $("#tot1").empty();
+                    $("#pages11").empty();
+                    $("#pages21").empty();
+                    var html3 ='<span >共'+pagesum+'条，当前'+pageno+'/'+pagenum+'页</span>';
+                    $("#tot1").append(html3);
+
+
+                    var html5 = '<a href="#" onclick="showAllFile2('+pageno+'-1<1?1:'+pageno+'-1)"><</a>';
+                    $("#pages11").append(html5);
+
+                    var html4 = '<a href="#" onclick="showAllFile2('+pageno+'+1>'+pagenum+'?'+pagenum+':'+pageno+'+1)">></a>';
+                    $("#pages21").append(html4);
+
+                    $("#tbcont1").empty();
+                    $.each(docs,function(i,item){
+
+                        var html = '+<tr>'+
+                            '<td>'+item._source.localNum+'</td> '+
+                            '<td>'+item._source.postion+'</td> '+
+                            '<td>暂无此类型</td> '+
+                            '<td>暂无此类型</td> '+
+                            '</tr>';
+
+                        $("#tbcont1").append(html);
+
+                    });
+
+                    $("#tbcont2").empty();
+                    var numb = [];
+                    var startTime = [];
+                    $.each(docs,function(i,item){
+                        //alert(item._source.startTime);
+                        var html = '+<tr>'+
+                            '<td>'+item._source.dialNumber+'</td> '+
+                            '<td>'+item._source.method+'</td> '+
+                            '<td>'+item._source.startTime+'</td> '+
+                            '<td>'+item._source.callDuration+'</td> '+
+                            '</tr>';
+                        numb.push(Number(item._source.callDuration));
+                        startTime.push(item._source.startTime);
+                        $("#tbcont2").append(html);
+                    });
+
+                    var echarts = require('echarts');
+                    var myChart9 = echarts.init(document.getElementById('main10'));
+                    // 绘制图表
+                    myChart9.setOption({
+                        title: {
+                            text: '通话时长统计图',
+                            subtext: 'DEMO'
+                        },
+                        tooltip: {},
+                        xAxis: {
+                            type: 'category',
+                            data:startTime
+                        },
+                        yAxis: {
+                            type: 'value',
+                            axisLabel: {
+                                formatter: '{value} s'
+                            }
+                        },
+                        series: [{
+                            name:'时长',
+                            type:'line',
+                            data:numb
+                        }]
+                    });
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    alert("失败");
+                }
+            });
+        }
+	
+////////////////d5_通话记录显示////////////////////////////////////
+//window.onload = showAllTicket_d5(1,0);
+	var flag_showAllTicket_d5=1;
+		//显示在表格通话记录详情显示
+		function showAllTicket_d5(pageno,flag_d5_search){
+			
+			
+			var CaseInfo = document.getElementsByName("ids_call");
+		    
+		    
+			if(pageno==1&&flag_showAllTicket_d5==1){
+				
+				ContactAnalysis_d5();
+			
+			}
+			
+			
+			    var suspectNums = [];
+			     var suspectNumsStr="";
+			    for(i=0;i<CaseInfo.length;i++){
+			        if(CaseInfo[i].checked){
+			        	//suspectNums.push(CaseInfo[i].value);
+			        	if(suspectNumsStr.length==0){
+			        		suspectNumsStr=CaseInfo[i].value;
+			        	}else{
+			        	suspectNumsStr=suspectNumsStr+","+CaseInfo[i].value;
+			        	}
+			        }
+			    }
+			    
+			//suspectNumsStr =document.getElementById('suspectNums_d5').value; 
+			
+			if(suspectNumsStr==""&&flag_d5_search==1){
+		    	/* alert("请先输入嫌疑人手机号!"); */
+		    	if(CaseInfo.length>0)
+			   		 suspectNumsStr=CaseInfo[0].value;
+
+		    } 
+		    else if(suspectNumsStr==""&&flag_d5_search==0)
+		    	if(CaseInfo.length>0)
+			   		 suspectNumsStr=CaseInfo[0].value;
+
+			//alert(suspectNumsStr);
+			/* suspectNumsStr="15614556246"
+			    if(suspectNumsStr==""){
+			    	alert("请先选择嫌疑人!");
+			    } */
+			
+			var startDate =document.getElementById('startDate_d5').value;	
+			var endDate =document.getElementById('endDate_d5').value;
+			var suspectMail =document.getElementById('posstartTime').value;
+			$.ajax({
+				type : "POST",
+				url : "<%=basePath%>admin/getTicket_each.php",
+				data : {
+					"startDate":startDate,	
+					"endDate":endDate,		
+					"suspectMail":suspectMail,
+					"suspectNumsStr":suspectNumsStr,
+					"pageno":pageno,
+				},
+				dataType : "json",
+				async: true,
+				success : function(data) {
+					
+					var Ticket=data.ticketList;
+					
+					
+					var sizes=5;
+					var pagesum=data.total;
+					//导出话单时有用到
+					nums_eachticket=data.total;
+					
+					
+					var pagenum = pagesum / sizes;
+					var length=5;  //要显示的分页页数
+						
+					if(pagenum%1!=0){
+							pagenum=pagenum+(1-pagenum%1);
+					}
+					
+					
+					$("#pages_d5").empty();
+					
+					//用于删除之前显示的页数，动态添加时id名均设为order
+					for(var i=1;i<=length;i++)
+						  $("#order_d5").remove();
+					
+					if(pagesum<sizes){
+						var html2 = '<li class="active" id="order_d5"><a href="#" onclick="showAllTicket_d5(1,0)">1</a></li >';
+						$("#pages_d5").after(html2);	
+						
+						
+					}else{
+					
+					if(pageno<pagenum){
+						if(pageno+length-1<=pagenum){
+							var html2="";
+							if(pageno-2>0){
+								for(var i =pageno-2;i<=pageno+length-1-2;i++){	
+									if(i==pageno)
+										html2 += '<li class="active" id="order_d5"><a href="#" onclick="showAllTicket_d5('+i+',0)">'+i+'</a></li >';
+										else
+							
+											html2 += '<li id="order_d5"><a href="#" onclick="showAllTicket_d5('+i+',0)">'+i+'</a></li >';  
+							   				   }
+								}
+							else{
+								for(var i =1;i<=length;i++){	
+									if(i==pageno)
+										html2 += '<li class="active" id="order_d5"><a href="#" onclick="showAllTicket_d5('+i+',0)">'+i+'</a></li >';
+										else
+							
+											html2 += '<li id="order_d5"><a href="#" onclick="showAllTicket_d5('+i+',0)">'+i+'</a></li >';  
+							   				   }
+							}
+						//alert(html2);
+						$("#pages_d5").after(html2);
+					
+						}/* if */
+						else{
+							var html2="";
+							if(pagenum>=length){
+							for(var i =pageno-(length-1-pagenum+pageno);i<=pagenum;i++){	
+								 if(i==pageno)
+									html2 += '<li class="active" id="order_d5"><a href="#" onclick="showAllTicket_d5('+i+',0)">'+i+'</a></li >';
+								else
+									html2 += '<li id="order_d5"><a href="#" onclick="showAllTicket_d5('+i+',0)">'+i+'</a></li >'; 
+								
+							   }
+							$("#pages_d5").after(html2);	
+							}
+							else{
+								
+								for(var i =1;i<=pagenum;i++){	
+									
+									  
+									 if(i==pageno)
+										html2 += '<li class="active" id="order_d5"><a href="#" onclick="showAllTicket_d5('+i+',0)">'+i+'</a></li >';
+									else
+										html2 += '<li id="order_d5"><a href="#" onclick="showAllTicket_d5('+i+',0)">'+i+'</a></li >';
+								   }
+								$("#pages_d5").after(html2);	
+							}
+								
+						}
+					}
+					else{
+						if(pageno==pagenum){
+							var html2="";
+						
+							for(var i =pageno-length+1>0?pageno-length+1:1;i<=pagenum;i++){	
+							 if(i==pageno)
+								html2 += '<li class="active" id="order_d5"><a href="#" onclick="showAllTicket_d5('+i+',0)">'+i+'</a></li >';
+							else
+								html2 += '<li id="order_d5"><a href="#" onclick="showAllTicket_d5('+i+',0)">'+i+'</a></li >';
+						   }
+							$("#pages_d5").after(html2);
+						}/* if */
+					}
+				}
+
+					$("#tot_d5").empty();
+					$("#pages1_d5").empty();
+					$("#pages2_d5").empty();
+					var html3 ='<span >共'+pagesum+'条，当前'+pageno+'/'+pagenum+'页</span>';
+					$("#tot_d5").append(html3);
+					
+					var html5 = '<a href="#" onclick="showAllTicket_d5('+pageno+'-1<1?1:'+pageno+'-1,0)"><</a>';
+					$("#pages1_d5").append(html5);
+					
+					var html4 = '<a href="#" onclick="showAllTicket_d5('+pageno+'+1>'+pagenum+'?'+pagenum+':'+pageno+'+1,0)">></a>';
+					$("#pages2_d5").append(html4);
+					$("#tbcont20_d5").empty();
+					$.each(Ticket,function(i,item){
+						var html01 = '+<tr>'+
+						'<th class="alcenter" id="suspectcost_d5" name="suspectcost">'+item.localNum+'</th>'+
+						'<th class="alcenter" id="startTime_d5" name="startTime">'+item.startTime+'</th>'+
+						'<th class="alcenter" id="dialNumber_d5" name="dialNumber">'+item.dialNumber+'</th>'+
+						'<th class="alcenter" id="callDuration_d5" name="callDuration">'+item.callDuration+'</th>'+
+						'<th class="alcenter" id="position_d5" name="position">'+item.positionName+'</th>'+
+						'<th class="alcenter" id="method_d5" name="method">'+item.method+'</th>'+
+						
+					    '</tr>+';
+						$("#tbcont20_d5").append(html01);	
+						
+					});
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+					alert("失败");
+				}
+			});
+		}
+	//////////////////////////////////////////////////////
+	
+		
+		//通话记录搜索：时间、嫌疑人姓名、对方号码
+	
+	//显示在表格通话记录详情显示
+	//通话记录搜索：时间、嫌疑人姓名、对方号码
+	//window.onload = showAllTicketCount(1);
+	//显示在表格通话记录详情显示
+	//window.onload = showAllTicketCount(1);
+
+	function showAllTicketCount1(pageno){
+		var posstartTime13 =document.getElementById('posstartTime13').value;   //通话日期范围
+		var caseName13 =document.getElementById('caseName13').value;	 // 嫌疑人姓名/手机号:  
+		var haoma =document.getElementById('haoma').value;  //对方号码
+		
+		var CaseInfo = document.getElementsByName("ids_call");
+		//alert(posstartTime12);
+		//var endDate =document.getElementById('endDate').value;
+		 var suspectNumsStr="";
+
+		    for(i=0;i<CaseInfo.length;i++){
+		        if(CaseInfo[i].checked){
+		        	//suspectNums.push(CaseInfo[i].value);
+		        	if(suspectNumsStr.length==0){
+		        		suspectNumsStr=CaseInfo[i].value;
+		        	}else{
+		        	suspectNumsStr=suspectNumsStr+","+CaseInfo[i].value;
+		        	}
+		        }
+		    }
+					//alert("进入方法");
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>admin/getCallLogStatistics.php",
+			data : {
+				"caseName13":caseName13,	
+				"haoma":haoma,		
+				"posstartTime13":posstartTime13,
+				"suspectNumsStr":suspectNumsStr,
+				"pageno":pageno
+			},
+			dataType : "json",
+			async: true,
+			success : function(data) {
+				var Ticket=data.hits.hits;
+				var sizes=5;
+				var pagesum=data.hits.total;
+				var pagenum = pagesum / sizes;
+				var length=5;  //要显示的分页页数
+					
+				if(pagenum%1!=0){
+						pagenum=pagenum+(1-pagenum%1);
+				}
+				
+				
+				$("#pagesCount1").empty();
+				
+				//用于删除之前显示的页数，动态添加时id名均设为order
+				for(var i=1;i<=length;i++)
+					  $("#order").remove();
+				
+				if(pagesum<sizes){
+					var html2 = '<li class="active" id="order"><a href="#" onclick="showAllTicketCount1(1)">1</a></li >';
+					$("#pagesCount1").after(html2);	
+					
+					
+				}else{
+				
+				if(pageno<pagenum){
+					if(pageno+length-1<=pagenum){
+						var html2="";
+						if(pageno-2>0){
+							for(var i =pageno-2;i<=pageno+length-1-2;i++){	
+								if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="showAllTicketCount1('+i+')">'+i+'</a></li >';
+									else
+						
+										html2 += '<li id="order"><a href="#" onclick="showAllTicketCount1('+i+')">'+i+'</a></li >';  
+						   				   }
+							}
+						else{
+							for(var i =1;i<=length;i++){	
+								if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="showAllTicketCount1('+i+')">'+i+'</a></li >';
+									else
+						
+										html2 += '<li id="order"><a href="#" onclick="showAllTicketCount1('+i+')">'+i+'</a></li >';  
+						   				   }
+						}
+					$("#pagesCount1").after(html2);
+				
+					}/* if */
+					else{
+						var html2="";
+						if(pagenum>=length){
+						for(var i =pageno-(length-1-pagenum+pageno);i<=pagenum;i++){	
+							 if(i==pageno)
+								html2 += '<li class="active" id="order"><a href="#" onclick="showAllTicketCount1('+i+')">'+i+'</a></li >';
+							else
+								html2 += '<li id="order"><a href="#" onclick="showAllTicketCount1('+i+')">'+i+'</a></li >'; 
+							
+						   }
+						$("#pagesCount1").after(html2);	
+						}
+						else{
+							
+							for(var i =1;i<=pagenum;i++){	
+								
+								  
+								 if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="showAllTicketCount1('+i+')">'+i+'</a></li >';
+								else
+									html2 += '<li id="order"><a href="#" onclick="showAllTicketCount1('+i+')">'+i+'</a></li >';
+							   }
+							$("#pagesCount1").after(html2);	
+						}
+							
+					}
+				}
+				else{
+					if(pageno==pagenum){
+						var html2="";
+					
+						for(var i =pageno-length+1>0?pageno-length+1:1;i<=pagenum;i++){	
+						 if(i==pageno)
+							html2 += '<li class="active" id="order"><a href="#" onclick="showAllTicketCount1('+i+')">'+i+'</a></li >';
+						else
+							html2 += '<li id="order"><a href="#" onclick="showAllTicketCount1('+i+')">'+i+'</a></li >';
+					   }
+						$("#pagesCount1").after(html2);
+					}/* if */
+				}
+			}
+
+				$("#totCount1").empty();
+				$("#pages1Count1").empty();
+				$("#pages2Count1").empty();
+				var html3 ='<span >共'+pagesum+'条，当前'+pageno+'/'+pagenum+'页</span>';
+				$("#totCount1").append(html3);
+				hdurl = [];
+				var html5 = '<a href="#" onclick="showAllTicketCount1('+pageno+'-1<1?1:'+pageno+'-1)"><</a>';
+				$("#pages1Count1").append(html5);
+				hdurl = [];
+				var html4 = '<a href="#" onclick="showAllTicketCount1('+pageno+'+1>'+pagenum+'?'+pagenum+':'+pageno+'+1)">></a>';
+				$("#pages2Count1").append(html4);
+				$("#tbcont20Count1").empty();
+				$.each(Ticket,function(i,item){
+					var html01 = '+<tr>'+ 
+					'<th class="alcenter" id="startTime" name="startTime">'+item._source.startTime+'</th>'+
+					'<th class="alcenter" id="startTime" name="startTime">'+item._source.name+'</th>'+
+					'<th class="alcenter" id="startTime" name="startTime">'+item._source.localNum+'</th>'+
+					'<th class="alcenter" id="dialNumber" name="dialNumber">'+item._source.dialNumber+'</th>'+
+					'<th class="alcenter" id="callDuration" name="callDuration">'+item._source.callDuration+'</th>'+
+					'<th class="alcenter" id="position" name="position">'+item._source.position+'</th>'+
+					'<th class="alcenter" id="method" name="method">'+item._source.method+'</th>'+
+					'<td class="alcenter" id="huadanid'+i+'" name="huadanid" style="display:none;>'+item._id+'</td>'+
+				    '</tr>+';
+				    
+					$("#tbcont20Count1").append(html01);
+					//alert(item._source.file_download_url);
+					hdurl.push(item._id);
+				});
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+				alert("失败");
+			}
+		});
+	}
+		
+	///////////////////////////////////////////////////////	
+		
+		function exportFile(){
+		//alert(hdurl);
+			//获取所有选中项
+/* 			var stunos=[];
+			$("input[name='cb']:checked").each(function(){
+				stunos.push($(this).val());
+			}); */
+			var stunoStr="";
+			//确认导出
+			if(hdurl.length>0){
+			 	var rs = confirm("确定导出?");
+				if(rs) { 
+				for(var i=0;i<hdurl.length;i++){
+					if(i == 0) {
+						stunoStr+=hdurl[i];
+					}else {
+						stunoStr+=","+hdurl[i];
+					}
+					//alert(stunoStr);
+				}
+				$("#url12").attr("href","<%=basePath %>admin/Exporthd.php?docpath="+stunoStr); 
+				
+				 } 
+			}else{
+				alert("没有导出的数据");
+			}
+		}
+
+
+	</script>
+	
+	<script type="text/javascript">
+
+	window.onload = showAddrestTicket();
+	
+	function showAddrestTicket(){
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>admin/getAddrestTicket.php",
+			data : {
+				"suspectMail":""			
+			},		
+			dataType : "json",
+			async: true,
+			success : function(data) {			
+				$("#tb60").empty();
+				$.each(data,function(i,item){
+					
+					var html10 = '+<tr >'+
+					'<td style="text-align: left" class="alcenter" id="localNum6" name="localNum6">'+item.localNum+'</td>'+
+					'<td style="text-align: left" class="alcenter" id="num6" name="num6">'+item.num+'</td>'+
+					'<td style="text-align: left" class="alcenter" id="address6" name="address6">'+item.addrest+'</td>'+
+					'<td style="text-align: left" class="alcenter" id="baseAddress6" name="baseAddress6">'+item.baseAddrest+'</td>'+
+					
+				    '</tr>+';
+				   
+					$("#tb60").append(html10);	
+					var m=0;
+					var s=0;
+					m=item.time/60;
+					m=m-m%1;
+					s=item.time%60;
+					var html01 = '+<tr style="text-align: left">'+
+					'<td style="text-align: left" class="alcenter" id="dialNumber6" name="dialNumber6">'+item.dialNumber+'</td>'+
+					'<td style="text-align: left" class="alcenter" id="startTime6" name="startTime6">'+item.startTime+'</td>'+
+					'<td style="text-align: left" class="alcenter" id="time6" name="time6">'+m+'分'+s+'秒'+'</td>'+
+					'<td style="text-align: left" class="alcenter" id="method6" name="method6">'+item.method+'</td>'+
+					
+				    '</tr>+';
+					$("#tb6").append(html01);
+				});
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+				alert("失败");
+			}
+		});
+	}
+
+
+	</script>
+	<script type="text/javascript">
+	var hdurl = [];
+	window.onload = showAllTicket(1);
+	window.onload = Ticket();
+	//显示在表格通话记录详情显示
+	function showAllTicket(pageno){
+		var startDate =document.getElementById('startDate').value;	
+		var endDate =document.getElementById('endDate').value;
+		var posstartTime =document.getElementById('posstartTime').value;
+		var CaseInfo = document.getElementsByName("ids_call");
+		//alert(posstartTime12);
+		//var endDate =document.getElementById('endDate').value;
+		 var suspectNumsStr="";
+
+		    for(i=0;i<CaseInfo.length;i++){
+		        if(CaseInfo[i].checked){
+		        	//suspectNums.push(CaseInfo[i].value);
+		        	if(suspectNumsStr.length==0){
+		        		suspectNumsStr=CaseInfo[i].value;
+		        	}else{
+		        	suspectNumsStr=suspectNumsStr+","+CaseInfo[i].value;
+		        	}
+		        }
+		    }
+					//alert("进入方法");
+        Ticket();
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>admin/getTicket.php",
+			data : {
+				"startDate":startDate,	
+				"endDate":endDate,		
+				"posstartTime":posstartTime,
+				"suspectNumsStr":suspectNumsStr,
+				"pageno":pageno
+			},
+			dataType : "json",
+			async: true,
+			success : function(data) {
+				var Ticket=data.hits.hits;
+				var sizes=5;
+				var pagesum=data.hits.total;
+				var pagenum = pagesum / sizes;
+				var length=5;  //要显示的分页页数
+					
+				if(pagenum%1!=0){
+						pagenum=pagenum+(1-pagenum%1);
+				}
+				
+				
+				$("#pages").empty();
+				
+				//用于删除之前显示的页数，动态添加时id名均设为order
+				for(var i=1;i<=length;i++)
+					  $("#order").remove();
+				
+				if(pagesum<sizes){
+					var html2 = '<li class="active" id="order"><a href="#" onclick="showAllTicket(1)">1</a></li >';
+					$("#pages").after(html2);	
+					
+					
+				}else{
+				
+				if(pageno<pagenum){
+					if(pageno+length-1<=pagenum){
+						var html2="";
+						if(pageno-2>0){
+							for(var i =pageno-2;i<=pageno+length-1-2;i++){	
+								if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="showAllTicket('+i+')">'+i+'</a></li >';
+									else
+						
+										html2 += '<li id="order"><a href="#" onclick="showAllTicket('+i+')">'+i+'</a></li >';  
+						   				   }
+							}
+						else{
+							for(var i =1;i<=length;i++){	
+								if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="showAllTicket('+i+')">'+i+'</a></li >';
+									else
+						
+										html2 += '<li id="order"><a href="#" onclick="showAllTicket('+i+')">'+i+'</a></li >';  
+						   				   }
+						}
+					//alert(html2);
+					$("#pages").after(html2);
+				
+					}/* if */
+					else{
+						var html2="";
+						if(pagenum>=length){
+						for(var i =pageno-(length-1-pagenum+pageno);i<=pagenum;i++){	
+							 if(i==pageno)
+								html2 += '<li class="active" id="order"><a href="#" onclick="showAllTicket('+i+')">'+i+'</a></li >';
+							else
+								html2 += '<li id="order"><a href="#" onclick="showAllTicket('+i+')">'+i+'</a></li >'; 
+							
+						   }
+						$("#pages").after(html2);	
+						}
+						else{
+							
+							for(var i =1;i<=pagenum;i++){	
+								
+								  
+								 if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="showAllTicket('+i+')">'+i+'</a></li >';
+								else
+									html2 += '<li id="order"><a href="#" onclick="showAllTicket('+i+')">'+i+'</a></li >';
+							   }
+							$("#pages").after(html2);	
+						}
+							
+					}
+				}
+				else{
+					if(pageno==pagenum){
+						var html2="";
+					
+						for(var i =pageno-length+1>0?pageno-length+1:1;i<=pagenum;i++){	
+						 if(i==pageno)
+							html2 += '<li class="active" id="order"><a href="#" onclick="showAllTicket('+i+')">'+i+'</a></li >';
+						else
+							html2 += '<li id="order"><a href="#" onclick="showAllTicket('+i+')">'+i+'</a></li >';
+					   }
+						$("#pages").after(html2);
+					}/* if */
+				}
+			}
+
+				$("#tot").empty();
+				$("#pages1").empty();
+				$("#pages2").empty();
+				var html3 ='<span >共'+pagesum+'条，当前'+pageno+'/'+pagenum+'页</span>';
+				$("#tot").append(html3);
+				hdurl = [];
+				var html5 = '<a href="#" onclick="showAllTicket('+pageno+'-1<1?1:'+pageno+'-1)"><</a>';
+				$("#pages1").append(html5);
+				hdurl = [];
+				var html4 = '<a href="#" onclick="showAllTicket('+pageno+'+1>'+pagenum+'?'+pagenum+':'+pageno+'+1)">></a>';
+				$("#pages2").append(html4);
+				$("#tbcont20").empty();
+				
+				$.each(Ticket,function(i,item){
+					var html01 = '+<tr>'+
+					'<th class="alcenter" id="startTime" name="startTime">'+item._source.startTime+'</th>'+
+					'<th class="alcenter" id="startTime" name="startTime">'+item._source.name+'</th>'+
+					'<th class="alcenter" id="startTime" name="startTime">'+item._source.localNum+'</th>'+
+					'<th class="alcenter" id="dialNumber" name="dialNumber">'+item._source.dialNumber+'</th>'+
+					'<th class="alcenter" id="callDuration" name="callDuration">'+item._source.callDuration+'</th>'+
+					'<th class="alcenter" id="position" name="position">'+item._source.position+'</th>'+
+					'<th class="alcenter" id="method" name="method">'+item._source.method+'</th>'+
+					'<td class="alcenter" id="huadanid'+i+'" name="huadanid" style="display:none;>'+item.id+'</td>'+
+				    '</tr>+';
+					$("#tbcont20").append(html01);
+					//alert(item._id);
+					hdurl.push(item._id);
+				});
+				
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+				alert("失败");
+			}
+		});
+	}
+	
+	//通话次数记录
+	function Ticket(){
+		var suspectMail =document.getElementById('posstartTime').value;
+		var startDate =document.getElementById('startDate').value;    
+		var endDate =document.getElementById('endDate').value;
+		
+		var CaseInfo = document.getElementsByName("ids_call");
+		//alert(posstartTime12);
+		//var endDate =document.getElementById('endDate').value;
+		 var suspectNumsStr="";
+
+		    for(i=0;i<CaseInfo.length;i++){
+		        if(CaseInfo[i].checked){
+		        	//suspectNums.push(CaseInfo[i].value);
+		        	if(suspectNumsStr.length==0){
+		        		suspectNumsStr=CaseInfo[i].value;
+		        	}else{
+		        	suspectNumsStr=suspectNumsStr+","+CaseInfo[i].value;
+		        	}
+		        }
+		    }
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>admin/getNumberTicket.php",
+			data : {
+				   "suspectMail":suspectMail,
+				  "startDate":startDate,
+				  "suspectNumsStr":suspectNumsStr,
+				  "endDate":endDate		
+			},
+			dataType : "json",
+			async: true,
+			success : function(data) {
+		    	var dateTime = [];
+		    	var datesum = [];
+				$("#degree").empty();
+				$.each(data,function(i,item){	
+					var htmlw = '+<tr data-toggle="modal" data-target="#myModal">'+
+					'<td style="text-align: left " id="posstartTime" name="posstartTime">'+item.posstartTime+'</td>'+
+					'<td style="text-align: right" id="pagesum" name="pagesum">'+item.degreesum+'</td>'+
+					dateTime.push(item.posstartTime);
+					datesum.push(item.degreesum);
+			    '</tr>+';
+				$("#degree").append(htmlw);
+				});
+
+				
+				var myChart = echarts.init(document.getElementById('main'));
+
+				// 指定图表的配置项和数据
+
+				var option = {
+					color : [ '#3398DB' ],
+					tooltip : {
+						trigger : 'axis',
+						axisPointer : { // 坐标轴指示器，坐标轴触发有效
+							type : 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+						}
+					},
+					grid : {
+						left : '3%',
+						right : '4%',
+						bottom : '3%',
+						containLabel : true
+					},
+					xAxis : [ {
+						type : 'category',
+						data : dateTime,
+						axisTick : {
+							alignWithLabel : true
+						}
+					} ],
+					yAxis : [ {
+						type : 'value'
+					} ],
+					series : [ {
+						name : '通话次数',
+						type : 'bar',
+						barWidth : '40%',
+						data : datesum
+					} ]
+				};
+				<%--  //异步加载数据
+				              // window.onload=tubiao();
+				   				
+							
+							
+							 $.get('<%=basePath%>admin/getNumberTicket.php').done(function (data) {
+							        data = eval('('+data+')'); 
+							        //alert(1111111111111111122222222222222222222222);
+							    	var dateTime = [];
+							    	var datesum = [];
+							    	$.each(data,function(i,item){		
+							    		//alert(item.posstartTime);
+							    		/* if(item.posstartTime) */
+							    		dateTime.push(item.posstartTime);
+							    		datesum.push(item.degreesum);
+									});
+							        myChart.setOption({                
+							            xAxis:{
+							                data:dateTime
+							            },                
+							            series:[
+							                {    
+							                    //根据名字对应到相应的系列
+							                    name:"通话次数",
+							                    data:datesum
+							                }
+							            ]
+							        })
+							    });
+				// 使用刚指定的配置项和数据显示图表。 --%>
+				myChart.setOption(option);
+				
+				
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+				alert("失败");
+			}
+		});
+	}
+    //联系人分析
+ var vardata=[];
+    var varlinks=[];
+function ContactAnalysis(){
+	var posstartTime12 =document.getElementById('posstartTime12').value;
+	var xingmingshouji =document.getElementById('xingmingshouji').value;
+	var gongtong = document.getElementById('gongtong').value;
+	var CaseInfo = document.getElementsByName("ids_call");
+	//alert(posstartTime12);
+	//var endDate =document.getElementById('endDate').value;
+	 var suspectNumsStr="";
+
+	    for(i=0;i<CaseInfo.length;i++){
+	        if(CaseInfo[i].checked){
+	        	//suspectNums.push(CaseInfo[i].value);
+	        	if(suspectNumsStr.length==0){
+	        		suspectNumsStr=CaseInfo[i].value;
+	        	}else{
+	        	suspectNumsStr=suspectNumsStr+","+CaseInfo[i].value;
+	        	}
+	        }
+	    }
+				//alert("进入方法");
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>admin/contactAnalysis.php",
+			data : {
+				"suspectNumsStr":suspectNumsStr,
+				 "posstartTime12":posstartTime12,
+				"xingmingshouji":xingmingshouji,
+				"gongtong":gongtong
+			},
+			dataType : "json",
+			async: true,
+			success : function(data) {
+				 vardata=[];
+				 varlinks=[];
+				
+				$("#tbcont111").empty();
+
+				var ticketLinksList=data.ticketLinksList;
+				var aliketickets=data.aliketickets;
+				var linkman=[];
+				var compeo=[];
+				var sum2=[];
+				$.each(ticketLinksList,function(i,item){
+					var licketLinkList = item.licketLinkList;
+					
+					var localNum = "";
+					
+					var html3="";
+					$.each(licketLinkList,function(j,item2){
+						 localNum = item2.localNum;
+						/*  html2.dialNumber
+						 html2.number */
+						var dialNumber = item2.dialNumber;
+						var number = item2.number;
+						html3+=dialNumber+","+number+' ';
+						//alert(html3);
+					});
+					var html2='<span style="display: none" id="linkids'+i+'">'+html3+'</span>';
+					
+					if(item.linkman=="" || localNum==""){
+						
+					}else{
+						
+						linkman.push(item.linkman+'\n'+localNum);
+						var html1='<tr data-toggle="modal" id="linkid'+i+'" data-target="#myModal"'+
+							'onclick="searchone('+i+')">'+
+							'<td style="text-align: left">'+item.linkman+'</td>'+
+							'<td style="text-align: right">'+localNum+'</td>'+
+						'</tr>';
+							$("#tbcont111").append(html1);
+							$("#tbcont111").append(html2);
+							
+							var var1={
+								    name: item.linkman+'\n'+localNum,
+								    symbol: 'image://http://www.damndigital.com/wp-content/uploads/2010/12/steve-jobs.jpg',
+								    itemStyle: {
+								        normal: {
+								            color: '#f90', //圆点的颜色
+								            label: {
+								                position: 'bottom',
+								                textStyle: {
+								                    color: '#f90'
+								                }
+								            }
+								        }
+								    },
+
+								};
+							
+								
+								vardata.push(var1);
+								
+					}
+				});
+				
+		/* 		$.each(data.aliketickets,function(i,item3){
+					
+					var dialNumber1 = item3.dialNumber;
+					var number2 = item3.number;
+					sum2.push(number2);
+					
+				}); */
+				
+				var html5="";
+				$("#tbcont555").empty();
+				var sum=0;
+		 		$.each(data.aliketickets,function(i,item3){
+					
+					var dialNumber1 = item3.dialNumber;
+					//var localNum1 = item3.localNum;
+					var number2 = item3.number;
+					
+					sum2.push(number2);
+					//alert(sum2);
+					//alert("hhhh"+dialNumber1);
+					//alert("aaaa"+item3);
+					if(item3=dialNumber1){
+						//alert("aaaa"+sum);
+					
+						sum=parseInt(sum)+parseInt(number2);
+					}
+				});
+				$.each(data.strings,function(i,item3){
+
+					compeo.push(item3);
+					//alert(sum);
+					html5+='<tr data-toggle="modal" data-target="#myModal"'+
+								'onclick="searchone(this)">'+
+								'<td style="text-align: left">'+item3+'</td>'+
+								'<td style="text-align: right">'+sum+'</td>'+
+							'</tr>';						
+					var var2={
+						    name: item3,
+						    symbol: 'image://http://www.damndigital.com/wp-content/uploads/2010/12/steve-jobs.jpg',
+						    itemStyle: {
+						        normal: {
+						            color: '#f90', //圆点的颜色
+						            label: {
+						                position: 'bottom',
+						                textStyle: {
+						                    color: '#f90'
+						                }
+						            }
+						        }
+						    },
+
+						};
+				
+						
+						vardata.push(var2);
+						
+				});
+				 for(i=0;i<linkman.length;i++){
+					 if(compeo.length>0){
+						 for(j=0;j<sum2.length;j++){
+
+								var1={
+								           source: linkman[i],
+								           target: compeo[j],
+								           value: sum2[j],
+								           lineStyle: {
+								               normal: {
+								                   color: '#38f',
+								                   curveness: 0 // 线的弯曲度 0-1之间 越大则歪曲度更大
+								               }
+								           },
+								           label: {
+								               normal: {
+								                   textStyle: {
+								                       color: '#07ac72'
+								                   }
+								               }
+								           }
+								       };
+									 varlinks.push(var1);
+										
+							} 
+					 }else{
+					 
+					 }
+					
+				} 
+				 
+			       
+				
+				
+				if(html5==""){
+					$("#tbcont555").empty();
+					html5='<tr data-toggle="modal" data-target="#myModal"'+
+								'onclick="searchone(this)">'+
+								'<td style="text-align: left">无共同联系人</td>'+
+							'</tr>';
+		/* 					var node3={
+									 id : nodesnum,
+				                     category : 1,
+				                     name : '1861223556',
+				                     // symbol : 'roundRect',
+				                     value : '1861223556',
+				                     symbolSize : 10
+				                    };
+							nodes.push(node3);
+							
+							$.each(gongtongcall,function(n,item4){
+								var link3= {
+											source : item4,
+											target : nodesnum
+										  };
+								links.push(link3);  
+							});
+							nodesnum=nodesnum+1;   */
+				}
+				$("#tbcont555").append(html5);
+				// 基于准备好的dom，初始化echarts实例
+				var myChart_d2 = echarts.init(document.getElementById('main_d22'));
+
+
+
+				/*     var dom = document.getElementById('main');
+				dom.style.width = 780 + 'px';
+				dom.style.height = 600 + 'px'; */
+
+				option = {
+				   tooltip: {
+				       show: false
+				   },
+
+				   animation: false,
+				   series: [{
+				       categories: [{
+				           name: '家人',
+				           itemStyle: {
+				               normal: {
+				                   color: "#009800",
+				               }
+				           }
+				       }, {
+				           name: '朋友',
+				           itemStyle: {
+				               normal: {
+				                   color: "#4592FF",
+				               }
+				           }
+				       }],
+				       type: 'graph',
+				       layout: 'force',
+				       symbol: "circle",
+				       symbolSize: 50,
+				       roam: true, //禁止用鼠标滚轮缩小放大效果
+				       edgeSymbol: ['circle', 'arrow'],
+				       edgeSymbolSize: [0, 10],
+				       // 连接线上的文字
+				       focusNodeAdjacency: true, //划过只显示对应关系
+				       edgeLabel: {
+				           normal: {
+				               show: true,
+				               textStyle: {
+				                   fontSize: 20
+				               },
+				               formatter: "{c}"
+				           }
+				       },
+				       categories: [{
+				           name: '家人',
+				           itemStyle: {
+				               normal: {
+				                   color: "#009800",
+				               }
+				           }
+				       }, {
+				           name: '朋友',
+				           itemStyle: {
+				               normal: {
+				                   color: "#4592FF",
+				               }
+				           }
+				       }],
+				       lineStyle: {
+				           normal: {
+				               opacity: 1,
+				               width: 2,
+				               curveness: 0
+				           }
+				       },
+				       // 圆圈内的文字
+				       label: {
+				           normal: {
+				               show: true
+				           }
+				       },
+				       force: {
+				           repulsion: 5000
+				       },
+				       data: vardata,
+				       links:varlinks
+				   }]
+				};
+
+				// 使用刚指定的配置项和数据显示图表。
+				myChart_d2.setOption(option);
+				showAllTicketCount1(1);
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+			}
+			
+			
+		});
+	}
+	
+	
+function searchone(i){
+	//var id = $("#linkids"+i).Text;
+	//$("#tbcont333").empty();
+	var id = $("#linkids"+i).text();
+	//alert(id);
+	var mainParty2 = id.split(" ");
+	//alert(mainParty2);
+ 	if(mainParty2.length>0){
+ 		$("#tbcont333").empty();
+	$.each(mainParty2,function(i,item){
+		//alert(item);
+		var mainParty4 = item.split(",");
+		var mainPartyName = mainParty4[0];
+		var mainPartyCall = mainParty4[1];
+		//alert(mainPartyName+"  "+mainPartyCall);
+	if(mainPartyName=="" || mainPartyCall==""){
+		
+	}else{
+		//alert(mainPartyName);
+		var html1='<tr id="linkid'+i+'">'+
+		'<td style="text-align: left">'+mainPartyName+'</td>'+
+		'<td style="text-align: right">'+mainPartyCall+'</td>'+
+	'</tr>';
+		$("#tbcont333").append(html1);
+	}
+	});
+} 	 													
+
+}
+<%-- 	//左侧案件列表
+	window.onload = showcase();
+	function showcase(){
+		//alert("anjian");
+		$("#caseSuspect").empty();		
+		var casenumorname = document.getElementById("caseinfo").value;
+		//alert(casenumorname);
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>admin/getCasecriminalSuspect.php",
+			data : {
+				"casenumorname":casenumorname
+			},
+			dataType : "json",
+			async: true,
+			success : function(data) {
+				$.each(data,function(i,item){
+				 	var mainParty1 = item.mainParty
+					var mainParty2 = mainParty1.split("/");
+					var htmlMainParty="";
+					if(mainParty2.length>0){
+						$.each(mainParty2,function(i,item){
+							var mainParty4 = item.split(" ");
+							var mainPartyName = mainParty4[0];
+							var mainPartyCall = mainParty4[1];
+							
+							htmlMainParty+='<li style="border-bottom: 1px solid #E0E0E0; padding-top: 5px; padding-bottom: 5px">'+
+												'<span><input  name="ids" value="'+mainPartyCall+'" type="checkbox" style="margin-left: 20px" /></span>'+
+												'<span style="margin-left: 40px">'+mainPartyName+'</span>'+
+												'<span style="margin-left: 20px">'+mainPartyCall+'</span>'+
+											'</li>'; 
+						});
+					} 														
+					var html1=' <ul style="border: 1px solid #E0E0E0; border-width: 1px 0 1px 0; padding-left: 0px;">'+
+									'<li class="has-sub">'+
+											'<a href="javascript:;" class=""  onclick="shuoSuspect('+i+')"> '+
+												'<span class="menu-text" style="color: #989898">'+item.caseName+'</span>'+
+												'<span style="float:right;padding-right:10px; "><img id="imgRotate'+i+'" class="menu_arrow" alt="" src="<%=basePath%>template/img/018.png" style="transform:;" /></span>'+
+											'</a>'+
+										'<ul id ="caseSuspect'+i+'" style="list-style: none; display: none; padding-left: 0px;">'+
+										htmlMainParty+
+										'</ul>'+
+									'</li>'+
+								'</ul>';
+
+					$("#caseSuspect").append(html1);					
+				});
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+			}
+		});
+	} 
+	 --%>
+	//解封lyxg— —插件显示
+		function ContactAnalysis_d5(){
+			//alert("进入方法");
+			var CaseInfo = document.getElementsByName("ids_call");
+		    var suspectNums = [];
+		     var suspectNumsStr="";
+		    for(i=0;i<CaseInfo.length;i++){
+		        if(CaseInfo[i].checked){
+		        	//suspectNums.push(CaseInfo[i].value);
+		        	if(suspectNumsStr.length==0){
+		        		suspectNumsStr=CaseInfo[i].value;
+		        	}else{
+		        	suspectNumsStr=suspectNumsStr+","+CaseInfo[i].value;
+		        	}
+		        }
+		    }
+			var startDate =document.getElementById('startDate_d5').value;
+		    
+			var endDate =document.getElementById('endDate_d5').value;
+		    
+		    
+		    if(suspectNumsStr==""){//默认第一个案件第一个嫌疑人
+		    //	alert("请先选择案件嫌疑人!");
+		    	//alert(CaseInfo[0].value);
+		    	if(CaseInfo.length>0)
+		    		suspectNumsStr=CaseInfo[0].value;
+		    		//suspectNumsStr="15612557556,15614556246";
+		    } 
+
+		   // else
+		    	//alert(suspectNumsStr);
+		   //	alert(suspectNumsStr);
+			
+			$.ajax({
+				type : "POST",
+				url : "<%=basePath%>admin/contactAnalysis_each.php",
+				data : {
+					"suspectNumsStr":suspectNumsStr,
+					"startDate":startDate,
+					"endDate":endDate
+				},
+				dataType : "json",
+				async: true,
+				success : function(data) {
+					
+					var i=1;
+					var nodes = [ ];//子节点
+					var links = [ ];//连线
+					var gongtongcall = [ ];//主节点(嫌疑人)
+					var nodesnum=0;
+					var linksnum=0;
+					var htmlhead="";
+					var ticketLinksList=data.ticketLinksList;
+					var aliketickets=data.aliketickets;
+					//alert(ticketLinksList);
+					/////////////////////d5_d5//////////////////////////////
+	    // 基于准备好的dom，初始化echarts实例
+
+	    //绘制两个图用于显示全屏和半屏
+	    
+var myChart_d5 = echarts.init(document.getElementById('main_d5'));
+
+/* var myChart_d52 = echarts.init(document.getElementById('main_d52')); */
+data_series=[];
+links_series=[];
+
+
+
+
+
+ 
+///////////////echarts////////////////////////////////// 
+ 
+////////////////d5_通话记录显示////////////////////////////////////
+
+							
+							flag_common2=0;
+							var listCommon=[];	//共同联系人数组
+							
+					$.each(ticketLinksList,function(i,item){
+						//alert(item.name);
+						//alert(item.licketLinkList);
+						var name = item.linkman;
+						var licketLinkList = item.licketLinkList;
+						
+						 linksnum=nodesnum;
+						nodesnum=nodesnum+1;
+					    
+					    gongtongcall.push(linksnum);
+						var html1="";
+						var flag_55=0;	//用户控制只设置一次主机节点
+						
+						
+						
+						$.each(licketLinkList,function(j,item2){
+							var dialNumber = item2.dialNumber;
+							var number = item2.number;
+							/////////////////////////////////////////////
+							//alert("s"));
+						
+							if(flag_55==0){
+								//alert(flag_55==0);
+
+							        var1={
+							           name: name+'\n电话：'+item2.localNum,
+							           symbol: 'image://<%=basePath%>/template/img/head_ticket.png',
+							           itemStyle: {
+							               normal: {
+							                   color: '#f90', //圆点的颜色
+							                   label: {
+							                       position: 'bottom',
+							                       textStyle: {
+							                           color: '#f90'
+							                       }
+							                   }
+							               }
+							           },
+
+							       };
+							        flag_55=1;
+							        data_series.push(var1);
+							}
+							
+							flag_common=0;//判断是否为共同联系人
+							$.each(aliketickets,function(i,item3){
+								
+								if(item3==dialNumber){
+									flag_common=1;
+									//alert("item3+++"+item3+"++++++++daia1+++++"+dialNumber);
+									return false;
+									
+								}
+								//alert("共同联系人++++++++"+item3);
+								
+							});
+							//判断是否为共同联系人
+							if(dialNumber=="6966159"){
+							//alert("dialtest+++++++++"+dialNumber);
+							}
+							if(flag_common==0){
+							       var2={
+							           name: item2.dialName+'\n电话：'+dialNumber,
+							           category: 1,
+							           symbol: 'image://<%=basePath%>/template/img/head_ticket.png',
+							           itemStyle: {
+							               normal: {
+							                   color: '#f90', //圆点的颜色
+							                   label: {
+							                       position: 'bottom',
+							                       textStyle: {
+							                           color: '#f90'
+							                       }
+							                   }
+							               }
+							           },
+
+							       };
+							      data_series.push(var2);
+							     
+							      }
+							else{
+								var flag_exit=0;
+								for(i=0;i<listCommon.length;i++){
+									//alert("listCommon[i]+++++++"+listCommon[i]);
+									//alert("dialNumber+++++"+dialNumber);
+									if(dialNumber==listCommon[i]){
+										flag_exit=1;
+										break;
+									}
+								}
+								if(flag_exit==0){	//第一次找到共同联系人，设置节点
+									//alert("flag_exit");
+									 var2={
+									           name: item2.dialName+'\n电话：'+dialNumber,
+									           category: 1,
+									           symbol: 'image://<%=basePath%>/template/img/head_ticket.png',
+									           itemStyle: {
+									               normal: {
+									                   color: '#f90', //圆点的颜色
+									                   label: {
+									                       position: 'bottom',
+									                       textStyle: {
+									                           color: '#f90'
+									                       }
+									                   }
+									               }
+									           },
+
+									       };
+									      data_series.push(var2);
+									   //   alert("4166++++"+dialNumber);
+									      listCommon.push(dialNumber);
+									      flag_common=0;
+									      
+									
+								}
+							}
+							       
+							      
+							var flag_exit=0;	//当为对方号码为共同联系人时置1
+							for(i=0;i<listCommon.length;i++){
+								//alert("listCommon[i]+++++++"+listCommon[i]);
+								//alert("dialNumber+++++"+dialNumber);
+								
+								if(dialNumber==listCommon[i]){
+									flag_exit=1;
+									/* alert(dialNumber); */
+									break;
+								}
+							}
+							       if(flag_exit==0){
+							        var1={
+							           source: name+'\n电话：'+item2.localNum,
+							           target: item2.dialName+'\n电话：'+dialNumber,
+							           value: "通话"+number+"次",
+							           lineStyle: {
+							               normal: {
+							                   color: '#0066CC',
+							                   curveness: 0 // 线的弯曲度 0-1之间 越大则歪曲度更大
+							               }
+							           },
+							          
+							       };
+							        var2={
+									           source: item2.dialName+'\n电话：'+dialNumber,
+									           target: name+'\n电话：'+item2.localNum,
+									           value: "通话"+number+"次",
+									           lineStyle: {
+									               normal: {
+									                   /*  color: '#9933CC',  */
+									                    color: '#0066CC', 
+									                   curveness: 0 // 线的弯曲度 0-1之间 越大则歪曲度更大
+									               }
+									           },
+									           
+									       };
+							      
+							       links_series.push(var1);
+							       links_series.push(var2);
+							       }
+							       else{
+							    	   var1={
+									           source: name+'\n电话：'+item2.localNum,
+									           target: item2.dialName+'\n电话：'+dialNumber,
+									           value: "通话"+number+"次",
+									           lineStyle: {
+									               normal: {
+									            	   color: '#9933CC',
+									                   /* color: '#0066CC', */
+									                   curveness: 0 // 线的弯曲度 0-1之间 越大则歪曲度更大
+									               }
+									           },
+									          
+									       };
+									        var2={
+											           source: item2.dialName+'\n电话：'+dialNumber,
+											           target: name+'\n电话：'+item2.localNum,
+											           value: "通话"+number+"次",
+											           lineStyle: {
+											               normal: {
+											                     color: '#9933CC', 
+											                  /*   color: '#0066CC',  */
+											                   curveness: 0 // 线的弯曲度 0-1之间 越大则歪曲度更大
+											               }
+											           },
+											           
+											       };
+									      
+									       links_series.push(var1);
+									       links_series.push(var2);
+							    	   
+							       }
+							       
+						
+							    
+							
+							/////////////////////////////////////////////
+							
+							
+						});
+					}); //////////外层循环结束
+////////////////////////echarts插件显示//////////////////////
+					 option = {
+ 		
+ 	backgroundColor:'#FFFFFF',    //背景色
+     animation: false,
+      toolbox: {  
+         //show: true,  
+         itemSize: 20,  
+         itemGap: 30,  
+         right: 50,  
+         feature: {  
+             /* dataView: {show:true}, */  
+             saveAsImage: { 
+            	 name:"相互通话关系图",
+                 //excludeComponents :['toolbox'],  
+                 pixelRatio: 2  
+             }  
+         }  
+}, 
+     series: [{
+         categories: [{
+             name: '本机',
+             itemStyle: {
+                 normal: {
+                     color: "#009800",
+                 }
+             }
+         }, {
+             name: '对方',
+             itemStyle: {
+                 normal: {
+                     color: "#4592FF",
+                 }
+             }
+         }],
+         type: 'graph',
+         layout: 'force',
+         symbol: "circle",
+         symbolSize: 50,
+         roam: true, //禁止用鼠标滚轮缩小放大效果
+         edgeSymbol: ['circle', 'arrow'],
+         edgeSymbolSize: [0, 10],
+         // 连接线上的文字
+         focusNodeAdjacency: true, //划过只显示对应关系
+         edgeLabel: {	//连线上文本的设置
+             normal: {
+                 show: true,
+                 textStyle: {
+                     fontSize: 10		//文本大小设置
+                 },
+                 formatter: "{c}"
+             }
+         },
+         categories: [{
+             name: '本机',
+             itemStyle: {
+                 normal: {
+                     color: "#009800",
+                 }
+             }
+         }, {
+             name: '对方',
+             itemStyle: {
+                 normal: {
+                     color: "#4592FF",
+                 }
+             }
+         }],
+         lineStyle: {
+             normal: {
+                 opacity: 1,
+                 width: 2,
+                 curveness: 0
+             }
+         },
+         // 圆圈内的文字
+         label: {
+             normal: {
+                 show: true
+             }
+         },
+         force: {
+             repulsion: 3000	//连线长度
+         },
+         data: data_series,
+         links:links_series
+     }]
+ };
+
+
+// 使用刚指定的配置项和数据显示图表。
+
+myChart_d5.setOption(option);
+
+
+
+/* myChart_d52.setOption(option); */
+					////////////////////////echarts插件显示//////////////////////
+					
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+				}
+			});
+		} 
+	    /////////解封lyxg
+	    //活动地图lyxg
+	    window.onload = contactMap(0);
+		function contactMap(flag_d4_search){
+			//alert("进入方法");
+			var CaseInfo = document.getElementsByName("ids_call");
+		    var suspectNums = [];
+		    //alert(CaseInfo.length);
+		  
+		    
+		     var startDate =document.getElementById('startDate_d4').value;
+		   // alert(startDate);
+			var endDate =document.getElementById('endDate_d4').value;
+			var suspectNumsStr="";
+			//alert(endDate);
+			//suspectNumsStr =document.getElementById('suspectNums_d4').value; 
+			//alert(document.getElementById('select_d4').value);
+			suspectNumsStr =document.getElementById('select_d4').value; 
+			
+			if(suspectNumsStr==""&&flag_d4_search==1){
+		    	alert("请先选择嫌疑人手机号!");
+		    	if(CaseInfo.length>0)
+			    suspectNumsStr=CaseInfo[0].value;
+
+		    } 
+		    else if(suspectNumsStr==""&&flag_d4_search==0){
+		    	if(CaseInfo.length>0)
+		    		suspectNumsStr=CaseInfo[0].value;
+		    }
+		
+		   // else
+		    	//alert(suspectNumsStr);
+		   //	alert(suspectNumsStr);
+			
+			$.ajax({
+				type : "POST",
+				url : "<%=basePath%>admin/contactMap.php",
+				data : {
+					"suspectNumsStr":suspectNumsStr,
+					"startDate":startDate,
+					"endDate":endDate
+				},
+				dataType : "json",
+				async: true,
+				success : function(data) {
+					
+					
+					var i=1;
+					var nodes = [ ];//子节点
+					var links = [ ];//连线
+					var gongtongcall = [ ];//主节点(嫌疑人)
+					var nodesnum=0;
+					var linksnum=0;
+					var htmlhead="";
+					var ticketLinksList=data.ticketLinksList;
+					var aliketickets=data.aliketickets;
+					
+					count=0;
+					$("#tbcont1_d4").empty();
+					$("#tbcont2_d4").empty();
+
+					$.each(ticketLinksList,function(i,item){
+						//alert(item.name);
+						//alert(item.licketLinkList);
+						var name = item.linkman;
+						var licketLinkList = item.licketLinkList;
+						
+						 linksnum=nodesnum;
+						nodesnum=nodesnum+1;
+					    
+					    gongtongcall.push(linksnum);
+						var html1="";
+						
+						
+						
+						
+						$.each(licketLinkList,function(j,item2){
+							var dialNumber = item2.dialNumber;
+							var number = item2.number;
+							count++;
+						/////////////////////////////////
+				                    var html = '+<tr style="text-align: left" onclick="getCallRecord('+item2.localNum+','+item2.position+','+item2.number+')">'+
+				                        '<td>'+item2.localNum
+
+				                        +'</td> '+
+				                        '<td>'+item2.number+'</td> '+
+				                        '<td>'+item2.positionName_sim+'</td> '+
+				                        '<td><a href="javascript:void(0)"  onclick="searchByStationName(\''+item2.positionName_sim+'\');">'+item2.positionName+'</a></td> '+
+				                 
+				                        '</tr>';
+
+				                    $("#tbcont1_d4").append(html);
+				                   
+				                
+							
+							
+						});
+						
+						
+						
+						
+						
+					}); //////////外层循环结束
+					//alert(count);
+
+					
+					
+
+					
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+				}
+			});
+		} 
+	    /////////活动地图lyxg
+	    ////////////活动地图——获取指定地点通话记录
+	    function getCallRecord(localNum,pid1,pid2,number){
+	    	position=pid1+","+pid2;
+	    	
+	    	//alert(position);
+	    	//alert(number);
+	    	
+			//var CaseInfo = document.getElementsByName("ids");
+		   // var suspectNums = [];
+		    /* var suspectNumsStr="";
+		    for(i=0;i<CaseInfo.length;i++){
+		        if(CaseInfo[i].checked){
+		        	//suspectNums.push(CaseInfo[i].value);
+		        	if(suspectNumsStr.length==0){
+		        		suspectNumsStr=CaseInfo[i].value;
+		        	}else{
+		        	suspectNumsStr=suspectNumsStr+","+CaseInfo[i].value;
+		        	}
+		        }
+		    }*/
+		    /* suspectNumsStr="15612557556,15614556246"
+		    if(suspectNumsStr==""){
+		    	alert("请先选择嫌疑人!");
+		    }  */
+		   // else
+		    	//alert(suspectNumsStr);
+		   //	alert(suspectNumsStr);
+			var startDate =document.getElementById('startDate_d4').value;
+		   // alert(startDate);
+			var endDate =document.getElementById('endDate_d4').value;
+			$.ajax({
+				type : "POST",
+				url : "<%=basePath%>admin/getCallRecord.php",
+				data : {
+					
+					"localNum":localNum,
+					"position":position,
+					"pageSize":number,
+					"startDate":startDate,
+					"endDate":endDate
+				},
+				dataType : "json",
+				async: true,
+				success : function(data) {
+					
+					var docs=data.hits.hits;
+					$("#tbcont2_d4").empty();
+					$.each(docs,function(i,item){
+						//alert(item._source.localNum+"++"+item._source.position);
+						 
+			                
+			                	var m=item._source.callDuration/60;
+			                	m=m-(m%1);
+			                	var s=item._source.callDuration%60;
+
+			                    var html = '+<tr style="text-align: left">'+
+			                        
+			                        '<td>'+item._source.dialNumber+'</td> '+
+			                       
+			                        '<td>'+item._source.startTime+'</td> '+
+			                        '<td>'+m+'分'+s+'秒'+'</td> '+
+			                        '<td>'+item._source.method+'</td> '+
+			                        '</tr>';
+			                    /* td style="text-align: left"><a href="javascript:void(0)" onclick="searchByStationName('上海市');">上海市</a></td> */
+			                    $("#tbcont2_d4").append(html);
+			                
+						
+						});
+						
+						
+
+					
+
+					
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+				}
+			});
+ }
+	    ////////////活动地图——获取指定地点通话记录end
+	    
+	    /////////解封lyxg
+	    //疑似居住地地图lyxg
+	//    window.onload = addressMap();
+		function addressMap(flag_d6_search){
+			//alert("进入方法");
+			var CaseInfo = document.getElementsByName("ids_call");
+		   
+		    
+		     var startDate =document.getElementById('startDate_d6').value;
+		    
+			var endDate =document.getElementById('endDate_d6').value;
+			
+			//suspectNumsStr =document.getElementById('suspectNums_d6').value; 
+			suspectNumsStr =document.getElementById('select_d6').value; 
+		//	alert(suspectNumsStr);
+			
+			if(suspectNumsStr==""&&flag_d6_search==1){
+		    	alert("请先选择嫌疑人手机号!");
+		    	if(CaseInfo.length>0)
+			    suspectNumsStr=CaseInfo[0].value;
+
+		    } 
+		    else if(suspectNumsStr==""&&flag_d6_search==0){
+		    	if(CaseInfo.length>0)
+		    		suspectNumsStr=CaseInfo[0].value;
+		    }
+
+/* 		    if(suspectNumsStr==""&&flag_d6_search==1){
+		    	alert("请先输入嫌疑人手机号!");
+			    suspectNumsStr="15612557556";
+
+		    } 
+		    else if(suspectNumsStr==""&&flag_d6_search==0)
+		    	suspectNumsStr="15612557556"; */
+		   // else
+		    	//alert(suspectNumsStr);
+		   //	alert(suspectNumsStr);
+			
+			$.ajax({
+				type : "POST",
+				url : "<%=basePath%>admin/addressMap.php",
+				data : {
+					"suspectNumsStr":suspectNumsStr,
+					"startDate":startDate,
+					"endDate":endDate
+				},
+				dataType : "json",
+				async: true,
+				success : function(data) {
+					
+					var i=1;
+					var nodes = [ ];//子节点
+					var links = [ ];//连线
+					var gongtongcall = [ ];//主节点(嫌疑人)
+					var nodesnum=0;
+					var linksnum=0;
+					var htmlhead="";
+					var ticketLinksList=data.ticketLinksList;
+					var aliketickets=data.aliketickets;
+					
+					count=0;
+					$("#tb60_d6").empty();
+					$("#tb6_d6").empty();
+					addrs.splice(0,addrs.length);//清空数组 
+
+					$.each(ticketLinksList,function(i,item){
+						//alert(item.name);
+						//alert(item.licketLinkList);
+						var name = item.linkman;
+						var licketLinkList = item.licketLinkList;
+						
+						 linksnum=nodesnum;
+						nodesnum=nodesnum+1;
+					    
+					    gongtongcall.push(linksnum);
+						var html1="";
+						
+						
+						
+						
+						$.each(licketLinkList,function(j,item2){
+							if(j<4){
+								if(item2.positionName!="")
+									addrs.push(item2.positionName_sim);
+								//else
+									//addrs.push("苏州");
+							}
+					    	 
+							var dialNumber = item2.dialNumber;
+							var number = item2.number;
+							count++;
+						/////////////////////////////////
+				                    var html = '+<tr style="text-align: left" onclick="getAddrCallRecord('+item2.localNum+','+item2.position+','+item2.number+')">'+
+				                        '<td>'+item2.localNum
+
+				                        +'</td> '+
+				                        '<td>'+item2.number+'</td> '+
+				                        '<td>'+item2.positionName_sim+'</td> '+
+				                        '<td><a href="javascript:void(0)"  onclick="">'+item2.positionName+'</a></td> '+
+				                 
+				                        '</tr>';
+
+				                    $("#tb60_d6").append(html);
+				                   
+				                
+							
+							
+						});
+						
+						
+						
+						
+						
+					}); //////////外层循环结束
+					//alert(count);
+					init_for_d6();
+
+					
+					
+
+					
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+				}
+			});
+		} 
+	    /////////疑似居住地地图lyxg
+	    ////////////疑似居住地地图——获取指定地点通话记录
+	   function getAddrCallRecord(localNum,pid1,pid2,number){
+		   position=pid1+","+pid2;
+	    	//alert("进入方法");
+			//var CaseInfo = document.getElementsByName("ids");
+		   // var suspectNums = [];
+		    /* var suspectNumsStr="";
+		    for(i=0;i<CaseInfo.length;i++){
+		        if(CaseInfo[i].checked){
+		        	//suspectNums.push(CaseInfo[i].value);
+		        	if(suspectNumsStr.length==0){
+		        		suspectNumsStr=CaseInfo[i].value;
+		        	}else{
+		        	suspectNumsStr=suspectNumsStr+","+CaseInfo[i].value;
+		        	}
+		        }
+		    }*/
+		    /* suspectNumsStr="15612557556,15614556246"
+		    if(suspectNumsStr==""){
+		    	alert("请先选择嫌疑人!");
+		    }  */
+		   // else
+		    	//alert(suspectNumsStr);
+		   //	alert(suspectNumsStr);
+			 var startDate =document.getElementById('startDate_d6').value;
+		    
+			var endDate =document.getElementById('endDate_d6').value;
+			
+			$.ajax({
+				type : "POST",
+				url : "<%=basePath%>admin/getAddrCallRecord.php",
+				data : {
+					
+					"localNum":localNum,
+					"position":position,
+					"pageSize":number,
+					"startDate":startDate,
+					"endDate":endDate
+				},
+				dataType : "json",
+				async: true,
+				success : function(data) {
+					 
+					var ticketList=data.ticketList; 
+					$("#tb6_d6").empty();
+					$.each(ticketList,function(i,item){
+						//alert(item.startTime);
+						var m=item.callDuration/60;
+	                	m=m-(m%1);
+	                	var s=item.callDuration%60;
+
+	                    var html = '+<tr style="text-align: left">'+
+	                        
+	                        '<td>'+item.dialNumber+'</td> '+
+	                       
+	                        '<td>'+item.startTime+'</td> '+
+	                        '<td>'+m+'分'+s+'秒'+'</td> '+
+	                        '<td>'+item.method+'</td> '+
+	                        '</tr>';
+	                    /* td style="text-align: left"><a href="javascript:void(0)" onclick="searchByStationName('上海市');">上海市</a></td> */
+	                    $("#tb6_d6").append(html);
+						
+					}); 
+						
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+				}
+			});
+}
+	    ////////////疑似居住地地图——获取指定地点通话记录end
+	window.onload = showcase();
+	window.onload = showAllemail(1,"");
+	function showcase(){
+		
+		var casenumorname = document.getElementById("caseinfo").value;
+		//alert(casenumorname);
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>admin/getCaseOfEmail.php",
+			data : {
+				"casenumorname":casenumorname
+			},
+			dataType : "json",
+			async: true,
+			success : function(data) {
+				$("#tbcont").empty();
+				var htmlhead='<tr>'+
+					'<td class="td_left"><input type="checkbox" id="ckall" onclick="selectAll()"/></td>'+
+					'<td class="td_left">案件编号</td>'+
+					'<td class="td_right">案件名称</td>'+
+					'<td></td>'+
+				'</tr>';
+				$("#tbcont").append(htmlhead);	
+				
+				$.each(data,function(i,item){
+					
+				 	var mainParty1 = item.mainParty
+					var mainParty2 = mainParty1.split("/");
+					var htmlMainParty="";
+					if(mainParty2.length>0){
+						$.each(mainParty2,function(j,item){
+							
+							var mainParty4 = item.split(" ");
+							var mainPartyName = mainParty4[0];
+							var mainPartyCall = mainParty4[1];
+							
+							
+							/* htmlMainParty+='<li style="border-bottom: 1px solid #E0E0E0; padding-top: 5px; padding-bottom: 5px">'+
+												'<span><input  name="ids" value="'+mainPartyCall+'" type="checkbox" style="margin-left: 20px" /></span>'+
+												'<span style="margin-left: 40px">'+mainPartyName+'</span>'+
+												'<span style="margin-left: 20px">'+mainPartyCall+'</span>'+
+											'</li>';  *///style="display: none;"
+											//此处选择框中的id用于传值到活动地图和疑似居住地选择联系人处
+							htmlMainParty+='<tr name="caseSuspect'+i+'" style="display: none;">'+
+							'<td class="td_left"><input id="'+mainPartyName+'"  name="ids_call" value="'+mainPartyCall+'" type="checkbox" style="margin-left: 20px" />'+
+							'<td class="td_left">嫌疑人：'+mainPartyName+'</td>'+
+							'<td class="td_right" id="">号码：'+mainPartyCall+'</td><td></td>'+
+							
+							
+						'</tr>';
+						
+						});
+					} 
+					
+					
+					var htmlhead2='<tr data-toggle="modal">';
+					var html = '<tr>'+
+							'<td class="td_left"><input id="caselist'+i+'" type="checkbox" name="ids" value="'+item.caseName+' '+item.id+'" onclick="showChoose(this.id);" />'+
+							'<td class="td_left">'+item.caseNum+'</td>'+
+							'<td class="td_right" id="">'+item.caseName+'</td>'+
+							'<td class="td_right" id=""  onclick="shuoSuspect('+i+')"><img id="imgRotate'+i+'" class="menu_arrow" alt="" src="<%=basePath%>template/img/018.png" style="transform:;" /></td>'+
+							/* '<ul id ="caseSuspect'+i+'" style="padding-left: 0px;">'+
+							htmlMainParty+"11111111111"+
+							'</ul>'+ */
+						'</tr>'+htmlMainParty;
+					$("#tbcont").append(html);					
+				});
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+			}
+		});
+	} 
+ 	//选择所有复选框
+	function selectAll(){
+		 var ckall=document.getElementById("ckall");
+		 var ids_call=document.getElementsByName("ids_call");
+	    var ck=document.getElementsByName("ids");
+	    for(var i=0;i<ids_call.length;i++){
+	    	ck[i].checked=ckall.checked;
+	    	ids_call[i].checked=ckall.checked;
+	    }
+
+	}
+	var caseidStr ="";
+	function checkCase(obj){
+		//用于在选择嫌疑人后更新活动地图和疑似居住地页面的嫌疑人选项
+		select_d4();
+		select_d6();
+		//用于选择嫌疑人后相互通话页面作相应修改
+		showAllTicket_d5(1,0);
+	    var CaseInfo = document.getElementsByName("ids");
+	    var str = [];
+	    for(i=0;i<CaseInfo.length;i++){
+	        if(CaseInfo[i].checked){
+	            str.push(CaseInfo[i].value.split(" ")[0]);
+	            if(caseidStr==""){
+	            	caseidStr=CaseInfo[i].value.split(" ")[1];
+	            }else{
+	            	caseidStr=caseidStr+" "+CaseInfo[i].value.split(" ")[1];
+	            }
+	        }
+	    }
+	   	//alert(str);
+	   	if($("#spans").text()!=null || $("#spans").text()!=""){
+	   		$("#spans").empty();
+	   	}
+	   	for (var i = 0; i < str.length; i++) {
+			var s = str[i];
+			//alert(s);
+			var html ='<span class="span-1" id="shanchu2'+i+'" style="width: 150px; height: 30px;margin-right: 15px;margin-top: 5px;" onclick="deletemainParty(this.id)">'+s+
+			'<img style="float: right; margin-right: 5px; margin-top: 7px;" src="<%=basePath%>template/img/x.png" /></span>';
+			
+			$("#spans").append(html);	
+
+			
+			<%-- $("#spans").append($("<span id='shanchu2"+i+"' class='span-1' style='width: 200px; height: 28px; margin-right: 20px;'  onclick='deletemainParty(this.id)'>"
+			+s.replace(new RegExp(replaceStr,'gm'),' ')+"<img style='float: right; margin-right: 5px; margin-top: 7px;'src='<%=basePath%>template/img/x.png'  /></span>")); --%>
+		}
+	    $("#myModals").modal("hide");
+	}
+	
+	function deletemainParty(id){
+		$("#"+id+"").remove();
+	}
+	
+	
+	var suspect=0;
+	function shuoSuspect(i){
+		
+		
+		if(suspect==0){
+			 var nodes = document.getElementsByName("caseSuspect"+i);
+			 
+			 for(i=0;i<nodes.length;i++){
+				 nodes[i].style.display="";
+				 
+			 }
+	      //  node.style.display=""; */
+	        var imgRotate = document.getElementById("imgRotate"+i);
+	     //   alert("4769");
+	        imgRotate.style.transform="rotate(90deg)";
+	        
+	        suspect=1;
+		}else{
+			 var nodes = document.getElementsByName("caseSuspect"+i);
+			 
+			 for(i=0;i<nodes.length;i++){
+				 nodes[i].style.display="none";
+				 
+			 }
+		//	var node = document.getElementById("caseSuspect"+i);
+	      //  node.style.display="none";
+	        var imgRotate = document.getElementById("imgRotate"+i);
+	        imgRotate.style.transform="";
+	        suspect=0;
+		}
+		
+	}
+	//通话记录搜索：时间、嫌疑人姓名、对方号码
+	//window.onload = showAllTicketCount(1);
+	//显示在表格通话记录详情显示
+	function showAllTicketCount(pageno){
+		var posstartTimeCount =document.getElementById('callLogStatisticsDate').value;   //通话日期范围
+		var startDate =document.getElementById('callLogStatisticsSuspectName').value;	 // 嫌疑人姓名/手机号:  
+		var endDate =document.getElementById('callLogStatisticsContactorNumber').value;  //对方号码
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>admin/getCallLogStatistics.php",
+			data : {
+				"startDate":startDate,	
+				"endDate":endDate,		
+				"posstartTimeCount":posstartTimeCount,				
+				"pageno":pageno,
+			},
+			dataType : "json",
+			async: true,
+			success : function(data) {
+				var Ticket=data.hits.hits;
+				var sizes=5;
+				var pagesum=data.hits.total;
+				var pagenum = pagesum / sizes;
+				var length=5;  //要显示的分页页数
+					
+				if(pagenum%1!=0){
+						pagenum=pagenum+(1-pagenum%1);
+				}
+				
+				
+				$("#pagesCount").empty();
+				
+				//用于删除之前显示的页数，动态添加时id名均设为order
+				for(var i=1;i<=length;i++)
+					  $("#order").remove();
+				
+				if(pagesum<sizes){
+					var html2 = '<li class="active" id="order"><a href="#" onclick="showAllTicketCount(1)">1</a></li >';
+					$("#pagesCount").after(html2);	
+					
+					
+				}else{
+				
+				if(pageno<pagenum){
+					if(pageno+length-1<=pagenum){
+						var html2="";
+						if(pageno-2>0){
+							for(var i =pageno-2;i<=pageno+length-1-2;i++){	
+								if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="showAllTicketCount('+i+')">'+i+'</a></li >';
+									else
+						
+										html2 += '<li id="order"><a href="#" onclick="showAllTicketCount('+i+')">'+i+'</a></li >';  
+						   				   }
+							}
+						else{
+							for(var i =1;i<=length;i++){	
+								if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="showAllTicketCount('+i+')">'+i+'</a></li >';
+									else
+						
+										html2 += '<li id="order"><a href="#" onclick="showAllTicketCount('+i+')">'+i+'</a></li >';  
+						   				   }
+						}
+					//alert(html2);
+					$("#pagesCount").after(html2);
+				
+					}/* if */
+					else{
+						var html2="";
+						if(pagenum>=length){
+						for(var i =pageno-(length-1-pagenum+pageno);i<=pagenum;i++){	
+							 if(i==pageno)
+								html2 += '<li class="active" id="order"><a href="#" onclick="showAllTicketCount('+i+')">'+i+'</a></li >';
+							else
+								html2 += '<li id="order"><a href="#" onclick="showAllTicketCount('+i+')">'+i+'</a></li >'; 
+							
+						   }
+						$("#pagesCount").after(html2);	
+						}
+						else{
+							
+							for(var i =1;i<=pagenum;i++){	
+								
+								  
+								 if(i==pageno)
+									html2 += '<li class="active" id="order"><a href="#" onclick="showAllTicketCount('+i+')">'+i+'</a></li >';
+								else
+									html2 += '<li id="order"><a href="#" onclick="showAllTicketCount('+i+')">'+i+'</a></li >';
+							   }
+							$("#pagesCount").after(html2);	
+						}
+							
+					}
+				}
+				else{
+					if(pageno==pagenum){
+						var html2="";
+					
+						for(var i =pageno-length+1>0?pageno-length+1:1;i<=pagenum;i++){	
+						 if(i==pageno)
+							html2 += '<li class="active" id="order"><a href="#" onclick="showAllTicketCount('+i+')">'+i+'</a></li >';
+						else
+							html2 += '<li id="order"><a href="#" onclick="showAllTicketCount('+i+')">'+i+'</a></li >';
+					   }
+						$("#pagesCount").after(html2);
+					}/* if */
+				}
+			}
+
+				$("#totCount").empty();
+				$("#pages1Count").empty();
+				$("#pages2Count").empty();
+				var html3 ='<span >共'+pagesum+'条，当前'+pageno+'/'+pagenum+'页</span>';
+				$("#totCount").append(html3);
+				
+				var html5 = '<a href="#" onclick="showAllTicketCount('+pageno+'-1<1?1:'+pageno+'-1)"><</a>';
+				$("#pages1Count").append(html5);
+				
+				var html4 = '<a href="#" onclick="showAllTicketCount('+pageno+'+1>'+pagenum+'?'+pagenum+':'+pageno+'+1)">></a>';
+				$("#pages2Count").append(html4);
+				$("#tbcont20Count").empty();
+				$.each(Ticket,function(i,item){
+					var html01 = '+<tr>'+
+					'<th class="alcenter" id="startTime" name="startTime">'+item._source.startTime+'</th>'+
+					'<th class="alcenter" id="startTime" name="startTime">'+item._source.name+'</th>'+
+					'<th class="alcenter" id="startTime" name="startTime">'+item._source.localNum+'</th>'+
+					'<th class="alcenter" id="dialNumber" name="dialNumber">'+item._source.dialNumber+'</th>'+
+					'<th class="alcenter" id="callDuration" name="callDuration">'+item._source.callDuration+'</th>'+
+					'<th class="alcenter" id="position" name="position">'+item._source.position+'</th>'+
+					'<th class="alcenter" id="method" name="method">'+item._source.method+'</th>'+
+				    '</tr>+';
+					$("#tbcont20Count").append(html01);	
+				});
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+				alert("失败");
+			}
+		});
+	}
+	
+	
+	
+	</script>
+
+</body>
+</html>
+
+

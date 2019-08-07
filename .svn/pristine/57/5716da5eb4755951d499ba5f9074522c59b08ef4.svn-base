@@ -1,0 +1,33 @@
+package com.xl.cloud.bean;
+
+public class HackCount {
+	int gewei;
+	int wanwei;
+	int yiwei;
+	public HackCount(){
+		gewei=0;
+		wanwei=0;
+		yiwei=0;
+	}
+	
+	public int getGewei(){
+		return this.gewei;
+	}
+	public void setGewei(int gewei){
+		this.gewei=gewei;	
+	}
+	
+	public int getWanwei(){
+		return this.wanwei;
+	}
+	public void setWanwei(int wanwei){
+		this.wanwei=wanwei;	
+	}
+	
+	public int getYiwei(){
+		return this.yiwei;
+	}
+	public void setYiwei(int yiwei){
+		this.yiwei=yiwei;	
+	}
+}

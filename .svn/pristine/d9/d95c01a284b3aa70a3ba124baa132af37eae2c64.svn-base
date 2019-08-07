@@ -1,0 +1,3877 @@
+<%@ page language="java" contentType="text/html; charset=utf-8"
+	pageEncoding="utf-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%
+	String path = request.getContextPath();
+	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
+			+ path + "/";
+%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title></title>
+<link href="<%=basePath%>template/css/cloud-admin.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/responsive.css">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/app.css">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/cloud-admin.css">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/responsive.css">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/app.css">
+<link rel="stylesheet" type="text/css" href="<%=basePath%>template/css/workspace.css">
+<script src="<%=basePath%>template/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=1.3"></script>
+<style>
+/* 弹出框收藏标签  */
+.span-1 {
+	display: inline-block;
+	padding-left: 25px;
+	padding-right: 25px;
+	margin-top: 20px;
+	margin-left: 20px;
+	border: 1px solid #FBD5CA;
+	width: auto;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 2px 12px 2px 2px;
+	background-color: #FEF4F1;
+}
+
+.span-2 {
+	padding-left: 25px;
+	padding-right: 25px;
+	display: inline-block;
+	margin-top: 20px;
+	margin-left: 20px;
+	border: 1px solid #D5E4F1;
+	width: auto;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 2px 12px 2px 2px;
+	background-color: #F1F7FB;
+}
+
+.span-3 {
+	padding-left: 25px;
+	padding-right: 25px;
+	display: inline-block;
+	margin-top: 20px;
+	margin-left: 20px;
+	border: 1px solid #FBE4C3;
+	width: auto;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 2px 12px 2px 2px;
+	background-color: #FBF6EE;
+}
+
+.span-4 {
+	padding-left: 25px;
+	padding-right: 25px;
+	display: inline-block;
+	margin-top: 20px;
+	margin-left: 20px;
+	border: 1px solid #D5EAE5;
+	width: auto;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 2px 12px 2px 2px;
+	background-color: #F0F8F6;
+}
+
+.span-5 {
+	padding-left: 25px;
+	padding-right: 25px;
+	display: inline-block;
+	margin-top: 20px;
+	margin-left: 20px;
+	border: 1px solid #EEE8B7;
+	width: auto;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 2px 12px 2px 2px;
+	background-color: #FEFDF2;
+}
+
+.span-6 {
+	padding-left: 25px;
+	padding-right: 25px;
+	display: inline-block;
+	margin-top: 20px;
+	margin-left: 20px;
+	border: 1px solid #C8E5F0;
+	width: auto;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 2px 12px 2px 2px;
+	background-color: #E9F5FA;
+}
+
+.span-7 {
+	padding-left: 25px;
+	padding-right: 25px;
+	display: inline-block;
+	margin-top: 20px;
+	margin-left: 20px;
+	border: 1px solid #DBDBF0;
+	width: auto;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	border-radius: 2px 12px 2px 2px;
+	background-color: #F2F2FA;
+}
+
+.span-1 {
+	display: inline-block;
+	background-color: #f0f3f4;
+	font-size: 15px;
+	line-height: 30px;
+	/* border:1px solid black; */
+}
+
+#table-modal_adduser .form-group, #table-modal .form-group {
+	width: 50%;
+	float: left;
+}
+
+#table-modal_adduser .form-group .control-label, #table-modal .form-group .control-label
+	{
+	padding-top: 7px;
+	padding-right: 0px;
+}
+
+#table-modal_adduser .form-group .col-lg-8, #table-modal .form-group .col-lg-8
+	{
+	padding-left: 0px;
+}
+
+.yuan { 
+-moz-border-radius: 18px; 
+-webkit-border-radius: 18px; 
+border-radius: 18px;
+background-color:#f45151;
+height:28px;
+width:18px;
+color:#fff;
+padding:4px;
+margin:5px;
+text-align:center;
+font-family:"微软雅黑";
+font-size:10px;
+} 
+
+
+.find_nav {
+	background-color: #f9f9f9;
+	position: relative;
+	top: 0;
+	z-index: 99;
+	border-bottom: 1px solid #ddd;
+	display: -moz-box;
+	display: -webkit-box;
+	display: box;
+}
+
+.find_nav_left {
+	height: 46px;
+	position: relative;
+	overflow: hidden;
+	-moz-box-flex: 1;
+	-webkit-box-flex: 1;
+	box-flex: 1;
+}
+
+.find_nav_list {
+	position: absolute;
+	/* */
+	left: 0;
+}
+
+.find_nav_list ul {
+	position: relative;
+	white-space: nowrap;
+	font-size: 0;
+}
+
+.find_nav_list ul li {
+	display: inline-block;
+	padding: 0 13px;
+}
+
+.find_nav_list ul li a {
+	display: block;
+	width: 100%;
+	height: 100%;
+	line-height: 46px;
+	font-size: 14px;
+	text-align: center;
+	color: #666;
+}
+
+.find_nav_cur a {
+	color: #48a5f4 !important;
+}
+
+.sideline {
+	display: block;
+	position: absolute;
+	border: 0;
+	height: 2px;
+	background-color: #48a5f4;
+	left: 0;
+	top: 43px;
+	pointer-events: none;
+}
+
+#vert{  
+                width: 100px;  
+                height: 20px;  
+                border: 1px solid white;  
+                background-color: white;  
+                position: relative;  
+            }  
+            #vert ul li{  
+                float: left;  
+                position: absolute;  
+                bottom: 0px;  
+                background-color: salmon;  
+                text-align: center;  
+                font-weight: bold;  
+                color: black;  
+              
+                width:100px;  
+                list-style: none;  
+            }  
+            #vert ul li.c1{ height:15px;width:180px;background-color:#33CCFF;}  
+            #vert ul li.c2{ height:15px;width:80px;background-color:#33CCFF;}  
+             #vert ul li.c3{ height:15px;width:230px;background-color:#33CCFF;}  
+              #vert ul li.c4{ height:15px;width:180px;background-color:#33CCFF;}  
+               #vert ul li.c5{ height:15px;width:80px;background-color:#33CCFF;}  
+               
+
+</style>
+<link rel="stylesheet" href="<%=basePath%>template/css/style.css">
+</head>
+<body>
+	<jsp:include page="common.jsp"></jsp:include>
+	<div class="bg-light lter b-b wrapper-md">
+		<h1 class="m-n h4">电子邮件工作台</h1>
+	</div>
+
+	<!--选择案件 -->
+	<!--搜索和选择案件 合并为一行-->
+	<div class="row"
+		style="height:; width: 98%; margin-left: 1%; margin-top: 1%;">
+		<div class="form-group" style="float: left;">
+			<span class="alcenter" style="float: left;">已选案件：</span>
+			<div id="spans" style="margin-left: 75px; margin-top: -12px;width:1300px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
+		</div>
+			<div>
+				<button data-target="#myModal" data-toggle="modal" type='button' class="btn btn-info" style="width:120px;margin-right: 10px; float: right; margin-top: 1px;" onclick="showcase()" >选择案件</button>
+			</div>
+	</div>
+
+	<div class="row find_nav"
+		style="height:; width: 98%; margin-left: 1%; margin-top: 1%;">
+		<div class="find_nav_left">
+			<div class="find_nav_list">
+				<ul style="">
+					<li class="find_nav_cur "><a href="javascript:void(0)"
+						onclick="d1()">电子邮箱工作台</a></li>
+					<li><a href="javascript:void(0)" onclick="d2()">收发件分析</a></li>
+					<li><a href="javascript:void(0)" onclick="d3()">联系人分析</a></li>
+					<li><a href="javascript:void(0)" onclick="d4()">域名分析</a></li>
+					<li class="sideline"></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal right fade" id="myModal" tabindex="-1"
+				style="width: 100%; height: 100%; margin: auto;">
+				<div class="panel panel-default"
+					style="width: 30%; height: 80%; margin: 3% auto;">
+					<div class="panel-heading">更改案件</div>
+					<div class="panel-body" style="width: 100%; height: 100%;">
+						<div class="panel-body" style="width: 100%">
+							<input id="caseinfo" name="caseinfo" class="form-control"
+								placeholder="搜索案件名称/案件编号" type="text"
+								style="float: left; width: 82%;" />
+							<button type='button' class="btn btn-info"
+								style="width: 70px; margin-left: 10px; height: 34px"
+								onclick="showcase()">搜索</button>
+						</div>
+<!-- 						<div class="panel-body" style="width: 100%">
+							<span style="float: left;">已选案件：</span>
+							<div id="spans1" style="margin-left: 65px; margin-top: -9px;"></div>
+						</div> -->
+						<div class="panel-body" style="height: 65%; overflow-y: scroll;">
+							<table id="datatable" class="table table-striped table-hover"
+								style="border: 1px solid #DDDDDD;">
+								<tbody id="tbcont">
+									<tr>
+										<td class="td_left"><input type="checkbox" id="ckall"
+											onclick="selectAll()" /></td>
+										<td class="td_left">案件编号</td>
+										<td class="td_right">案件名称</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<button type='button' class="btn btn-info"
+							style="width: 70px; height: 34px; margin-left: 40%; margin-top: 3%"
+							onclick="checkCase();">选择</button>
+					</div>
+				</div>
+			</div>
+
+	<div id="d1">
+		<div class="row"
+			style="height:; width: 98%; margin-left: 1%; margin-top: 1%;">
+			<div class="panel panel-default" style=" margin-bottom: 5px;">
+				<div class="panel-heading">搜索<span style="float: right;"><img src="<%=basePath %>template/img/addevidence.png" onclick="testOfSearch(this)"></span></div>
+				<div class="panel-body" id="searchOfForm" style="display: block;">
+					<form class="form-inline" role="form">
+						<div class="form-group">
+							<label>日期范围：</label>
+							<div class="form-group">
+									<input id="startDate_demain_email" name="createdTime" value=""
+											class="form-control" placeholder="请输入起始时间" type="text" style="width:168px;margin-left: -4px;" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'endDate\')||\'new Date()\'}'});"/> 	
+								</div>
+								<div class="form-group">
+									<label for="" class="clabel">&nbsp;&nbsp;&nbsp;至&nbsp;&nbsp;&nbsp;</label>
+									<input id="endDate_demain_email" name="endTime"  value=""
+										    class="form-control" placeholder="请输入结束时间" type="text" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'startDate\')}',maxDate:new Date()});"/>
+								</div>
+						</div>
+						<div class="form-group">
+							<label for="" class="clabel">排序:</label><select
+								class="form-control" style="width: 430px; margin-left: 16px;"
+								id="sortType">
+								<option>日期</option>
+								<option>未读</option>
+								<option>已读</option>
+								<option>星标</option>
+								<option>收件人</option>
+								<option>发件人</option>
+								<option>附件</option>
+							</select>
+						</div>
+					
+						<div class="form-group">
+							<input id="emailKeyword" class="form-control" style="width: 450px; margin-left: 16px;" />
+						</div>
+						<button type="button" class="btn btn-info" style="width: 75px; height: 33px; margin-bottom: 1px" onclick="showAllemail(1)">搜索</button>
+					</form>
+				</div>
+				</div>
+				</div>
+				<div class="panel-body" style="padding-top: 0px;">
+					<div name="gp_btnm"  class="_normal-button"
+						style="cursor: pointer; margin-top: 6px; margin-left: 6px;"
+						onclick="showAllemail('1','手机号');"><img src="<%=basePath %>template/img/qt1.png" style="margin-bottom:-2px; "><span style="margin-left: 6px;">手机号</span><span id="Phone" class="yuan" style="margin-left: 6px; ">0</span></div>
+					<div name="gp_btnm"  class="_normal-button"
+						style="cursor: pointer; margin-top: 6px; margin-left: 6px;"
+						onclick="showAllemail('1','银行卡号');"><img src="<%=basePath %>template/img/qt4.png" style="margin-bottom:-2px; "><span style="margin-left: 6px;">银行卡号</span><span id="regCard" class="yuan" style="margin-left: 6px;">0</span></div>
+					<div name="gp_btnm" class="_normal-button"
+						style="cursor: pointer; margin-top: 6px; margin-left: 6px;"
+						onclick="showAllemail('1','集装箱号');"><img src="<%=basePath %>template/img/qt12.png" style="margin-bottom:-2px; "><span style="margin-left: 6px;">集装箱号</span><span id="regContainer" class="yuan" style="margin-left: 6px;">0</span></div>
+					<div name="gp_btnm" class="_normal-button"
+						style="cursor: pointer; margin-top: 6px; margin-left: 6px;"
+						onclick="showAllemail('1','邮箱号');"><img src="<%=basePath %>template/img/qt5.png" style="margin-bottom:-2px; "><span style="margin-left: 6px;">邮箱账号</span><span id="regEmail" class="yuan" style="margin-left: 6px;">0</span></div>
+					<div name="gp_btnm" class="_normal-button"
+						style="cursor: pointer; margin-top: 6px; margin-left: 6px;"
+						onclick="showAllemail('1','发票代码');"><img src="<%=basePath %>template/img/qt24.png" style="margin-bottom:-2px; "><span style="margin-left: 6px;">发票代码</span><span id="regStamp" class="yuan" style="margin-left: 6px;">0</span></div>
+					<div name="gp_btnm"  class="_normal-button"
+						style="cursor: pointer; margin-top: 6px; margin-left: 6px;"
+						onclick="showAllemail('1','车牌号');"><img src="<%=basePath %>template/img/qt6.png" style="margin-bottom:-2px; "><span style="margin-left: 6px;">车牌号</span><span id="regLicense" class="yuan" style="margin-left: 6px;">0</span></div>
+					<div name="gp_btnm"  class="_normal-button"
+						style="cursor: pointer; margin-top: 6px; margin-left: 6px;"
+						onclick="showAllemail('1','身份证号');"><img src="<%=basePath %>template/img/qt2.png" style="margin-bottom:-2px; "><span style="margin-left: 6px;">身份证号</span><span id="regSFZ" class="yuan" style="margin-left: 6px;">0</span></div>
+					<div name="gp_btnm"  class="_normal-button"
+						style="cursor: pointer; margin-top: 6px; margin-left: 6px;"
+						onclick="showAllemail('1','GPS');"><img src="<%=basePath %>template/img/qt23.png" style="margin-bottom:-2px; "><span style="margin-left: 6px;">卫星定位</span><span id="regGPS" class="yuan" style="margin-left: 6px;">0</span></div>
+					<div name="gp_btnm"  class="_normal-button"
+						style="cursor: pointer; margin-top: 6px; margin-left: 6px;"
+						onclick="showAllemail('1','QQ号');"><img src="<%=basePath %>template/img/qt10.png" style="margin-bottom:-2px; "><span style="margin-left: 6px;">腾讯QQ</span><span id="QQnumber" class="yuan" style="margin-left: 6px;">0</span></div>
+					<div name="gp_btnm" class="_normal-button"
+						style="cursor: pointer; margin-top: 6px; margin-left: 6px;"
+						onclick="showAllemail('1','微信');"><img src="<%=basePath %>template/img/qt11.png" style="margin-bottom:-2px; "><span style="margin-left: 6px;">腾讯微信</span><span id="weChat" class="yuan" style="margin-left: 6px;">0</span></div>
+					<div name="gp_btnm" class="_normal-button"
+						style="cursor: pointer; margin-top: 6px; margin-left: 6px;"
+						onclick="showAllemail('1','推特号');"><img src="<%=basePath %>template/img/qt22.png" style="margin-bottom:-2px; "><span style="margin-left: 6px;">推特账号</span><span id="twitter" class="yuan" style="margin-left: 6px;">0</span></div>
+					<div name="gp_btnm"  class="_normal-button"
+						style="cursor: pointer; margin-top: 6px; margin-left: 6px;"
+						onclick="showAllemail('1','护照编号');"><img src="<%=basePath %>template/img/qt21.png" style="margin-bottom:-2px; "><span  style="margin-left: 6px;">护照编号</span><span id="passport" class="yuan" style="margin-left: 6px;">0</span></div>
+					<div name="gp_btnm" class="_normal-button"
+						style="cursor: pointer; margin-top: 6px; margin-left: 6px;"
+						onclick="showAllemail('1','支付宝号');"><img src="<%=basePath %>template/img/qt20.png" style="margin-bottom:-2px; "><span  style="margin-left: 6px;">支付宝号</span><span id="zfb" class="yuan" style="margin-left: 6px;">0</span></div>
+					<div name="gp_btnm"  class="_normal-button"
+						style="cursor: pointer; margin-top: 6px; margin-left: 6px;"
+						onclick="showAllemail('1','固定电话');"><img src="<%=basePath %>template/img/qt3.png" style="margin-bottom:-2px; "><span style="margin-left: 6px;">固定电话</span><span id="regTel" class="yuan" style="margin-left: 6px;">0</span></div>
+					<div name="gp_btnm" class="_normal-button"
+						style="cursor: pointer; margin-top: 6px; margin-left: 6px;"
+						onclick="showAllemail('1','信用证');"><img src="<%=basePath %>template/img/qt19.png" style="margin-bottom:-2px; "><span style="margin-left: 6px;">信用证号</span><span id="regLC" class="yuan" style="margin-left: 6px;">0</span></div>
+					<div name="gp_btnm"  class="_normal-button"
+						style="cursor: pointer; margin-top: 6px; margin-left: 6px;"
+						onclick="showAllemail('1','运输车号');"><img src="<%=basePath %>template/img/qt13.png" style="margin-bottom:-2px; "><span style="margin-left: 6px;">运输车号</span><span id="regModel" class="yuan" style="margin-left: 6px;">0</span></div>
+					<div name="gp_btnm"  class="_normal-button"
+						style="cursor: pointer; margin-top: 6px; margin-left: 6px;"
+						onclick="showAllemail('1','价格');"><img src="<%=basePath %>template/img/qt9.png" style="margin-bottom:-2px; "><span style="margin-left: 6px;">价格账单</span><span id="regPrice" class="yuan" style="margin-left: 6px;">0</span></div>
+					<div name="gp_btnm" class="_normal-button"
+						style="cursor: pointer; margin-top: 6px; margin-left: 6px;"
+						onclick="showAllemail('1','提单号');"><img src="<%=basePath %>template/img/qt18.png" style="margin-bottom:-2px; "><span style="margin-left: 6px;">提单账号</span><span id="regBill" class="yuan" style="margin-left: 6px;">0</span></div>
+					<div name="gp_btnm" class="_normal-button"
+						style="cursor: pointer; margin-top: 6px; margin-left: 6px;"
+						onclick="showAllemail('1','电汇');"><img src="<%=basePath %>template/img/qt14.png" style="margin-bottom:-2px; "><span style="margin-left: 6px;">电汇账单</span><span id="regTT" class="yuan" style="margin-left: 6px;">0</span></div>
+					<%-- <div name="gp_btnm" id="regPacking" class="_normal-button"
+						style="cursor: pointer; margin-top: 6px; margin-left: 6px;"
+						onclick="showAllemail('1','装箱单');"><img src="<%=basePath %>template/img/qt9.png" style="margin-bottom:-2px; "><span style="margin-left: 6px;">装箱单号</span><span id="regPacking" class="yuan" style="margin-left: 6px;">0</span></div>
+					<div name="gp_btnm" id="regContract" class="_normal-button"
+						style="cursor: pointer; margin-top: 6px; margin-left: 6px;"
+						onclick="showAllemail('1','合同编号');"><img src="<%=basePath %>template/img/qt9.png" style="margin-bottom:-2px; "><span style="margin-left: 6px;">合同编号</span><span id="regContract" class="yuan" style="margin-left: 6px;">0</span></div> --%>
+				</div>
+		<!-- 左侧表格 -->
+		<div class="row" style="width: 1660px; margin-top:; margin-left: 1%; float: left;">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<!-- <span id="emailsumnum">搜索结果</span> -->
+					                <span id="emailsumnum">共搜索到 个结果</span>
+					
+					 <span style="float: right;"
+						id="emailnum">/全部 封</span><span id="email0"
+						style="float: right; color: red;"> 未读 封 </span>
+				</div>
+				<table id="datatable1" class="table table-striped table-hover"
+							style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+							<thead id="emailtou">
+							</thead>
+							<tbody id="email">
+							</tbody>
+				</table>
+					
+				<div class="alcenter" style="font-size: 14px;padding-top: 20px;padding-bottom: 20px;">
+						<div id="total_d5" class="pagecount inline" style="height: 29px; padding-left: 40%;;">
+							<span id="tot1_d5"></span>
+						</div>
+						<div class="pagebar inline"
+							style="position: absolute; right: 14px; height: 29px;">
+						<ul class="pagination pagination-sm" style="margin: 0;">
+							<li id = "pages1_d5"></li>
+									
+							<li id = "pages_d5"></li>
+				            		
+							<li id = "pages2_d5" style=" margin-right: 20px;"></li>
+						</ul>
+						</div>
+					</div>
+
+		<!-- 邮件内容 -->
+		<div style="overflow:auto; width:100%;height:100%;margin: auto;" class="modal right fade panel panel-default" id="myModals" tabindex="-1" role="dialog"
+			aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="bg-light lter b-b wrapper-md">
+			<h1 class="m-n h4">电子邮件工作台</h1>
+		</div>
+		 <button type="button" class="close" data-dismiss="modal" style="margin-top:10px" aria-hidden="true">×</button>
+			<div class="panel-heading" class="alcenter" style="margin-top:10px;margin-left:10;">
+				邮件内容<span class="modal-title" style="font-size: 22px; width:700px;"></span>
+			</div>
+				<div class="panel-body" style="padding: 0px; height: 100%;">
+					<table id="datatable" style="border-bottom: 1px solid #DDDDDD; margin-bottom: 0px; width: 100%;">
+						<tr>
+							<td style="font-weight: bolder; font-size: 17px; padding-left: 30px; padding-top: 20px;" id="emailsubject">邮件标题</td>
+							<td style="padding-top: 20px; text-align: right;padding-right: 30px;">
+							<a id="url" href="#"><img src="<%=basePath%>template/img/download.png" onclick="downloadEML()" /></a>&nbsp;&nbsp;&nbsp;
+							<%-- <img id="stars" src="<%=basePath%>template/img/star2.png" onclick="upemailstar()" /></td> --%>
+							<span id="emailurl" style="display: none;"></span>
+							<span id="emailstar" style="display: none;"></span>
+							<span id="esId" style="display: none;"></span>
+							<span id="stari" style="display: none;"></span>
+						</tr>
+						<tr>
+							<td style="padding-left: 30px; padding-top: 10px;" id="emailtoWho">发件人：</td>
+							<td style="padding-right: 30px; text-align: right;" id="emaildate"></td>
+						</tr>
+						<tr>
+							<td style="padding-left: 30px; padding-top: 10px; padding-bottom: 20px" id="emailfromWho">收件人：</td>
+							<td></td>
+						</tr>
+					</table>
+				<div style="padding-top: 30px;padding-left: 30px;padding-bottom: 405px;" id="emailcontent" >
+				</div>
+				</div>
+	</div>
+	</div>
+	</div>
+</div>
+		<div id="d2" style="display: none;">
+			<div class="panel-body">
+					<form class="form-inline" role="form">
+					<input type="hidden" name="pageno" id="pageno"/>
+					<label>精确日期：</label>
+						<div class="form-group">
+						<input id="startDate_d2" name="createdTime" value="${createdTime }"
+								class="form-control" placeholder="请输入起始时间" type="text" style="width:168px;margin-left: -4px;" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'endDate\')||\'new Date()\'}'});"/> 	
+						</div>
+						<div class="form-group">
+							<label for="" class="clabel">&nbsp;&nbsp;&nbsp;至&nbsp;&nbsp;&nbsp;</label>
+							<input id="endDate_d2" name="endTime"  value="${endTime }"
+										    class="form-control" placeholder="请输入结束时间" type="text" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'startDate\')}',maxDate:new Date()});"/>
+						</div>
+				<button type="button" class="btn btn-info" style="width: 75px; height: 33px; margin-bottom: 1px; margin-left: 20px" onclick="showEmailDetil()">分析</button>
+				<a id="urlMail_d2" href="#"><div  class="btn btn-info" style="width: 75px; height: 33px; margin-bottom: 1px;" onclick="exportMail_d2()">导出</div></a>
+				&nbsp;&nbsp;&nbsp;
+			</form>
+			</div>
+			
+			<div class="col-md-5" style="width:50%;float:left;">
+				<div class="panel panel-default" style="position:relative; height:420px; overflow-y :auto" >
+					<div class="panel-heading">收件人次数统计</div>
+					<table id="datatable" class="table table-striped table-hover"
+						style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+						<thead>
+							<tr>
+								<th style="text-align: left">收件人邮件</th>
+								<th style="text-align: right">邮件总次数</th>
+							</tr>
+						</thead>
+						<tbody id="tbcont4">
+						
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+			<div class="col-md-5" style="width:50%;float:left;">
+				<div class="panel panel-default" style="position:relative; height:420px; overflow-y :auto">
+					<div class="panel-heading">发件人次数统计</div>
+					<table id="datatable" class="table table-striped table-hover"
+						style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+						<thead>
+							<tr>
+								<th style="text-align: left">发件人邮件</th>
+								<th style="text-align: right">邮件总次数</th>
+							</tr>
+						</thead>
+						<tbody id="tbcont3">
+							
+						</tbody>
+					</table>
+				</div>
+			</div>
+			
+			<div class="col-md-12" style="height:; width: 98%; margin-left: 1%; margin-top: 1%;">
+			<form class="form-inline" role="form">
+				<div class="form-group">
+					<label for="" class="clabel">排序:</label>
+					<select class="form-control" style="width: 260px; margin-left: 16px;" id="sortType_div2">
+						<option value="日期">日期</option>
+						<option>未读</option>
+						<option>已读</option>
+						<option>星标</option>
+						<option>收件人</option>
+						<option>发件人</option>
+						<option>附件</option>
+					</select>
+				</div>
+
+				<div class="form-group">
+							<label>选择日期范围：</label>
+							<div class="form-group">
+									<input id="startDate_div2" name="startDate" value=""
+											class="form-control" placeholder="请输入起始时间" type="text" style="width:168px;margin-left: -4px;" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'endDate\')||\'new Date()\'}'});"/> 	
+								</div>
+								<div class="form-group">
+									<label for="" class="clabel">&nbsp;&nbsp;&nbsp;至&nbsp;&nbsp;&nbsp;</label>
+									<input id="endDate_div2" name="endTime"  value=""
+										    class="form-control" placeholder="请输入结束时间" type="text" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'startDate\')}',maxDate:new Date()});"/>
+								</div>
+						</div>
+
+				<div class="form-group">
+					<label>关键字/邮箱地址</label>
+					<input id="emailKeyword_div2" class="form-control" placeholder="请输入..." style="width: 260px; margin-left: 16px;" />
+				</div>
+				<button type="button" class="btn btn-info" style="width: 75px; height: 33px; margin-bottom: 1px" onclick="showAllemail_div2(1)">搜索</button>
+			</form>
+		</div>
+
+		<div class="col-md-12" style="margin-top: 1%;">
+			<!-- 左侧表格 -->
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<!-- <span id="emailsumnum_div2">搜索结果</span> -->
+					<span id="emailsumnum_div2">共搜索到 个结果</span>
+					 <span style="float: right;" id="emailnum_div2">/全部 封</span>
+					<span id="email0_div2" style="float: right; color: red;"> 未读 封 </span>
+				</div>
+				<table id="datatable1_div2" class="table table-striped table-hover" style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+					<thead id="emailtou_div2">
+					
+					</thead>
+					<tbody id="email_div2">
+					
+					</tbody>
+				</table>
+
+				<div class="alcenter" style="font-size: 14px; padding-top: 20px; padding-bottom: 20px;">
+					<div id="total_d5_div2" class="pagecount inline" style="height: 29px; padding-left: 40%;">
+						<span id="tot1_d5_div2"></span>
+					</div>
+					<div class="pagebar inline" style="position: absolute; right: 14px; height: 29px;">
+						<ul class="pagination pagination-sm" style="margin: 0;">
+							<li id="pages1_d5_div2"></li>
+
+							<li id="pages_d5_div2"></li>
+
+							<li id="pages2_d5_div2" style="margin-right: 20px;"></li>
+						</ul>
+					</div>
+				</div>
+
+				<!-- 邮件内容 -->
+				<div style="display:none; overflow: auto; width: 100%; height: 100%;" class="modal right fade panel panel-default" id="myModals_div2"
+					tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<div class="panel-heading" class="alcenter">邮件内容<span class="modal-title" style="font-size: 22px; width: 100%;"></span>
+					</div>
+					<div class="panel-body" style="padding: 20px; height: 100%;">
+						<table id="datatable_div2" style="border-bottom: 1px solid #DDDDDD; width: 100%;">
+							<tr>
+								<td style="font-weight: bolder; font-size: 17px; padding-left: 30px; padding-top: 20px;" id="emailsubject_div2">邮件标题</td>
+								<td style="padding-top: 20px; text-align: right;"><a id="url_div2" href="javascript:void(0)">
+								<img id="url_div2" src="<%=basePath%>template/img/download.png" onclick="downloadEML_div2()" /></a>&nbsp;&nbsp;&nbsp;
+								<span id="emailurl_div2" style="display: none;"></span>
+								<span id="emailstar_div2" style="display: none;"></span>
+								<!-- <span id="esID_div2" style="display: none;"></span> -->
+								<span id="esId_div2" style="display: none;">lengjing</span>
+								<span id="stari_div2" style="display: none;">buai</span>
+							</tr>
+							<tr>
+								<td style="padding-left: 30px; padding-top: 10px;" id="emailtoWho_div2">发件人：</td>
+								<td style="padding-right: 10px; text-align: right;" id="emaildate_div2"></td>
+							</tr>
+							<tr>
+								<td style="padding-left: 30px; padding-top: 10px; padding-bottom: 20px" id="emailfromWho_div2">收件人：</td>
+								<td></td>
+							</tr>
+						</table>
+						<div style="padding-top: 30px; padding-left: 30px; padding-bottom: 405px;" id="emailcontent_div2"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		</div>
+		
+		<div id="d3" style="display: none;">
+				<div class="panel-body">
+					<form class="form-inline" role="form" id="searchForm" action="" method="post">
+						<input type="hidden" name="pageno" id="pageno" />
+						<div class="form-group">
+							<label>选择日期范围：</label>
+							<div class="form-group">
+									<input id="startDate_div3" name="startDate" value=""
+											class="form-control" placeholder="请输入起始时间" type="text" style="width:168px;margin-left: -4px;" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'endDate\')||\'new Date()\'}'});"/> 	
+								</div>
+								<div class="form-group">
+									<label for="" class="clabel">&nbsp;&nbsp;&nbsp;至&nbsp;&nbsp;&nbsp;</label>
+									<input id="endDate_div3" name="endTime"  value=""
+										    class="form-control" placeholder="请输入结束时间" type="text" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'startDate\')}',maxDate:new Date()});"/>
+								</div>
+						</div>&nbsp;&nbsp;&nbsp;
+					<div class="form-group">
+							<label for="" class="clabel">嫌疑人姓名:</label>
+								<input id="suspectsName_d3" name="suspectsName_d3" class="form-control" placeholder="" type="text" style="width:300px;"/>
+						</div>
+					
+						<a  href="javascript:void(0)"><div class="btn btn-info" style="width:80px;"onclick="d3();">搜索</div></a>
+						<!-- <a  href="javascript:void(0)"><div class="btn btn-info" style="width:80px;"onclick="">导出</div></a> -->
+					</form>
+				</div>
+			
+			 <div class="col-md-5" style="width:50%;float:left;">
+				<div class="panel panel-default">
+					<div class="panel-heading">案件关系图</div>
+					<div class="panel-body" style="padding-top: 0px">
+						<div id="mainCase" style="width: 800px; height: 300px;"></div>
+					</div>
+				</div>
+			</div> 
+			 <div class="col-md-5" style="width:50%;folat:right;">
+				<div class="panel panel-default">
+					<div class="panel-heading">嫌疑人关系图</div>
+					<div class="panel-body" style="padding-top: 0px">
+						<div id="mainSuspect" style="width: 800px; height: 300px;"></div>
+					</div>
+				</div>
+			</div> 
+			<div class="panel-body" style="float:left">
+					<form class="form-inline" role="form" id="searchForm" action="" method="post">
+						<input type="hidden" name="pageno" id="pageno" />
+						
+						<div class="form-group">
+							<label for="" class="clabel">排序:</label><select
+								class="form-control" style="width: 430px; margin-left: 16px;"
+								id="sortType_div3">
+								<option>日期</option>
+								<option>未读</option>
+								<option>已读</option>
+								<option>星标</option>
+								<option>收件人</option>
+								<option>发件人</option>
+								<option>附件</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<label>选择日期范围：</label>
+							<div class="form-group">
+									<input id="startDate_d3" name="startDate" value=""
+											class="form-control" placeholder="请输入起始时间" type="text" style="width:168px;margin-left: -4px;" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'endDate\')||\'new Date()\'}'});"/> 	
+								</div>
+								<div class="form-group">
+									<label for="" class="clabel">&nbsp;&nbsp;&nbsp;至&nbsp;&nbsp;&nbsp;</label>
+									<input id="endDate_d3" name="endTime"  value=""
+										    class="form-control" placeholder="请输入结束时间" type="text" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'startDate\')}',maxDate:new Date()});"/>
+								</div>
+						</div>
+						&nbsp;&nbsp;&nbsp;
+							<label for="" class="clabel">关键字/邮箱地址:</label>
+							<input id="key_d3" name="" class="form-control"  type="text" style="width:300px;" />
+							<a  href="#"><div class="btn btn-info" style="width:80px;"onclick="showAllemail_div3(1)">搜索</div></a>
+
+					</form>
+				</div>
+					<div class="col-md-12" style="margin-top: 1%;">
+			<!-- 左侧表格 -->
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<!-- <span id="emailsumnum_div3">搜索结果</span> -->
+					<span id="emailsumnum_div3">共搜索到 个结果</span>
+					<span style="float: right;" id="emailnum_div3">/全部 封</span>
+					<span style="float: right;color: red;"  id="email0_div3" > 未读 封 </span>
+				</div>
+				<table id="datatable1_div3" class="table table-striped table-hover" style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+					<thead id="emailtou_div3">
+					
+					</thead>
+					<tbody id="email_div3">
+					
+					</tbody>
+				</table>
+
+				<div class="alcenter" style="font-size: 14px; padding-top: 20px; padding-bottom: 20px;">
+					<div id="total_d5_div3" class="pagecount inline" style="height: 29px; padding-left: 40%;">
+						<span id="tot1_d5_div3"></span>
+					</div>
+					<div class="pagebar inline" style="position: absolute; right: 14px; height: 29px;">
+						<ul class="pagination pagination-sm" style="margin: 0;">
+							<li id="pages1_d5_div3"></li>
+
+							<li id="pages_d5_div3"></li>
+
+							<li id="pages2_d5_div3" style="margin-right: 20px;"></li>
+						</ul>
+					</div>
+				</div>
+
+				<!-- 邮件内容 -->
+				<div style="display:none; overflow: auto; width: 100%; height: 100%;" class="modal right fade panel panel-default" id="myModals_div3"
+					tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<div class="panel-heading" class="alcenter"> 邮件内容<span class="modal-title" style="font-size: 22px; width: 100%;"></span>
+					</div>
+					<div class="panel-body" style="height: 100%;padding: 20px;">
+						<table id="datatable_div3"
+							style="border-bottom: 1px solid #DDDDDD; margin-bottom: 0px; width: 100%;">
+							<tr>
+								<td style="font-weight: bolder; font-size: 17px; padding-left: 30px; padding-top: 20px;" id="emailsubject_div3">邮件标题</td>
+								<td style="padding-top: 20px; text-align: right;">
+								<a id="url_div3" href="#"> <img id="url_div3" src="<%=basePath%>template/img/download.png" onclick="downloadEML_div3()" /></a>&nbsp;&nbsp;&nbsp;
+								<%-- <img id="stars_div3" src="<%=basePath%>template/img/star2.png" onclick="upemailstar_div3()" /></td> --%>
+								<span id="emailurl_div3" style="display: none;"></span>
+								<span id="emailstar_div3" style="display: none;"></span>
+								<span id="esId_div3" style="display: none;">lengjing</span>
+								<span id="stari_div3" style="display: none;">buai</span>
+							</tr>
+							<tr>
+								<td style="padding-left: 30px; padding-top: 10px;" id="emailtoWho_div3">发件人：</td>
+								<td style="padding-right: 10px; text-align: right;" id="emaildate_div3"></td>
+							</tr>
+							<tr>
+								<td style="padding-left: 30px; padding-top: 10px; padding-bottom: 20px" id="emailfromWho_div3">收件人：</td>
+								<td></td>
+							</tr>
+						</table>
+						<div style="padding-top: 30px; padding-left: 30px; padding-bottom: 405px;" id="emailcontent_div3"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		</div>
+				
+	<div id="d4" style="margin-top: 1%;display: none;">
+		<div class="col-md-12">
+			<form class="form-inline" role="form">
+				<label>选择日期范围：</label>
+				<div class="form-group">
+					<input id="startDate_demain" name="createdTime" value="${createdTime }"
+							class="form-control" placeholder="请输入起始时间" type="text" style="width:168px;margin-left: -4px;" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'endDate\')||\'new Date()\'}'});"/> 	
+				</div>
+				<div class="form-group">
+						<label for="" class="clabel">&nbsp;&nbsp;&nbsp;至&nbsp;&nbsp;&nbsp;</label>
+						<input id="endDate_demain" name="endTime"  value="${endTime }"
+										    class="form-control" placeholder="请输入结束时间" type="text" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'startDate\')}',maxDate:new Date()});"/>
+				</div>
+
+				<button type="button" class="btn btn-info" style="width: 75px; height: 33px; margin-bottom: 1px; margin-left: 20px" onclick="showDomain()">分析</button>
+				<a id="urlMail" href="javascript:void(0)"><div  class="btn btn-info" style="width: 75px; height: 33px; margin-bottom: 1px;"onclick="exportMail()">导出</div></a>
+			</form>
+		</div>
+
+		<div class="col-md-6" style="margin-top: 1%;">
+			<div class="panel panel-default">
+				<div class="panel-heading">域名TOP10</div>
+				<div class="panel-body" style="padding-top: 0px">
+					<div id="main" style="width: 800px; height: 300px;"></div>
+				</div>
+			</div>
+
+			<div class="panel panel-default">
+				<div class="panel-heading">域名命中次数统计</div>
+				<div style="overflow-y: auto; height: 250px;">
+					<table id="datatable" class="table table-striped table-hover" style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+						<thead>
+							<tr>
+								<th style="text-align: left">域名类型</th>
+								<th style="text-align: left"></th>
+								<th style="text-align: right">命中次数</th>
+							</tr>
+						</thead>
+						<tbody id="getDomainInfo">
+
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-6" style="margin-top: 1%;">
+			<div class="panel panel-default">
+				<div class="panel-heading">IP地址分布图</div>
+			</div>
+			<div style="margin: auto;" class="col-md-10">
+				<!-- ///////////////////疑似居住地地图显示/////////////////////////////////////////// -->
+						<!--  <input type="button" value="查询" onclick="searchByStationName('上海');"/>  -->
+						<div id="container_d6"
+							style="margin-bottom: 15px; height: 600px; width: 800px; border: 1px solid gray;">
+						</div>
+					</div>
+					<script type="text/javascript">
+						var map = new BMap.Map("container_d6");
+						map.centerAndZoom("上海黄浦区", 12);
+						map.enableScrollWheelZoom(); //启用滚轮放大缩小，默认禁用
+						map.enableContinuousZoom(); //启用地图惯性拖拽，默认禁用
+
+						map.addControl(new BMap.NavigationControl()); //添加默认缩放平移控件
+						map.addControl(new BMap.OverviewMapControl()); //添加默认缩略地图控件
+						map.addControl(new BMap.OverviewMapControl({
+							isOpen : true,
+							anchor : BMAP_ANCHOR_BOTTOM_RIGHT
+						})); //右下角，打开
+
+						var localSearch = new BMap.LocalSearch(map);
+						var init_d6_flag = 0;
+						function init_for_d6() {
+							addrs = new Array(); //在showAddr中调用，用于显示地址信息
+							addrs_index = 1; //地址信息索引
+							
+							for(i=0;i<justAddrs.length;i++) {
+								addrs.push(justAddrs[i]);
+							}
+							if (init_d6_flag == 0) {
+								searchByStationName_d6(addrs[0]);
+								init_d6_flag = 1;
+							}
+
+						}
+
+						var markerArr = [];
+						var addr2 = new Array();
+						var addrMark = 0;//用于显示位置信息显示的控制
+
+						//  markerArr.push(item);
+						var map_d6 = new BMap.Map("container_d6");
+						// map.centerAndZoom("上海黄浦区", 12);
+						// var point = new BMap.Point(113.312213, 23.147267); //地图中心点，广州市
+						map_d6.centerAndZoom(point, 12);
+
+						map_d6.enableScrollWheelZoom(); //启用滚轮放大缩小，默认禁用
+						map_d6.enableContinuousZoom(); //启用地图惯性拖拽，默认禁用
+
+						map_d6.addControl(new BMap.NavigationControl()); //添加默认缩放平移控件
+						map_d6.addControl(new BMap.OverviewMapControl()); //添加默认缩略地图控件
+						map_d6.addControl(new BMap.OverviewMapControl({
+							isOpen : true,
+							anchor : BMAP_ANCHOR_BOTTOM_RIGHT
+						})); //右下角，打开
+
+						function showAddr() { //显示疑似居住地
+							var point = new Array(); //存放标注点经纬信息的数组  
+							var marker = new Array(); //存放标注点对象的数组  
+							var info = new Array(); //存放提示信息窗口对象的数组  
+							for (var i = 0; i < markerArr.length; i++) {
+								var p0 = markerArr[i].point.split(",")[0]; //  
+								var p1 = markerArr[i].point.split(",")[1]; //按照原数组的point格式将地图点坐标的经纬度分别提出来  
+								point[i] = new window.BMap.Point(p0, p1); //循环生成新的地图点  
+								marker[i] = new window.BMap.Marker(point[i]); //按照地图点坐标生成标记  
+								map_d6.addOverlay(marker[i]);
+
+								marker[i].setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画    
+								info[i] = new window.BMap.InfoWindow(
+										"<p style=’font-size:12px;lineheight:1.8em;’>"
+												+ /*markerArr[i].title +  */"地址："
+												+ markerArr[i].address + "</p>"); // 创建信息窗口对象  
+								if (addrs_index < addrs.length) {
+
+									searchByStationName_d6(addrs[addrs_index]);
+									addrs_index++;
+								}
+								map_d6.enableScrollWheelZoom(true); //启用滚轮放大缩小，默认禁用
+								map_d6.enableContinuousZoom(); //启用地图惯性拖拽，默认禁用
+
+								map_d6.addControl(new BMap.NavigationControl()); //添加默认缩放平移控件
+								map_d6
+										.addControl(new BMap.OverviewMapControl()); //添加默认缩略地图控件
+								map_d6.addControl(new BMap.OverviewMapControl({
+									isOpen : true,
+									anchor : BMAP_ANCHOR_BOTTOM_RIGHT
+								})); //右下角，打开
+
+							}
+							marker[0].addEventListener("mouseover", function() {
+								this.openInfoWindow(info[0]);
+							});
+							marker[1].addEventListener("mouseover", function() {
+								this.openInfoWindow(info[1]);
+							});
+							marker[2].addEventListener("mouseover", function() {
+								this.openInfoWindow(info[2]);
+							});
+							marker[3].addEventListener("mouseover", function() {
+								this.openInfoWindow(info[3]);
+							});
+
+						}
+						var localSearch = new BMap.LocalSearch(map);
+						localSearch.enableAutoViewport(); //允许自动调节窗体大小
+						function searchByStationName_d6(addr) {
+							map_d6.clearOverlays();//清空原来的标注
+							var keyword = addr;
+							addr2.push(addr);
+							localSearch.search(keyword);
+
+							localSearch.setSearchCompleteCallback(function(
+									searchResult) {
+								var poi = searchResult.getPoi(0);
+								map_d6.centerAndZoom(poi.point, 13);
+								var marker = new BMap.Marker(new BMap.Point(
+										poi.point.lng, poi.point.lat)); // 创建标注，为要查询的地方对应的经纬度
+
+								point_lng = "" + poi.point.lng;
+								point_lat = "" + poi.point.lat;
+
+								var item = {
+									title : addr2[addrMark],
+									point : point_lng + "," + point_lat,
+									address : addr2[addrMark]
+								};
+								addrMark++;
+								markerArr.push(item);
+								showAddr();
+							});
+						}
+		</script>
+		</div>
+
+		<div class="col-md-12"
+			style="height:; width: 98%; margin-left: 1%; margin-top: 1%;">
+			<form class="form-inline" role="form">
+
+				<div class="form-group">
+					<label for="" class="clabel">排序:</label><select
+						class="form-control" style="width: 260px; margin-left: 16px;"
+						id="sortType_div4">
+						<option value="日期">日期</option>
+						<option>未读</option>
+						<option>已读</option>
+						<option>星标</option>
+						<option>收件人</option>
+						<option>发件人</option>
+					    <option>附件</option>
+						<option>IP</option>
+					</select>
+				</div>
+
+				<div class="form-group">
+					<label>选择日期范围：</label>
+				<div class="form-group">
+									<input id="startDate" name="createdTime" value="${createdTime }"
+											class="form-control" placeholder="请输入起始时间" type="text" style="width:168px;margin-left: -4px;" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'endDate\')||\'new Date()\'}'});"/> 	
+								</div>
+								<div class="form-group">
+									<label for="" class="clabel">&nbsp;&nbsp;&nbsp;至&nbsp;&nbsp;&nbsp;</label>
+									<input id="endDate" name="endTime"  value="${endTime }"
+										    class="form-control" placeholder="请输入结束时间" type="text" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'startDate\')}',maxDate:new Date()});"/>
+								</div>
+				</div>
+
+				<div class="form-group">
+					<label>关键字/邮箱地址</label> 
+					<input id="emailKeyword_div4" class="form-control" placeholder="请输入..." style="width: 260px; margin-left: 16px;" />
+				</div>
+				<button type="button" class="btn btn-info" style="width: 75px; height: 33px; margin-bottom: 1px" onclick="showAllemail_div4(1)">搜索</button>
+			</form>
+		</div>
+
+		<div class="col-md-12" style="margin-top: 1%;">
+			<!-- 左侧表格 -->
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					                <span id="emailsumnum_div4">共搜索到 个结果</span>
+
+					<span style="float: right;" id="emailnum_div4">/全部 封</span>
+					<span id="email0_div4" style="float: right; color: red;"> 未读 封 </span>
+				</div>
+				<table id="datatable1_div4" class="table table-striped table-hover" style="text-align: center; border-bottom: 1px solid #DDDDDD;">
+					<thead id="emailtou_div4">
+
+					</thead>
+					<tbody id="email_div4">
+
+					</tbody>
+				</table>
+
+				<div class="alcenter" style="font-size: 14px; padding-top: 20px; padding-bottom: 20px;">
+					<div id="total_d5_div4" class="pagecount inline" style="height: 29px; padding-left: 40%;">
+						<span id="tot1_d5_div4"></span>
+					</div>
+					<div class="pagebar inline" style="position: absolute; right: 14px; height: 29px;">
+						<ul class="pagination pagination-sm" style="margin: 0;">
+							<li id="pages1_d5_div4"></li>
+
+							<li id="pages_d5_div4"></li>
+
+							<li id="pages2_d5_div4" style="margin-right: 20px;"></li>
+						</ul>
+					</div>
+				</div>
+
+				<!-- 邮件内容 -->
+					<div style="overflow:auto; width:100%;height:100%;margin: auto;" class="modal right fade panel panel-default" id="myModals_div4" tabindex="-1" role="dialog"
+			aria-labelledby="myModalLabel" aria-hidden="true">
+					
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<div class="panel-heading" class="alcenter"> 邮件内容<span class="modal-title" style="font-size: 22px; width: 100%;"></span>
+					</div>
+					<div class="panel-body" style="padding: 0px; height: 100%;">
+						<table id="datatable_div4"
+							style="border-bottom: 1px solid #DDDDDD; margin-bottom: 0px; width: 100%;">
+							<tr>
+								<td style="font-weight: bolder; font-size: 17px; padding-left: 30px; padding-top: 20px;" id="emailsubject_div4">邮件标题</td>
+								<td style="padding-top: 20px; text-align: right;padding-right: 30px;">
+								<a id="url_div4" href="#"> <img id="url_div4" src="<%=basePath%>template/img/download.png" onclick="downloadEML_div4()" /></a>&nbsp;&nbsp;&nbsp; 
+								<%-- <img id="stars_div4" src="<%=basePath%>template/img/star2.png" onclick="upemailstar_div4()" /></td> --%>
+								<span id="emailurl_div4" style="display: none;"></span>
+								<span id="emailstar_div4" style="display: none;"></span>
+								<!-- <span id="esID_div4" style="display: none;"></span> -->
+								<span id="esId_div4" style="display: none;">lengjing</span>
+								<span id="stari_div4" style="display: none;">buai</span>
+							</tr>
+							<tr>
+								<td style="padding-left: 30px; padding-top: 10px;" id="emailtoWho_div4">发件人：</td>
+								<td style="padding-right: 30px; text-align: right;" id="emaildate_div4"></td>
+							</tr>
+							<tr>
+								<td style="padding-left: 30px; padding-top: 10px; padding-bottom: 20px" id="emailfromWho_div4">收件人：</td>
+								<td></td>
+							</tr>
+						</table>
+						<div style="padding-top: 30px; padding-left: 30px; padding-bottom: 405px;" id="emailcontent_div4"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="<%=basePath%>template/js/jquery/jquery-2.0.3.min.js"></script>
+	<script src="<%=basePath%>template/js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+	<script src="<%=basePath%>template/bootstrap-dist/js/bootstrap.min.js"></script>
+	<script src="<%=basePath%>template/js/script_left.js"></script>
+	<script src="<%=basePath%>template/js/cutover/js.js"></script>
+	<script src="<%=basePath%>template/js/cutover/echarts.js"></script>
+	<script src="<%=basePath%>template/js/cutover/dataTool.min.js"></script>
+	<script type="text/javascript">
+	function d1() {
+        $("#d1").show();
+        $("#d2").hide();
+        $("#d3").hide();
+        $("#d4").hide();
+    }
+
+    function d2() {
+        $("#d1").hide();
+        $("#d3").hide();
+        $("#d4").hide();
+        $("#d2").css("display", "block");
+        showAllemail_div2(1, "");
+        show();
+        addresser();
+    }
+
+    function d3() {
+        $("#d1").hide();
+        $("#d2").hide();
+        $("#d4").hide();
+        $("#d3").css("display", "block");
+        contactsAnalyze();
+        contactsAnalyze2();
+        showAllemail_div3(1);
+    }
+
+    function d4() {
+        $("#d1").hide();
+        $("#d2").hide();
+        $("#d3").hide();
+        $("#d4").css("display", "block");
+        getIpAddress();
+        showAllemail_div4(1, "");
+    }
+		
+	function selectAll(){
+		var ckall=document.getElementById("ckall");
+	    var ck=document.getElementsByName("ids");
+	    for(var i=0;i<ck.length;i++){
+	    	ck[i].checked=ckall.checked;
+	    }
+	}
+	//获取域名分析的table展示信息
+	function showDomain(){
+		var startDate = $("#startDate_demain").val();
+		var endDate = $("#endDate_demain").val();
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>admin/getEmail_domain.php",
+			data : {
+				"caseidStr":caseidStr,
+				"startDate":startDate,
+				"endDate":endDate
+			},
+			dataType : "json",
+			async: true,
+			success : function(data) {
+				getdomain();
+				$("#tbcont3").empty();
+                $("#getDomainInfo").empty();
+				for(i = 0;i<data.beanStr.length;i++) {
+					var html01 = '+<tr>' +
+                    '<td style="text-align: left">' + data.beanStr[i].type + '</td> ' +
+                    '<td></td> ' +
+                    '<td style="text-align: right">' + data.beanStr[i].num + '</td>' +
+                    '</tr>+';
+                	$("#getDomainInfo").append(html01);	
+				} 
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+				/* alert("失败"); */
+			}
+		});
+	}
+	
+ 	function showChoose(id){
+		 var ckall=document.getElementById(id);
+	    	//ck[i].checked=ckall.checked;
+	}
+	//点击更改案件按钮弹出 显示案件标号和案件名称	
+	window.onload = showAllemail(1,"");
+	window.onload = showDomain();
+	function showcase(){
+		var casenumorname = document.getElementById("caseinfo").value;
+		//alert(casenumorname);
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>admin/getCaseOfEmail.php",
+			data : {
+				"casenumorname":casenumorname
+			},
+			dataType : "json",
+			async: true,
+			success : function(data) {
+				$("#tbcont").empty();
+				var htmlhead='<tr>'+
+					'<td class="td_left"><input type="checkbox" id="ckall" onclick="selectAll()"/></td>'+
+					'<td class="td_left">案件编号</td>'+
+					'<td class="td_right">案件名称</td>'+
+				'</tr>';
+				$("#tbcont").append(htmlhead);	
+				$.each(data,function(i,item){
+					var htmlhead2='<tr data-toggle="modal">';
+					var html = '<tr>'+
+						'<td class="td_left"><input id="caselist'+i+'" type="checkbox" name="ids" value="'+item.caseName+' '+item.id+'" onclick="showChoose(this.id);" />'+
+							'<td class="td_left">'+item.caseNum+'</td>'+
+							'<td class="td_right" id="">'+item.caseName+'</td>'+
+						'</tr>';
+					$("#tbcont").append(html);					
+				});
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+			}
+		});
+	} 
+	//选择某个复选框案件将案件信息展示在页面上
+	var caseidStr ="";
+	function checkCase(obj){
+		$("#emailKeyword").val(""); //设置 为空
+		$("#spans").empty();
+		caseidStr ="";
+	    var CaseInfo = document.getElementsByName("ids");
+	    var str = [];
+	    for(i=0;i<CaseInfo.length;i++){
+	        if(CaseInfo[i].checked){
+	            str.push(CaseInfo[i].value.split(" ")[0]+" "+CaseInfo[i].value.split(" ")[1]);
+	            if(caseidStr==""){
+	            	caseidStr=CaseInfo[i].value.split(" ")[1];
+	            }else{
+	            	caseidStr=caseidStr+" "+CaseInfo[i].value.split(" ")[1];
+	            }
+	        }
+	    }
+	   	if($("#spans").text()!=null || $("#spans").text()!=""){
+	   		$("#spans").empty();
+	   	}
+	   	for (var i = 0; i < str.length; i++) {
+	   		var splits = str[i].split(" ");
+	   		var	s=splits[0];
+	   		var	caseId=splits[1];
+	   		
+	   		var st = str[i];
+			var caseName="";
+			if(st.length>0){
+				caseName = st.substring(0,6) + "...";
+				
+			}
+			var html ='<span class="span-1" id="shanchu2'+i+'" style="width: 150px; height: 30px;margin-right: 15px;margin-top: 5px;" onclick="deletemainParty(this.id,'+caseId+')">'+caseName+
+			'<img style="float: right; margin-right: 5px; margin-top: 7px;" src="<%=basePath%>template/img/x.png" /></span>';
+			$("#spans").append(html);	
+		}
+	
+	    $("#myModal").modal("hide");
+		showAllemail(1,"");
+		showAllemail_div2(1,"");
+		showAllemail_div3(1,"");
+		showAllemail_div4(1,"");
+	}
+	function deletemainParty(id,caseId){
+		$("#"+id+"").remove();
+		var caseidStrSplit=caseidStr.split(" ");
+		var caseidStrNew="";
+		if(caseidStrSplit.length>0){
+			for(var i=0;i<caseidStrSplit.length;i++){
+				var par = caseidStrSplit[i];
+				if(par!=caseId){
+					if(caseidStrNew==""){
+						caseidStrNew=par;
+					}else{
+						caseidStrNew=caseidStrNew+" "+par;
+					}
+				}
+			}
+		}
+		caseidStr=caseidStrNew;
+		showAllemail(1,"");
+		showAllemail_div2(1,"");
+		showAllemail_div3(1,"");
+		showAllemail_div4(1,"");
+	}
+	//搜索邮件list
+	var read000 = 0;
+	function showAllemail(pageno,type){
+		var test = $("spans").val();
+		$("#emailtou").empty();
+		var sortType = $("#sortType").val();
+		var emailKeyword = $("#emailKeyword").val();
+		var startTime = $("#startDate_demain_email").val();
+		var endTime = $("#endDate_demain_email").val();
+		$("#email").empty();
+		var html0 = '<table style="border-bottom: 1px solid #DDDDDD; width: 1600px; height: 90px;" >'+	
+		'<tr>'+
+						'</tr>'+
+						'<tr>'+
+					'</tr>'+
+						'<tr>'+
+							'<td>正在搜索中...</td>'+
+						'</tr>'+
+					'</table>';
+		$("#email").append(html0);	
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>emaiExcavatel/getEmailList.php",
+			data : {
+				"pageIndex":pageno,
+				"caseidStr":caseidStr,
+				"sortType":sortType,
+				"emailKeyword":emailKeyword,
+				"startDate":startTime,
+				"endDate":endTime,
+				"regexpQuery":type
+			},
+			dataType : "json",
+			async: true,
+			success : function(data) {
+			    var total = data.count;
+			    var read00=data.read0;
+			    //分页开始
+			    var sizes=10;
+				var pagesum=total;
+				var pagenum = pagesum / sizes;
+				var length=5;  //要显示的分页页数
+
+				if(pagenum%1!=0){
+						pagenum=pagenum+(1-pagenum%1);
+				}
+				$("#pages_d5").empty();
+				//用于删除之前显示的页数，动态添加时id名均设为order
+				for(var i=1;i<=length;i++)
+					  $("#orderA_5").remove();
+				if(pagesum<sizes){
+					var html2 = '<li class="active" id="orderA_5"><a href="#" onclick="showAllemail(1)">1</a></li >';
+					$("#pages_d5").after(html2);
+				}else{
+
+				if(pageno<pagenum){
+					if(pageno+length-1<=pagenum){
+						var html2="";
+						if(pageno-2>0){
+							for(var i =pageno-2;i<=pageno+length-1-2;i++){
+								if(i==pageno)
+									html2 += '<li class="active" id="orderA_5"><a href="javascript:void(0)" onclick="showAllemail('+i+')">'+i+'</a></li >';
+									else
+										html2 += '<li id="orderA_5"><a href="javascript:void(0)" onclick="showAllemail('+i+')">'+i+'</a></li >';
+						   				   }
+							}
+						else{
+							for(var i =1;i<=length;i++){
+								if(i==pageno)
+									html2 += '<li class="active" id="orderA_5"><a href="javascript:void(0)" onclick="showAllemail('+i+')">'+i+'</a></li >';
+									else
+
+										html2 += '<li id="orderA_5"><a href="javascript:void(0)" onclick="showAllemail('+i+')">'+i+'</a></li >';
+						   				   }
+						}
+					$("#pages_d5").after(html2);
+
+					}/* if */
+					else{
+						var html2="";
+						if(pagenum>=length){
+						for(var i =pageno-(length-1-pagenum+pageno);i<=pagenum;i++){
+
+
+							 if(i==pageno)
+								html2 += '<li class="active" id="orderA_5"><a href="javascript:void(0)" onclick="showAllemail('+i+')">'+i+'</a></li >';
+							else
+								html2 += '<li id="orderA_5"><a href="javascript:void(0)" onclick="showAllemail('+i+')">'+i+'</a></li >';
+
+						   }
+						$("#pages_d5").after(html2);
+						}
+						else{
+							for(var i =1;i<=pagenum;i++){
+								 if(i==pageno)
+									html2 += '<li class="active" id="orderA_5"><a href="javascript:void(0)" onclick="showAllemail('+i+')">'+i+'</a></li >';
+								else
+									html2 += '<li id="orderA_5"><a href="javascript:void(0)" onclick="showAllemail('+i+')">'+i+'</a></li >';
+							   }
+							$("#pages_d5").after(html2);
+						}
+					}
+				}
+				else{
+					if(pageno==pagenum){
+						var html2="";
+						for(var i =pageno-length+1>0?pageno-length+1:1;i<=pagenum;i++){
+						 if(i==pageno)
+							html2 += '<li class="active" id="orderA_5"><a href="javascript:void(0)" onclick="showAllemail('+i+')">'+i+'</a></li >';
+						else
+							html2 += '<li id="orderA_5"><a href="javascript:void(0)" onclick="showAllemail('+i+')">'+i+'</a></li >';
+					   }
+						$("#pages_d5").after(html2);
+					}/* if */
+				}
+			}
+				$("#tot1_d5").empty();
+				$("#pages1_d5").empty();
+				$("#pages2_d5").empty();
+				var html3 ='<span >共'+pagesum+'条，当前'+pageno+'/'+pagenum+'页</span>';
+				$("#tot1_d5").append(html3);
+				var html5 = '<a href="javascript:void(0)" onclick="showAllemail('+pageno+'-1<1?1:'+pageno+'-1)"><</a>';
+				$("#pages1_d5").append(html5);
+
+				var html4 = '<a href="javascript:void(0)" onclick="showAllemail('+pageno+'+1>'+pagenum+'?'+pagenum+':'+pageno+'+1)">></a>';
+				$("#pages2_d5").append(html4);
+				//分页结束
+   
+				if("手机号"==type){
+					$("#Phone").text(total);
+				}else if("银行卡号"==type){
+					$("#regCard").text(total);
+				}else if("集装箱号"==type){
+					$("#regContainer").text(total);
+				}else if("邮箱号"==type){
+					$("#regEmail").text(total);
+				}else if("发票代码"==type){
+					$("#regStamp").text(total);
+				}else if("车牌号"==type){
+					$("#regLicense").text(total);
+				}else if("身份证号"==type){
+					$("#regSFZ").text(total);
+				}else if("GPS"==type){
+					$("#regGPS").text(total);
+				}else if("QQ号"==type){
+					$("#QQnumber").text(total);
+				}else if("微信"==type){
+					$("#weChat").text(total);
+				}else if("推特号"==type){
+					$("#twitter").text(total);
+				}else if("护照编号"==type){
+					$("#passport").text(total);
+				}else if("支付宝号"==type){
+					$("#zfb").text(total);
+				}else if("固定电话"==type){
+					$("#regTel").text(total);
+				}else if("信用证"==type){
+					$("#regLC").text(total);
+				}else if("运输车号"==type){
+					$("#regModel").text(total);
+				}else if("价格"==type){
+					$("#regPrice").text(total);
+				}else if("提单号"==type){
+					$("#regBill").text(total);
+				}else if("电汇"==type){
+					$("#regTT").text(total);
+				}else if("装箱单"==type){
+					$("#regPacking").text(total);
+				}else if("合同编号"==type){
+					$("#regContract").text(total);
+				}  
+				$("#email").empty();
+				$("#emailtou").empty();
+				var htmltou ='<tr>'+
+					'<th class="alcenter" style=" width :5%; ">收藏</th>'+
+					'<th class="alcenter" style=" width :5%; ">协同分析</th>'+
+					'<th class="alcenter" style=" width :30%; ">邮件主题</th>'+
+					'<th class="alcenter" style=" width :20%; ">发件人</th>'+
+					'<th class="alcenter" style=" width :20%; ">收件人</th>'+
+					'<th class="alcenter" style=" width :10%; ">发送日期</th>'+
+					'<th class="alcenter" style=" width :5%; ">附件</th>'+
+				'</tr>';
+
+				$("#emailtou").append(htmltou);	
+
+				read000=0;
+				var sumi=0;
+				var emailDTOList = data.emailDTOList;
+				 $.each(emailDTOList,function(i,item){
+					var towho =item.toWho;//收件人
+					if(towho!=null){
+						var towhos = towho.split(";;");
+						var towhonum = towhos.length;
+						if(towhonum>1){
+							towho=towhos[0];
+						}
+					}
+					var str =item.subject ;
+					var substr="";
+					if(str.length>25){
+						substr = str.substring(0,25) + "...";
+						}else{
+							substr=str;
+						}
+					var str =item.fromWho ;
+					var substr2="";
+					if(str.length>35){
+						substr2 = str.substring(0,35) + "...";
+						
+					}else{
+						substr2=str;
+					}
+					var str =item.toWho ;
+					var substr1="";
+					if(str.length>45){
+						substr1 = str.substring(0,45) + "...";
+						
+					}else{
+						substr1=str;
+					}
+					var fujian =item.attachmentname;
+					var fuj ="";
+					//有附件显示
+					if(fujian.length>0){
+						fuj ='src="<%=basePath%>template/img/fujian.png"';
+					}
+
+					var star;
+					var star2=item.star;
+					if(star2==0){
+						star="star2";
+					}if(star2==1){
+						star="star";
+					}
+					var read;
+					var read2=item.read;
+					if(read2==0){
+						read="read";
+						var subjectStyle = '<td id ="emailboldSubject'+i+'" data-toggle="modal" data-target="#myModals" onclick="showdetails('+i+')" style="text-align:left; vertical-align:middle;font-weight:bold; width :30%; ">'+item.subject+'</td>';
+					}if(read2==1){
+						read="unread";
+						var subjectStyle = '<td id ="emailboldSubject'+i+'" data-toggle="modal" data-target="#myModals" onclick="showdetails('+i+')" style="text-align:left; vertical-align:middle; width :30%; ">'+item.subject+'</td>';
+					}
+					var html =  '<tr>'+
+									'<td style="text-align:left;  width :5%;  vertical-align: middle;"><img id ="emailStar'+i+'" data-target="#myModalfavorite" data-toggle="modal" onclick="upemailstar('+i+')" src="<%=basePath%>template/img/'+star+'.png"/></td>'+
+									'<td id ="emailbold'+i+'" data-toggle="modal" data-target="#myModals" onclick="showdetails('+i+')" style="text-align:left; width :5%;  vertical-align: middle;"><img id = "read'+i+'" src="<%=basePath%>template/img/'+read+'.png" /></td>'+
+									subjectStyle+
+									'<td id ="emailbold'+i+'" data-toggle="modal" data-target="#myModals" onclick="showdetails('+i+')" style="text-align:left; vertical-align: middle; width :20%; ">'+substr2+'</td>'+
+									'<td id ="emailbold'+i+'" data-toggle="modal" data-target="#myModals" onclick="showdetails('+i+')" style="text-align:left; vertical-align: middle; width :20%; ">'+substr1+'</td>'+
+									'<td id ="emailbold'+i+'" data-toggle="modal" data-target="#myModals" onclick="showdetails('+i+')" style="text-align:left; vertical-align:middle; width :10%; ">'+item.date+'</td>'+
+									'<td id ="emailbold'+i+'" data-toggle="modal" data-target="#myModals" onclick="showdetails('+i+')" style="text-align:left; vertical-align:middle; width :5%; "><img id = "fujian'+i+'" '+fuj+' />'+
+									
+									'<div id="emaildetails0'+i+'" style=" display:none;">'+item.esID+'</div>'+
+									'<div id="emaildetails1'+i+'" style=" display:none;">'+item.subject+'</div>'+
+									'<div id="emaildetails2'+i+'" style=" display:none;">'+item.fromWho+'</div>'+
+									'<div id="emaildetails3'+i+'" style=" display:none;">'+item.toWho+'</div>'+
+									'<div id="emaildetails4'+i+'" style=" display:none;">'+item.date+'</div>'+
+									'<div id="emaildetails5'+i+'" style=" display:none;">'+item.content+'</div>'+
+									'<div id="emaildetails6'+i+'" style=" display:none;">'+item.downloadUrl+'</div>'+
+									'<div id="emaildetails7'+i+'" style=" display:none;">'+item.read+'</div>'+
+									'<div id="emaildetails8'+i+'" style=" display:none;">'+item.star+'</div>'+
+									'<span id="emaildetails9'+i+'" style=" display:none;">'+item.attachmentname+'</span>'+
+									
+									'</td>'+
+								'</tr>';
+					$("#email").append(html);	
+					sumi=i+1; 
+				 }); 
+				 read000=read00;
+				 $("#emailnum").html("/全部"+total+"封");
+				 $("#emailsumnum").html("共搜索到" + total + "个结果");
+				// $("#emailsumnum").html("共搜索到"+total+"个结果");
+				 $("#email0").html("未读"+read00+"封");
+				 if(sumi==0){
+					 
+					 $("#email").empty();
+					 $("#emailtou").empty();
+						var html01 = '<table style="border-bottom: 1px solid #DDDDDD; width: 1600px; height: 90px;" >'+
+											'<tr>'+
+										'</tr>'+
+										'<tr>'+
+									'</tr>'+
+										'<tr>'+
+											'<td>未找到相关内容</td>'+
+										'</tr>'+
+									'</table>';
+						$("#email").append(html01);	
+				 }
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+			}
+		});
+	} 
+	//点击邮件显示详情
+	function showdetails(i){
+		var esId = $("#emaildetails0"+i+"").html();
+		var emailsubject = $("#emaildetails1"+i+"").html();//document.getElementById("emaildetails1"+i+"").innerHTML;
+		var emailtoWho = $("#emaildetails2"+i+"").html();
+		var emailfromWho = $("#emaildetails3"+i+"").html();
+		var emaildate = $("#emaildetails4"+i+"").html();
+		var emailcontent = $("#emaildetails5"+i+"").html();
+		var emlpath = $("#emaildetails6"+i+"").html();
+		var read = $("#emaildetails7"+i+"").html();
+		var star = $("#emaildetails8"+i+"").html();
+		
+		$("#stari").html(i);
+		$("#esId").html(esId);
+		$("#emailsubject").html("邮件标题 : "+emailsubject);
+		$("#emailtoWho").html("发件人 : "+emailtoWho);
+		$("#emailfromWho").html("收件人 : "+emailfromWho);
+		$("#emaildate").html(emaildate);
+		$("#emailcontent").html(emailcontent);
+		$("#emailurl").html(emlpath);	
+		$("#emailstar").html(star);
+		var star2;
+		if(star==0){
+			star2="star2";
+		}if(star==1){
+			star2="star";
+		}
+		var read2;
+		if(read==0){
+			read2="unread";
+		}if(star==1){
+			read2="read";
+		}
+		<%-- document.getElementById("stars").src = "<%=basePath%>template/img/"+star2+".png"; --%>
+		//判断邮件是否已读
+		
+		if(read==0){
+			//未读数-1
+			read000=read000-1;
+			//改变图标
+			document.getElementById("read"+i).src = "<%=basePath%>template/img/unread.png";
+			//修改未读书
+			$("#email0").html("未读"+read000+"封");
+			//修改主题显示
+			$("#emailboldSubject"+i).css("font-weight","");
+			//修改邮件状态
+			upemailstatus(1,esId);
+		}
+	}
+
+	function downloadEML(){
+		var emlpath = document.getElementById("emailurl").innerText;
+		$("#url").attr("href","<%=basePath %>admin/downloadEML.php?emlpath="+emlpath);
+	} 
+
+	//修改邮件状态 
+	function upemailstatus(read,esId){
+		//var url = document.getElementById("emailurl").innerText;
+		var read2="";
+		if(read==0){
+			read2=1;
+		}if(read==1){
+			read2=0;
+		}
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>emaiExcavatel/upEmailStatus.php",
+			data : {
+				"star":"",
+				"esId":esId,
+				"read":read
+			},
+			dataType : "json",
+			async: true,
+			success : function(data) {
+				if(read==0){ 
+					document.getElementById("emailstar").innerText=1;
+				}
+				if(star==1){
+					document.getElementById("emailstar").innerText=0;
+				}
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+				/* alert("失败!"); */
+			}
+		});	
+	} 
+	
+	//点击弹出收藏或者取消框
+	function upemailstar(i){
+		var emailESId = $("#emaildetails0"+i+"").html();
+		var emailStarFlag = $("#emaildetails8"+i+"").html();
+		
+		if(emailStarFlag=='1'){
+			$(("#"+'emailStar'+i)).attr('data-target',"#cancelFavorite");
+			//取消收藏
+			$('#cancelPicId').val(emailESId);
+			$('#cancelPicNumber').val(i);
+			$('#cancelPicFlag').val(emailStarFlag);
+			
+			
+		}else {
+			//进行收藏
+			$(("#"+'emailStar'+i)).attr('data-target',"#myModalfavorite");
+			$('#picId').val(emailESId);
+			$('#picNumber').val(i);
+			$('#picFlag').val('0');
+		} 
+	}
+	//取消收藏
+	function cancelFavorite(){
+		var esid=$('#cancelPicId').val();
+		var i=$('#cancelPicNumber').val();
+		var flag=$('#cancelPicFlag').val();
+		doAddOrCancelFavorite(esid,flag,i,'');
+	}
+	//执行收藏
+	function addFavorite(){
+		var values=[];
+		$("input[name='ids_favo']:checked").each(function(){
+			values.push($(this).val());
+		});
+		if(values.length==0){
+			alert('请先选中类别');
+		}else{
+			var esid=$('#picId').val();
+			var i=$('#picNumber').val();
+			var flag=$('#picFlag').val();
+			doAddOrCancelFavorite(esid,flag,i,values.toString());
+		}
+	}
+	//取消或者收藏
+	function doAddOrCancelFavorite(esid,flag,i,values){
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>admin/favoEmail.php",
+			data : {
+				'esid':esid,
+				'flag':flag,
+				'emailLabel':values
+			},
+			dataType : "json",
+			async: true,
+			success : function(data) {
+				//进行收藏
+				if(flag==0){
+					var src="<%=basePath%>"+"template/img/star.png";
+					$(("#"+'emailStar'+i)).attr('src',src);
+					alert("收藏成功！");
+					document.getElementById("emaildetails8"+i+"").innerText=1;
+				}
+				//取消收藏
+				if(flag==1){
+					var src="<%=basePath%>"+"template/img/star2.png";
+					$(("#"+'emailStar'+i)).attr('src',src);
+					document.getElementById("emaildetails8"+i+"").innerText=0;
+				}
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+				/* alert('请求收藏失败'); */
+			}
+		})
+	}
+
+	window.onload = showAllLabelOfDoc();
+	//查询所有标签
+	function showAllLabelOfDoc(){
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>admin/showAllLabelOfDoc.php",
+			data : {
+//				"casenumorname":casenumorname
+			},
+			dataType : "json",
+			async: true,
+			success : function(data) {
+				$("#tbcontOfDoc").empty();
+				$("#tbcontOfDoc_div2").empty();
+				$("#tbcontOfDoc_div3").empty();
+				$("#tbcontOfDoc_div4").empty();
+				for(var i = data.length - 1; i >= 0;i--){  
+					if(i % 7 == 1) {
+						var html = '<span>'+
+							'<span class="td_left"><input id="caselist'+i+'" type="checkbox"  name="ids_favo" value="'+data[i].label+'" onclick="showChoose(this.id);" />'+
+								'<span class="span-1" id="">'+data[i].label+'</span>'+
+							'</span><br/>';
+							}
+						if(i % 7 == 2) {
+						var html = '<span>'+
+							'<span class="td_left"><input id="caselist'+i+'" type="checkbox"  name="ids_favo" value="'+data[i].label+'" onclick="showChoose(this.id);" />'+
+								'<span class="span-2" id="">'+data[i].label+'</span>'+
+							'</span><br/>';
+							}
+						if(i % 7 == 3) {
+						var html = '<span>'+
+							'<span class="td_left"><input id="caselist'+i+'" type="checkbox"  name="ids_favo" value="'+data[i].label+'" onclick="showChoose(this.id);" />'+
+								'<span class="span-3" id="">'+data[i].label+'</span>'+
+							'</span><br/>';
+							}
+						if(i % 7 == 4) {
+						var html = '<span>'+
+							'<span class="td_left"><input id="caselist'+i+'" type="checkbox"  name="ids_favo" value="'+data[i].label+'" onclick="showChoose(this.id);" />'+
+								'<span class="span-4" id="">'+data[i].label+'</span>'+
+							'</span><br/>';
+							}
+						if(i % 7 == 5) {
+						var html = '<span>'+
+							'<span class="td_left"><input id="caselist'+i+'" type="checkbox"  name="ids_favo" value="'+data[i].label+'" onclick="showChoose(this.id);" />'+
+								'<span class="span-5" id="">'+data[i].label+'</span>'+
+							'</span><br/>';
+							}
+						if(i % 7 == 6) {
+						var html = '<span>'+
+							'<span class="td_left"><input id="caselist'+i+'" type="checkbox"  name="ids_favo" value="'+data[i].label+'" onclick="showChoose(this.id);" />'+
+								'<span class="span-6" id="">'+data[i].label+'</span>'+
+							'</span><br/>';
+							}
+						if(i % 7 == 7) {
+						var html = '<span>'+
+							'<span class="td_left"><input id="caselist'+i+'" type="checkbox"  name="ids_favo" value="'+data[i].label+'" onclick="showChoose(this.id);" />'+
+								'<span class="span-7" id="">'+data[i].label+'</span>'+
+							'</span><br/>';
+							}
+						if(i % 7 == 0) {
+						var html = '<span>'+
+							'<span class="td_left"><input id="caselist'+i+'" type="checkbox"  name="ids_favo" value="'+data[i].label+'" onclick="showChoose(this.id);" />'+
+								'<span class="span-3" id="">'+data[i].label+'</span>'+
+							'</span><br/>';
+							}
+						$("#tbcontOfDoc").append(html);	
+						$("#tbcontOfDoc_div2").append(html);
+						$("#tbcontOfDoc_div3").append(html);
+						$("#tbcontOfDoc_div4").append(html);	
+				}
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+			}
+		});
+	 
+	}
+	</script>
+	
+	<!-- 弹出取消收藏框      div_1 -->
+	<div class="modal fade" id="cancelFavorite" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+						&times;
+					</button>
+					<h4 class="modal-title" >
+						取消收藏
+					</h4>
+				</div>
+				
+				<div class="modal-footer">
+					<span id="cancelPicId" style="display:none"></span>
+					<span id="cancelPicFlag" style="display:none"></span>
+					<span id="cancelPicNumber" style="display:none"></span>
+					<button type="button" class="btn btn-default" data-dismiss="modal" onclick="cancelFavorite()">确定</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal -->
+	</div>
+	<!-- 弹出框       选择标签 class="modal right fade"  tabindex="-1"  -->
+	<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="myModalfavorite" style="width: 100%; height: 100%; margin: auto;">
+				<div class="panel panel-default"
+					style="width: 50%; height: 80%; margin: 3% auto;">
+					<div class="panel-heading">邮件收藏 - 选择标签</div>
+					
+					<div class="panel-body" style="width: 100%; height: 100%;">
+						<div class="panel-body" style="width: 100%">
+							<label style="float:left;margin-top:7px;">新建标签：</label>
+							<input id="favoLabelNameOfEmail" name="favoLabelNameOfEmail" class="form-control" placeholder="请输入..." type="text" style="float:left; width: 60%;" />
+							<button type="button" class="btn btn-info" style="width: 70px; margin-left: 10px; height: 33px" onclick="addFavoLabelOfEmail()">添加</button>
+						</div>
+						<div class="panel-body" style="padding: 0 0 0 20px;overflow-y:auto;height:62%;border: 1px solid #EAEAEA;">
+							<span id="tbcontOfDoc" > 
+										
+							</span>
+						</div>
+						<span id="picId" style="display:none"></span>
+						<span id="picFlag" style="display:none"></span>
+						<span id="picNumber" style="display:none"></span>
+						<!-- data-dismiss="modal" -->
+						<button type='button' class="btn btn-info" style="width: 65px; height: 30px; margin-left: 39%; margin-top: 3%;"
+								data-dismiss="modal" onclick="addFavorite();" >确定</button>
+								 
+						<button type='button' class="btn btn-info" style="width: 65px; height: 30px; margin-left: 8px;margin-top: 3%;"
+								data-dismiss="modal">取消</button>
+					</div>
+				</div>
+	</div>
+	
+	<!-- 弹出取消收藏框      div_2 -->
+	<div class="modal fade" id="cancelFavorite_div2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" >取消收藏</h4>
+				</div>
+				
+				<div class="modal-footer">
+					<span id="cancelPicId_div2" style="display:none"></span>
+					<span id="cancelPicFlag_div2" style="display:none"></span>
+					<span id="cancelPicNumber_div2" style="display:none"></span>
+					<button type="button" class="btn btn-default" data-dismiss="modal" onclick="cancelFavorite_div2()">确定</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 弹出框       选择标签 class="modal right fade"  tabindex="-1"    _div2  -->
+	<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="myModalfavorite_div2"   
+				style="width: 100%; height: 100%; margin: auto;">
+				<div class="panel panel-default" style="width: 50%; height: 80%; margin: 3% auto;">
+					<div class="panel-heading">邮件收藏 -选择标签</div>
+					
+					<div class="panel-body" style="width: 100%; height: 100%;">
+						<div class="panel-body" style="width: 100%">
+						<label style="float:left;margin-top:7px;">新建标签：</label>
+						<input id="favoLabelNameOfEmail_div2" name="favoLabelNameOfEmail_div2" class="form-control" placeholder="请输入..." type="text" style="float:left; width: 60%;" />
+						<button type="button" class="btn btn-info" style="width: 70px; margin-left: 10px; height: 33px" onclick="addFavoLabelOfEmail_div2()">添加</button>
+						</div>
+						<div class="panel-body" style="padding: 0 0 0 20px;overflow-y:auto;height:62%;border: 1px solid #EAEAEA;">
+									<span id="tbcontOfDoc_div2" > 
+										
+								    </span>
+						</div>
+						<span id="picId_div2" style="display:none"></span>
+						<span id="picFlag_div2" style="display:none"></span>
+						<span id="picNumber_div2" style="display:none"></span>
+						<!-- data-dismiss="modal" -->
+						<button type='button' class="btn btn-info" style="width: 65px; height: 30px; margin-left: 39%; margin-top: 3%;"
+								data-dismiss="modal" onclick="addFavorite_div2();" >确定</button>
+								 
+						<button type='button' class="btn btn-info" style="width: 65px; height: 30px; margin-left: 8px;margin-top: 3%;"
+								data-dismiss="modal">取消</button>
+					</div>
+				</div>
+	</div>
+	
+	<!-- 弹出取消收藏框      div_3 -->
+	<div class="modal fade" id="cancelFavorite_div3" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" >取消收藏</h4>
+				</div>
+				
+				<div class="modal-footer">
+					<span id="cancelPicId_div3" style="display:none"></span>
+					<span id="cancelPicFlag_div3" style="display:none"></span>
+					<span id="cancelPicNumber_div3" style="display:none"></span>
+					<button type="button" class="btn btn-default" data-dismiss="modal" onclick="cancelFavorite_div3()">确定</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 弹出框       选择标签 class="modal right fade"  tabindex="-1"    _div3  -->
+	<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="myModalfavorite_div3"   
+				style="width: 100%; height: 100%; margin: auto;">
+				<div class="panel panel-default" style="width: 50%; height: 80%; margin: 3% auto;">
+					<div class="panel-heading">邮件收藏 -选择标签</div>
+					
+					<div class="panel-body" style="width: 100%; height: 100%;">
+						<div class="panel-body" style="width: 100%">
+						<label style="float:left;margin-top:7px;">新建标签：</label>
+						<input id="favoLabelNameOfEmail_div3" name="favoLabelNameOfEmail_div2" class="form-control" placeholder="请输入..." type="text" style="float:left; width: 60%;" />
+						<button type="button" class="btn btn-info" style="width: 70px; margin-left: 10px; height: 33px" onclick="addFavoLabelOfEmail_div3()">添加</button>
+						</div>
+						<div class="panel-body" style="padding: 0 0 0 20px;overflow-y:auto;height:62%;border: 1px solid #EAEAEA;">
+									<span id="tbcontOfDoc_div3" > 
+										
+								    </span>
+						</div>
+						<span id="picId_div3" style="display:none"></span>
+						<span id="picFlag_div3" style="display:none"></span>
+						<span id="picNumber_div3" style="display:none"></span>
+						<!-- data-dismiss="modal" -->
+						<button type='button' class="btn btn-info" style="width: 65px; height: 30px; margin-left: 39%; margin-top: 3%;"
+								data-dismiss="modal" onclick="addFavorite_div3();" >确定</button>
+								 
+						<button type='button' class="btn btn-info" style="width: 65px; height: 30px; margin-left: 8px;margin-top: 3%;"
+								data-dismiss="modal">取消</button>
+					</div>
+				</div>
+	</div>
+	<!-- 弹出取消收藏框      div_4 -->
+	<div class="modal fade" id="cancelFavorite_div4" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" >取消收藏</h4>
+				</div>
+				
+				<div class="modal-footer">
+					<span id="cancelPicId_div4" style="display:none"></span>
+					<span id="cancelPicFlag_div4" style="display:none"></span>
+					<span id="cancelPicNumber_div4" style="display:none"></span>
+					<button type="button" class="btn btn-default" data-dismiss="modal" onclick="cancelFavorite_div4()">确定</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 弹出框       选择标签 class="modal right fade"  tabindex="-1"    _div4  -->
+	<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="myModalfavorite_div4"   
+				style="width: 100%; height: 100%; margin: auto;">
+				<div class="panel panel-default" style="width: 50%; height: 80%; margin: 3% auto;">
+					<div class="panel-heading">邮件收藏 -选择标签</div>
+					
+					<div class="panel-body" style="width: 100%; height: 100%;">
+						<div class="panel-body" style="width: 100%">
+						<label style="float:left;margin-top:7px;">新建标签：</label>
+						<input id="favoLabelNameOfEmail_div4" name="favoLabelNameOfEmail_div4" class="form-control" placeholder="请输入..." type="text" style="float:left; width: 60%;" />
+						<button type="button" class="btn btn-info" style="width: 70px; margin-left: 10px; height: 33px" onclick="addFavoLabelOfEmail_div4()">添加</button>
+						</div>
+						<div class="panel-body" style="padding: 0 0 0 20px;overflow-y:auto;height:62%;border: 1px solid #EAEAEA;">
+									<span id="tbcontOfDoc_div4" > 
+										
+								    </span>
+						</div>
+						<span id="picId_div4" style="display:none"></span>
+						<span id="picFlag_div4" style="display:none"></span>
+						<span id="picNumber_div4" style="display:none"></span>
+						<!-- data-dismiss="modal" -->
+						<button type='button' class="btn btn-info" style="width: 65px; height: 30px; margin-left: 39%; margin-top: 3%;"
+								data-dismiss="modal" onclick="addFavorite_div4();" >确定</button>
+								 
+						<button type='button' class="btn btn-info" style="width: 65px; height: 30px; margin-left: 8px;margin-top: 3%;"
+								data-dismiss="modal">取消</button>
+					</div>
+				</div>
+	</div>
+	<script type="text/javascript">
+	function getdomain() {
+	var myChart = echarts.init(document.getElementById('main'));
+	// 指定图表的配置项和数据
+	var option = {
+		color : [ '#3398DB' ],
+		tooltip : {
+			trigger : 'axis',
+			axisPointer : { // 坐标轴指示器，坐标轴触发有效
+				type : 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+			}
+		},
+		grid : {
+			left : '3%',
+			right : '4%',
+			bottom : '3%',
+			containLabel : true
+		},
+		xAxis : [ {
+			type : 'category',
+			data : [ ],
+			axisTick : {
+				alignWithLabel : true
+			}
+		} ],
+		yAxis : [ {
+			type : 'value'
+		} ],
+		series : [ {
+			name : '命中次数',
+			type : 'bar',
+			barWidth : '40%',
+			data : [ ]
+		} ]
+	};
+	//异步加载数据
+ 	var startDate = $("#startDate_demain").val();
+	var endDate = $("#endDate_demain").val();
+	var dateTime = [];
+	var datesum = [];
+	$.ajax({
+		type : "POST",
+		url : "<%=basePath%>admin/getEmail_domain.php",
+		data : {
+			"caseidStr":caseidStr,
+			"startDate":startDate,
+			"endDate":endDate
+		},
+		dataType : "json",
+		async: true,
+		success : function(data) {
+			for(i = 0;i<data.beanStr.length;i++) {
+				for(i = 0;i<data.beanStr.length;i++) {
+                        if (i < 10) {
+                            dateTime.push(data.beanStr[i].type);
+                            datesum.push(data.beanStr[i].num);
+					}
+				}
+				myChart.setOption({
+                    xAxis: {
+                        data: dateTime
+                    },
+                    series: [
+                        {
+                            //根据名字对应到相应的系列
+                            name: "命中次数",
+                            data: datesum
+                        }
+                    ]
+                });
+			} 
+		},
+		error: function(XMLHttpRequest, textStatus, errorThrown) {
+			/* alert("失败"); */
+		}
+	});
+	myChart.setOption(option);
+	}
+	</script>
+	<script type="text/javascript">
+	// d2页面的js代码
+              //表格显示邮箱联系人分析数据
+              window.onload = show(1);
+            	function show(pageno){
+            		$.ajax({
+            			type : "POST",
+            			url : "<%=basePath%>admin/getEmail_Workbench.php",
+            			data : {
+            				"pageno":pageno
+            				
+            			},
+            			dataType : "json",
+            			async: true,
+            			success : function(data) {
+            				$("#tbcont3").empty();
+            				$.each(data,function(i,item){
+            					var str =item.formWho ;
+            					 var shou="";
+            					if(str.length>0){
+            						shou = str.substring(0,45) + "...";
+            					} 
+            					var html01 = '+<tr>'+
+					            				    '<td style="text-align: left">'+shou+'</td> '+
+					            					'<td style="text-align: right">'+item.emailNum+'</td>'+
+					            			 '</tr>+';
+            					$("#tbcont3").append(html01);	
+            				});
+            			},
+            			error: function(XMLHttpRequest, textStatus, errorThrown) {
+            				/* alert("失败"); */
+            			}
+            		});
+            	}
+            	function addresser(pageno){
+            		$.ajax({
+            			type : "POST",
+            			url : "<%=basePath%>admin/getEmail_Work.php",
+            			data : {
+            				"pageno":pageno
+            			},
+            			dataType : "json",
+            			async: true,
+            			success : function(data) {
+            				$("#tbcont4").empty();
+            				$.each(data,function(i,item){
+            					var str =item.toWho ;
+            					var substr1="";
+            					if(str.length>0){
+            						substr1 = str.substring(0,45) + "...";
+            					} 
+            					var html01 = '+<tr>'+
+            				     '<td style="text-align: left">'+substr1+'</td> '+
+            					'<td style="text-align: right">'+item.emailNum+'</td>'+
+            				    '</tr>+';
+            					$("#tbcont4").append(html01);	
+            				});
+            			},
+            			error: function(XMLHttpRequest, textStatus, errorThrown) {
+            				/* alert("失败"); */
+            			}
+            		});
+            	}
+	</script>
+	<script src="http://echarts.baidu.com/build/dist/echarts.js"></script>
+	<script type="text/javascript" src="<%=basePath%>template/js/echarts/echarts.min.js"></script>
+	<script type="text/javascript" src="<%=basePath%>template/js/echarts/echarts.js"></script>
+    <script type="text/javascript" src="<%=basePath%>template/js/echarts/dataTool.js"></script>
+	<!-- ----------------------------------------------------------------------------------------------------------
+	---------------------------------------------收发件分析邮件显示------------------------------------------------
+	----------------------------------------------------------------------------------------------------------- -->
+	<script>
+	var	email_d2=[];
+	//收发件时间精确分析
+	function showEmailDetil(){
+		var startDate = $("#startDate_d2").val();
+		var endDate = $("#endDate_d2").val();
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>admin/getEmail_Workbench.php",
+			data : {
+				"caseidStr":caseidStr,
+				"startDate" : startDate,
+				"endDate" : endDate
+			},
+			dataType : "json",
+			async: true,
+			success : function(data) {
+				$("#tbcont3").empty();
+				$.each(data,function(i,item){
+					var html01 = '+<tr>'+
+				     '<td style="text-align: left">'+item.formWho+'</td> '+
+					'<td style="text-align: right">'+item.emailNum+'</td>'+
+				    '</tr>+'
+					$("#tbcont3").append(html01);	
+				});
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+				/* alert("失败"); */
+			}
+		});
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>admin/getEmail_Work.php",
+			data : {
+				"caseidStr":caseidStr,
+				"startDate" : startDate,
+				"endDate" : endDate
+			},
+			dataType : "json",
+			async: true,
+			success : function(data) {
+				$("#tbcont4").empty();
+				$.each(data,function(i,item){
+					var html0 = '+<tr>'+
+				     '<td style="text-align: left">'+item.toWho+'</td> '+
+					'<td style="text-align: right">'+item.emailNum+'</td>'+
+				    '</tr>+'
+					$("#tbcont4").append(html0);	
+				});
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+				/* alert("失败"); */
+			}
+		});
+	}
+//邮件下载
+	function downloadEML_div2(){
+		var emlpath = document.getElementById("emailurl_div2").innerText;
+		$("#url_div2").attr("href","<%=basePath %>admin/downloadEML.php?emlpath="+emlpath);
+	} 
+	var read000_div2 = 0;
+	function showAllemail_div2(pageno,type){
+		$("#emailtou_div2").empty();
+		var sortType = $("#sortType_div2").val();
+		var emailKeyword = $("#emailKeyword_div2").val();
+		var startDate = $("#startDate_div2").val();
+		var endDate = $("#endDate_div2").val();
+		$("#email_div2").empty();
+		var html0 = '<table style="border-bottom: 1px solid #DDDDDD; width: 1600px; height: 90px;" >'+							'<tr>'+
+						'</tr>'+
+						'<tr>'+
+					'</tr>'+
+						'<tr>'+
+							'<td>正在搜索中...</td>'+
+						'</tr>'+
+					'</table>';
+		$("#email_div2").append(html0);	
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>emaiExcavatel/getEmailList.php",
+			data : {
+				"pageIndex":pageno,
+				"caseidStr":caseidStr,
+				"sortType":sortType,
+				"emailKeyword":emailKeyword,
+				"startDate": startDate,
+                "endDate": endDate,
+				"regexpQuery":""
+			},
+			dataType : "json",
+			async: true,
+			success : function(data) {
+			    var total = data.count;
+			    var read00 = data.read0;
+			    //分页开始
+			    var sizes=10;
+				var pagesum=total;
+				var pagenum = pagesum / sizes;
+				var length=5;  //要显示的分页页数
+
+				if(pagenum%1!=0){
+						pagenum=pagenum+(1-pagenum%1);
+				}
+				$("#pages_d5_div2").empty();
+				//用于删除之前显示的页数，动态添加时id名均设为order
+				for(var i=1;i<=length;i++)
+					  $("#orderA_5_div2").remove();
+				if(pagesum<sizes){
+					var html2 = '<li class="active" id="orderA_5_div2"><a href="#" onclick="showAllemail_div2(1)">1</a></li >';
+					$("#pages_d5_div2").after(html2);
+				}else{
+
+				if(pageno<pagenum){
+					if(pageno+length-1<=pagenum){
+						var html2="";
+						if(pageno-2>0){
+							for(var i =pageno-2;i<=pageno+length-1-2;i++){
+								if(i==pageno)
+									html2 += '<li class="active" id="orderA_5_div2"><a href="#" onclick="showAllemail_div2('+i+')">'+i+'</a></li >';
+									else
+										html2 += '<li id="orderA_5_div2"><a href="#" onclick="showAllemail_div2('+i+')">'+i+'</a></li >';
+						   				   }
+							}
+						else{
+							for(var i =1;i<=length;i++){
+								if(i==pageno)
+									html2 += '<li class="active" id="orderA_5_div2"><a href="#" onclick="showAllemail_div2('+i+')">'+i+'</a></li >';
+									else
+
+										html2 += '<li id="orderA_5_div2"><a href="#" onclick="showAllemail_div2('+i+')">'+i+'</a></li >';
+						   				   }
+						}
+					$("#pages_d5_div2").after(html2);
+
+					}/* if */
+					else{
+						var html2="";
+						if(pagenum>=length){
+						for(var i =pageno-(length-1-pagenum+pageno);i<=pagenum;i++){
+
+
+							 if(i==pageno)
+								html2 += '<li class="active" id="orderA_5_div2"><a href="#" onclick="showAllemail_div2('+i+')">'+i+'</a></li >';
+							else
+								html2 += '<li id="orderA_5_div2"><a href="#" onclick="showAllemail_div2('+i+')">'+i+'</a></li >';
+
+						   }
+						$("#pages_d5_div2").after(html2);
+						}
+						else{
+							for(var i =1;i<=pagenum;i++){
+								 if(i==pageno)
+									html2 += '<li class="active" id="orderA_5_div2"><a href="#" onclick="showAllemail_div2('+i+')">'+i+'</a></li >';
+								else
+									html2 += '<li id="orderA_5_div2"><a href="#" onclick="showAllemail_div2('+i+')">'+i+'</a></li >';
+							   }
+							$("#pages_d5_div2").after(html2);
+						}
+					}
+				}
+				else{
+					if(pageno==pagenum){
+						var html2="";
+						for(var i =pageno-length+1>0?pageno-length+1:1;i<=pagenum;i++){
+						if(i==pageno)
+							html2 += '<li class="active" id="orderA_5_div2"><a href="#" onclick="showAllemail_div2('+i+')">'+i+'</a></li >';
+						else
+							html2 += '<li id="orderA_5_div2"><a href="#" onclick="showAllemail_div2('+i+')">'+i+'</a></li >';
+					   }
+						$("#pages_d5_div2").after(html2);
+					}/* if */
+				}
+			}
+
+				$("#tot1_d5_div2").empty();
+				$("#pages1_d5_div2").empty();
+				$("#pages2_d5_div2").empty();
+				var html3 ='<span >共'+pagesum+'条，当前'+pageno+'/'+pagenum+'页</span>';
+				$("#tot1_d5_div2").append(html3);
+
+
+				var html5 = '<a href="#" onclick="showAllemail_div2('+pageno+'-1<1?1:'+pageno+'-1)"><</a>';
+				$("#pages1_d5_div2").append(html5);
+
+				var html4 = '<a href="#" onclick="showAllemail_div2('+pageno+'+1>'+pagenum+'?'+pagenum+':'+pageno+'+1)">></a>';
+				$("#pages2_d5_div2").append(html4);
+				//分页结束
+				
+				$("#email_div2").empty();
+
+				$("#emailtou_div2").empty();
+
+				var htmltou ='<tr>'+
+					'<th class="alcenter">收藏</th>'+
+					'<th class="alcenter">协同分析</th>'+
+					'<th class="alcenter">邮件主题</th>'+
+					'<th class="alcenter">发件人</th>'+
+					'<th class="alcenter">收件人</th>'+
+					'<th class="alcenter">发送日期</th>'+
+					'<th class="alcenter">附件</th>'+
+				'</tr>';
+
+				$("#emailtou_div2").append(htmltou);	
+		
+//				read0_div2=0;
+				read000_div2 = 0;
+				var sumi=0;
+				var emailDTOList = data.emailDTOList;
+				 $.each(emailDTOList,function(i,item){
+					var towho =item.toWho;//收件人
+					if(towho!=null){
+						var towhos = towho.split(";;");
+						var towhonum = towhos.length;
+						if(towhonum>1){
+							towho=towhos[0];
+						}
+					}
+					
+					var str =item.subject ;
+					var substr="";
+					if(str.length>25){
+						substr = str.substring(0,25) + "...";
+					}else{
+						substr=str;
+					}
+					var str =item.toWho ;
+					var substr1="";
+					if(str.length>35){
+						substr1 = str.substring(0,35) + "...";
+					}else{
+						substr1=str;
+					}
+					var str =item.fromWho ;
+					var sub="";
+					if(str.length>45){
+						sub = str.substring(0,45) + "...";
+					}else{
+						sub=str;
+					}
+					var fujian =item.attachmentname;
+					var fuj ="";
+					//有附件显示
+					if(fujian.length>0){
+						fuj ='src="<%=basePath%>template/img/fujian.png"';
+					}
+					var star;
+					var star2=item.star;
+					if(star2==0){
+						star="star2";
+					}if(star2==1){
+						star="star";
+					}
+					var read;
+					var read2=item.read;
+					if(read2==0){
+						read="read";
+						var subjectStyle = '<td id ="emailboldSubject_div2' + i + '" data-toggle="modal" data-target="#myModals_div2" onclick="showdetails_div2(' + i + ')" style="text-align:left; vertical-align:middle;font-weight:bold;">' + substr + '</td>';
+//						read0_div2=read0_div2+1;
+					}if(read2==1){
+						read="unread";
+                        var subjectStyle = '<td id ="emailboldSubject_div2' + i + '" data-toggle="modal" data-target="#myModals_div2" onclick="showdetails_div2(' + i + ')" style="text-align:left; vertical-align:middle;">' + substr + '</td>';
+
+					}
+					
+					var html =  '<tr>'+
+									'<td style="text-align:left; vertical-align: middle;"><img id ="emailStar_div2'+i+'" data-target="#myModalfavorite_div2" data-toggle="modal" onclick="upemailstar_div2('+i+')" src="<%=basePath%>template/img/'+star+'.png"/></td>'+
+									'<td id ="emailbold_div2'+i+'" data-toggle="modal" data-target="#myModals_div2" onclick="showdetails_div2('+i+')" style="text-align:left; vertical-align: middle;"><img id ="read_div2'+i+'" src="<%=basePath%>template/img/'+read+'.png" /></td>'+
+			                        subjectStyle +
+									'<td id ="emailbold_div2'+i+'" data-toggle="modal" data-target="#myModals_div2" onclick="showdetails_div2('+i+')" style="text-align:left; vertical-align: middle;">'+sub+'</td>'+
+									'<td id ="emailbold_div2'+i+'" data-toggle="modal" data-target="#myModals_div2" onclick="showdetails_div2('+i+')" style="text-align:left; vertical-align: middle;">'+substr1+'</td>'+
+									'<td id ="emailbold_div2'+i+'" data-toggle="modal" data-target="#myModals_div2" onclick="showdetails_div2('+i+')" style="text-align:left; vertical-align:middle;">'+item.date+'</td>'+
+									'<td id ="emailbold_div2'+i+'" data-toggle="modal" data-target="#myModals_div2" onclick="showdetails_div2('+i+')" style="text-align:left; vertical-align:middle;"><img id = "fujian_div2'+i+'" '+fuj+' />'+
+									
+									'<span id="emaildetails0_div2'+i+'" style=" display:none;">' + item.esID + '</span>' +
+									'<span id="emaildetails1_div2'+i+'" style=" display:none;">'+item.subject+'</span>'+
+									'<span id="emaildetails2_div2'+i+'" style=" display:none;">'+item.toWho+'</span>'+
+									'<span id="emaildetails3_div2'+i+'" style=" display:none;">'+item.fromWho+'</span>'+
+									'<span id="emaildetails4_div2'+i+'" style=" display:none;">'+item.date+'</span>'+
+									'<div id="emaildetails5_div2'+i+'" style=" display:none;">'+item.content+'</div>'+
+									'<span id="emaildetails6_div2'+i+'" style=" display:none;">'+item.downloadUrl+'</span>'+
+									'<span id="emaildetails7_div2'+i+'" style=" display:none;">'+item.read+'</span>'+
+									'<span id="emaildetails8_div2'+i+'" style=" display:none;">'+item.star+'</span>'+
+									'<span id="emaildetails9_div2'+i+'" style=" display:none;">'+item.attachmentname+'</span>'+
+									'</td>'+
+								'</tr>';
+							
+					$("#email_div2").append(html);	
+					email_d2.push[item.esID];
+					sumi=i+1;
+				 }); 
+				 read000_div2 = read00;
+				 $("#emailnum_div2").html("/全部"+total+"封");
+			     /* $("#emailsumnum_div2").html("共搜索到"+sumi+"个结果"); */
+			     $("#emailsumnum_div2").html("共搜索到" + total + "个结果");
+				 $("#email0_div2").html("未读"+read000_div2+"封");
+				 if(sumi==0){
+					 
+					 $("#email_div2").empty();
+					 $("#emailtou_div2").empty();
+						var html01 = '<table style="border-bottom: 1px solid #DDDDDD; width: 1600px; height: 90px;" >'+
+											'<tr>'+
+										'</tr>'+
+										'<tr>'+
+									'</tr>'+
+										'<tr>'+
+											'<td>未找到相关内容</td>'+
+										'</tr>'+
+									'</table>';
+						$("#email_div2").append(html01);	
+				 }
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+				/* alert("失败"); */
+			}
+		});
+	} 
+	
+	//点击邮件显示详情
+	function showdetails_div2(i){
+		var esId = $("#emaildetails0_div2"+i+"").html();
+		var emailsubject = $("#emaildetails1_div2"+i+"").html();//document.getElementById("emaildetails1"+i+"").innerHTML;
+		var emailtoWho = $("#emaildetails2_div2"+i+"").html();
+		var emailfromWho = $("#emaildetails3_div2"+i+"").html();
+		var emaildate = $("#emaildetails4_div2"+i+"").html();
+		var emailcontent = $("#emaildetails5_div2"+i+"").html();
+		var emlpath = $("#emaildetails6_div2"+i+"").html();
+		var read = $("#emaildetails7_div2"+i+"").html();
+		var star = $("#emaildetails8_div2"+i+"").html();
+		
+		$("#stari_div2").html(i);
+		$("#esId_div2").html(esId);
+		$("#emailsubject_div2").html("邮件标题 : "+emailsubject);
+		$("#emailtoWho_div2").html("发件人 : "+emailtoWho);
+		$("#emailfromWho_div2").html("收件人 : "+emailfromWho);
+		$("#emaildate_div2").html(emaildate);
+		$("#emailcontent_div2").html(emailcontent);
+		$("#emailurl_div2").html(emlpath);	
+		$("#emailstar_div2").html(star);
+		var star2;
+		if(star==0){
+			star2="star2";
+		}if(star==1){
+			star2="star";
+		}
+		var read2;
+		if(read==0){
+			read2="unread";
+		}if(star==1){
+			read2="read";
+		}
+		<%-- document.getElementById("stars_div4").src = "<%=basePath%>template/img/"+star2+".png"; --%>
+		//判断邮件是否已读
+		if(read==0){
+			//未读数-1
+			read000_div2=read000_div2-1;
+			//改变图标
+			document.getElementById("read_div2"+i).src = "<%=basePath%>template/img/unread.png";
+			//修改未读数
+			$("#email0_div2").html("未读"+read000_div2+"封");
+			//修改主题显示
+			$("#emailboldSubject_div2"+i).css("font-weight","");
+			//修改邮件状态
+			upemailstatus_div2(1,esId);
+		}
+	}
+	function exportMail_d2() {
+		$("#urlMail_d2").attr("href","<%=basePath %>ExportMail.php");
+	}
+
+	//修改邮件状态 
+	function upemailstatus_div2(read,esId){
+		var read2="";
+		if(read==0){
+			read2=1;
+		}if(read==1){
+			read2=0;
+		}
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>emaiExcavatel/upEmailStatus.php",
+			data : {
+				"star":"",
+				"esId":esId,
+				"read":read
+			},
+			dataType : "json",
+			async: true,
+			success : function(data) {
+				if(read==0){ 
+					document.getElementById("emailstar_div2").innerText=1;
+				}
+				if(read==1){
+					document.getElementById("emailstar_div2").innerText=0;
+				}
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+				/* alert("失败!"); */
+			}
+		});	
+	} 
+	</script>
+	<!-- ----------------------------------------------------------------------------------------------------------
+	---------------------------------------------联系人分析邮件显示------------------------------------------------
+	----------------------------------------------------------------------------------------------------------- -->
+	<script>
+	//邮件下载
+	function downloadEML_div3(){
+		var emlpath = document.getElementById("emailurl_div3").innerText;
+		$("#url_div3").attr("href","<%=basePath %>admin/downloadEML.php?emlpath="+emlpath);
+	} 
+	
+	var read000_div3 = 0;
+	function showAllemail_div3(pageno,type){
+		$("#emailtou_div3").empty();
+		var startDate = $("#startDate_d3").val();
+		var endDate = $("#endDate_d3").val();
+		var emailKeyword = $("#key_d3").val();
+		var sortType = $("#sortType_div3").val();
+		$("#email_div3").empty();
+		var html0 = '<table style="border-bottom: 1px solid #DDDDDD; width: 1600px; height: 90px;" >'+							'<tr>'+
+						'</tr>'+
+						'<tr>'+
+					'</tr>'+
+						'<tr>'+
+							'<td>正在搜索中...</td>'+
+						'</tr>'+
+					'</table>';
+		$("#email_div3").append(html0);	
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>emaiExcavatel/getEmailList.php",
+			data : {
+				"pageIndex":pageno,
+				"caseidStr":caseidStr,
+				"sortType":sortType,
+				"emailKeyword":emailKeyword,
+				"startDate":startDate,
+				"endDate":endDate,
+				"regexpQuery":""
+			},
+			dataType : "json",
+			async: true,
+			success : function(data) {
+			    var total = data.count;
+                var read00 = data.read0;
+			    //分页开始
+			    var sizes=10;
+				var pagesum=total;
+				var pagenum = pagesum / sizes;
+				var length=5;  //要显示的分页页数
+
+				if(pagenum%1!=0){
+						pagenum=pagenum+(1-pagenum%1);
+				}
+				$("#pages_d5_div3").empty();
+				//用于删除之前显示的页数，动态添加时id名均设为order
+				for(var i=1;i<=length;i++)
+					  $("#orderA_5_div3").remove();
+				if(pagesum<sizes){
+					var html2 = '<li class="active" id="orderA_5_div3"><a href="#" onclick="showAllemail_div3(1)">1</a></li >';
+					$("#pages_d5_div3").after(html2);
+				}else{
+				if(pageno<pagenum){
+					if(pageno+length-1<=pagenum){
+						var html2="";
+						if(pageno-2>0){
+							for(var i =pageno-2;i<=pageno+length-1-2;i++){
+								if(i==pageno)
+									html2 += '<li class="active" id="orderA_5_div3"><a href="#" onclick="showAllemail_div3('+i+')">'+i+'</a></li >';
+									else
+										html2 += '<li id="orderA_5_div3"><a href="#" onclick="showAllemail_div3('+i+')">'+i+'</a></li >';
+						   				   }
+							}
+						else{
+							for(var i =1;i<=length;i++){
+								if(i==pageno)
+									html2 += '<li class="active" id="orderA_5_div3"><a href="#" onclick="showAllemail_div3('+i+')">'+i+'</a></li >';
+									else
+
+										html2 += '<li id="orderA_5_div3"><a href="#" onclick="showAllemail_div3('+i+')">'+i+'</a></li >';
+						   				   }
+						}
+					$("#pages_d5_div3").after(html2);
+					}
+					else{
+						var html2="";
+						if(pagenum>=length){
+						for(var i =pageno-(length-1-pagenum+pageno);i<=pagenum;i++){
+							if(i==pageno)
+								html2 += '<li class="active" id="orderA_5_div3"><a href="#" onclick="showAllemail_div3('+i+')">'+i+'</a></li >';
+							else
+								html2 += '<li id="orderA_5_div3"><a href="#" onclick="showAllemail_div3('+i+')">'+i+'</a></li >';
+						   }
+						$("#pages_d5_div3").after(html2);
+						}
+						else{
+							for(var i =1;i<=pagenum;i++){
+								 if(i==pageno)
+									html2 += '<li class="active" id="orderA_5_div3"><a href="#" onclick="showAllemail_div3('+i+')">'+i+'</a></li >';
+								else
+									html2 += '<li id="orderA_5_div3"><a href="#" onclick="showAllemail_div3('+i+')">'+i+'</a></li >';
+							   }
+							$("#pages_d5_div3").after(html2);
+						}
+					}
+				}
+				else{
+					if(pageno==pagenum){
+						var html2="";
+						for(var i =pageno-length+1>0?pageno-length+1:1;i<=pagenum;i++){
+						 if(i==pageno)
+							html2 += '<li class="active" id="orderA_5_div3"><a href="#" onclick="showAllemail_div3('+i+')">'+i+'</a></li >';
+						else
+							html2 += '<li id="orderA_5_div3"><a href="#" onclick="showAllemail_div3('+i+')">'+i+'</a></li >';
+					   }
+						$("#pages_d5_div3").after(html2);
+					}
+				}
+			}
+				$("#tot1_d5_div3").empty();
+				$("#pages1_d5_div3").empty();
+				$("#pages2_d5_div3").empty();
+				var html3 ='<span >共'+pagesum+'条，当前'+pageno+'/'+pagenum+'页</span>';
+				$("#tot1_d5_div3").append(html3);
+
+				var html5 = '<a href="#" onclick="showAllemail_div3('+pageno+'-1<1?1:'+pageno+'-1)"><</a>';
+				$("#pages1_d5_div3").append(html5);
+
+				var html4 = '<a href="#" onclick="showAllemail_div3('+pageno+'+1>'+pagenum+'?'+pagenum+':'+pageno+'+1)">></a>';
+				$("#pages2_d5_div3").append(html4);
+				//分页结束
+				
+				$("#email_div3").empty();
+				$("#emailtou_div3").empty();
+				var htmltou ='<tr>'+
+									'<th class="alcenter">收藏</th>'+
+									'<th class="alcenter">协同分析</th>'+
+									'<th class="alcenter">邮件主题</th>'+
+									'<th class="alcenter">发件人</th>'+
+									'<th class="alcenter">收件人</th>'+
+									'<th class="alcenter">发送日期</th>'+
+									'<th class="alcenter">附件</th>'+
+							'</tr>';
+				$("#emailtou_div3").append(htmltou);	
+				read0_div4 = 0;
+				var sumi=0;
+				var emailDTOList = data.emailDTOList;
+				 $.each(emailDTOList,function(i,item){
+					var towho =item.toWho;//收件人
+					if(towho!=null){
+						var towhos = towho.split(";;");
+						var towhonum = towhos.length;
+						if(towhonum>1){
+							towho=towhos[0];
+						}
+					}
+					
+					var str =item.subject ;
+					var substr="";
+					if(str.length>25){
+						substr = str.substring(0,25) + "...";
+					}else{
+						substr=str;
+					}
+					var str =item.toWho ;
+					var substr1="";
+					if(str.length>35){
+						substr1 = str.substring(0,35) + "...";
+					}else{
+						substr1=str;
+					}
+					var str =item.fromWho ;
+					var sub="";
+					if(str.length>45){
+						sub = str.substring(0,45) + "...";
+					}else{
+						sub=str;
+					}
+					var fujian =item.attachmentname;
+					var fuj ="";
+					//有附件显示
+					if(fujian.length>0){
+						fuj ='src="<%=basePath%>template/img/fujian.png"';
+					}
+					var star;
+					var star2=item.star;
+					if(star2==0){
+						star="star2";
+					}if(star2==1){
+						star="star";
+					}
+					var read;
+					var read2=item.read;
+					if(read2==0){
+						read="read";
+//						read0_div3=read0_div3+1;
+                        var subjectStyle = '<td id ="emailboldSubject_div3' + i + '" data-toggle="modal" data-target="#myModals_div3" onclick="showdetails_div3(' + i + ')" style="text-align:left; vertical-align:middle;font-weight:bold;">' + substr + '</td>';
+
+					}if(read2==1){
+						read="unread";
+                        var subjectStyle = '<td id ="emailboldSubject_div3' + i + '" data-toggle="modal" data-target="#myModals_div3" onclick="showdetails_div3(' + i + ')" style="text-align:left; vertical-align:middle;">' + substr + '</td>';
+
+					}
+					
+					var html =  '<tr>'+
+									'<td style="text-align:left;  vertical-align: middle;"><img id ="emailStar_div3'+i+'" data-target="#myModalfavorite_div3" data-toggle="modal" onclick="upemailstar_div3('+i+')" src="<%=basePath%>template/img/'+star+'.png"/></td>'+
+									'<td id ="emailbold_div3'+i+'" data-toggle="modal" data-target="#myModals_div3" onclick="showdetails_div3('+i+')" style="text-align:left; vertical-align: middle;"><img id ="read_div3'+i+'" src="<%=basePath%>template/img/'+read+'.png" /></td>'+
+			                        subjectStyle +
+									'<td id ="emailbold_div3'+i+'" data-toggle="modal" data-target="#myModals_div3" onclick="showdetails_div3('+i+')" style="text-align:left; vertical-align: middle;">'+sub+'</td>'+
+									'<td id ="emailbold_div3'+i+'" data-toggle="modal" data-target="#myModals_div3" onclick="showdetails_div3('+i+')" style="text-align:left; vertical-align: middle;">'+substr1+'</td>'+
+									'<td id ="emailbold_div3'+i+'" data-toggle="modal" data-target="#myModals_div3" onclick="showdetails_div3('+i+')" style="text-align:left; vertical-align:middle;">'+item.date+'</td>'+
+									'<td id ="emailbold_div3'+i+'" data-toggle="modal" data-target="#myModals_div3" onclick="showdetails_div3('+i+')" style="text-align:left; vertical-align:middle;"><img id = "fujian_div3'+i+'" '+fuj+' />'+
+									
+									'<span id="emaildetails0_div3' + i + '" style=" display:none;">' + item.esID + '</span>' +
+									'<span id="emaildetails1_div3'+i+'" style=" display:none;">'+item.subject+'</span>'+
+									'<span id="emaildetails2_div3'+i+'" style=" display:none;">'+item.toWho+'</span>'+
+									'<span id="emaildetails3_div3'+i+'" style=" display:none;">'+item.fromWho+'</span>'+
+									'<span id="emaildetails4_div3'+i+'" style=" display:none;">'+item.date+'</span>'+
+									'<div id="emaildetails5_div3'+i+'" style=" display:none;">'+item.content+'</div>'+
+									'<span id="emaildetails6_div3'+i+'" style=" display:none;">'+item.downloadUrl+'</span>'+
+									'<span id="emaildetails7_div3'+i+'" style=" display:none;">'+item.read+'</span>'+
+									'<span id="emaildetails8_div3'+i+'" style=" display:none;">'+item.star+'</span>'+
+									'<span id="emaildetails9_div3'+i+'" style=" display:none;">'+item.attachmentname+'</span>'+
+									'</td>'+
+								'</tr>';
+					$("#email_div3").append(html);	
+					email_d2.push[item.esID];
+					sumi=i+1;
+				 }); 
+				 read000_div3 = read00;
+				 $("#emailnum_div3").html("/全部"+total+"封");
+			     /* $("#emailsumnum_div3").html("共搜索到"+sumi+"个结果"); */
+			     $("#emailsumnum_div3").html("共搜索到" + total + "个结果");
+				 $("#email0_div3").html("未读"+read000_div3+"封");
+				 if(sumi==0){
+					 
+					 $("#email_div3").empty();
+					 $("#emailtou_div3").empty();
+						var html01 = '<table style="border-bottom: 1px solid #DDDDDD; width: 1600px; height: 90px;" >'+
+											'<tr>'+
+										'</tr>'+
+										'<tr>'+
+									'</tr>'+
+										'<tr>'+
+											'<td>未找到相关内容</td>'+
+										'</tr>'+
+									'</table>';
+						$("#email_div3").append(html01);	
+				 }
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+				/* alert("失败"); */
+			}
+		});
+	} 
+	
+	//点击邮件显示详情
+	function showdetails_div3(i){
+		var esId = $("#emaildetails0_div3"+i+"").html();
+		var emailsubject = $("#emaildetails1_div3"+i+"").html();//document.getElementById("emaildetails1"+i+"").innerHTML;
+		var emailtoWho = $("#emaildetails2_div3"+i+"").html();
+		var emailfromWho = $("#emaildetails3_div3"+i+"").html();
+		var emaildate = $("#emaildetails4_div3"+i+"").html();
+		var emailcontent = $("#emaildetails5_div3"+i+"").html();
+		var emlpath = $("#emaildetails6_div3"+i+"").html();
+		var read = $("#emaildetails7_div3"+i+"").html();
+		var star = $("#emaildetails8_div3"+i+"").html();
+		
+		$("#stari_div3").html(i);
+		$("#esId_div3").html(esId);
+		$("#emailsubject_div3").html("邮件标题 : "+emailsubject);
+		$("#emailtoWho_div3").html("发件人 : "+emailtoWho);
+		$("#emailfromWho_div3").html("收件人 : "+emailfromWho);
+		$("#emaildate_div3").html(emaildate);
+		$("#emailcontent_div3").html(emailcontent);
+		$("#emailurl_div3").html(emlpath);	
+		$("#emailstar_div3").html(star);
+		
+		var read2;
+		if(read==0){
+			read2="unread";
+		}if(star==1){
+			read2="read";
+		}
+		//判断邮件是否已读
+		if(read==0){
+			//未读数-1
+			read000_div3=read000_div3-1;
+			//改变图标
+			document.getElementById("read_div3"+i).src = "<%=basePath%>template/img/unread.png";
+			//修改未读数
+			$("#email0_div3").html("未读"+read000_div3+"封");
+			//修改主题显示
+			$("#emailboldSubject_div3"+i).css("font-weight","");
+			//修改邮件状态
+			upemailstatus_div3(1,esId);
+		}
+	}
+	
+	function exportMail_d2() {
+		$("#urlMail_d2").attr("href","<%=basePath %>ExportMail.php");
+	}
+	//修改邮件状态 
+	function upemailstatus_div3(read,esId){
+		var read2="";
+		if(read==0){
+			read2=1;
+		}if(read==1){
+			read2=0;
+		}
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>emaiExcavatel/upEmailStatus.php",
+			data : {
+				"star":"",
+				"esId":esId,
+				"read":read
+			},
+			dataType : "json",
+			async: true,
+			success : function(data) {
+				if(read==0){ 
+					document.getElementById("emailstar_div3").innerText=1;
+				}
+				if(read==1){
+					document.getElementById("emailstar_div3").innerText=0;
+				}
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+				/* alert("失败!"); */
+			}
+		});	
+	} 
+	
+	</script>
+	<script>
+	window.onload=showEmail();
+	function showEmail(){
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>admin/searchEmail.php",
+			data : {
+				"caseid":caseid
+			},
+			dataType : "json",
+			async: true,
+			success : function(data) {
+				var caseid=data.caseid;
+			},
+		});
+	} 
+	</script>
+	<!-- div4域名分析的邮件展示 -->
+	<script>
+	//邮件下载
+	function downloadEML_div4(){
+		var emlpath = document.getElementById("emailurl_div4").innerText;
+		$("#url_div4").attr("href","<%=basePath %>admin/downloadEML.php?emlpath="+emlpath);
+	} 
+	//搜索邮件list
+	var read000_div4 = 0;
+	function showAllemail_div4(pageno,type){
+		$("#emailtou_div4").empty();
+		var sortType = $("#sortType_div4").val();
+		var emailKeyword = $("#emailKeyword_div4").val();
+		var startDate = $("#startDate").val();
+		var endDate = $("#endDate").val();
+		$("#email_div4").empty();
+		var html0 = '<table style="border-bottom: 1px solid #DDDDDD; width: 1600px; height: 90px;" >'+	
+					'<tr>'+
+						'</tr>'+
+						'<tr>'+
+					'</tr>'+
+						'<tr>'+
+							'<td>正在搜索中...</td>'+
+						'</tr>'+
+					'</table>';
+		$("#email_div4").append(html0);	
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>emaiExcavatel/getEmailList.php",
+			data : {
+				"pageIndex":pageno,
+				"caseidStr":caseidStr,
+				"sortType":sortType,
+				"emailKeyword":emailKeyword,
+				"startDate":startDate,
+				"endDate":endDate,
+				"regexpQuery":type
+			},
+			dataType : "json",
+			async: true,
+			success : function(data) {
+			    var total = data.count;
+			    var read00=data.read0;
+			    //分页开始
+			    var sizes=10;
+				var pagesum=total;
+				var pagenum = pagesum / sizes;
+				var length=5;  //要显示的分页页数
+
+				if(pagenum%1!=0){
+						pagenum=pagenum+(1-pagenum%1);
+				}
+				$("#pages_d5_div4").empty();
+				//用于删除之前显示的页数，动态添加时id名均设为order
+				for(var i=1;i<=length;i++)
+					  $("#orderA_5_div4").remove();
+				if(pagesum<sizes){
+					var html2 = '<li class="active" id="orderA_5_div4"><a href="javascript:void(0)" onclick="showAllemail_div4(1)">1</a></li >';
+					$("#pages_d5_div4").after(html2);
+				}else{
+
+				if(pageno<pagenum){
+					if(pageno+length-1<=pagenum){
+						var html2="";
+						if(pageno-2>0){
+							for(var i =pageno-2;i<=pageno+length-1-2;i++){
+								if(i==pageno)
+									html2 += '<li class="active" id="orderA_5_div4"><a href="javascript:void(0)" onclick="showAllemail_div4('+i+')">'+i+'</a></li >';
+									else
+										html2 += '<li id="orderA_5_div4"><a href="javascript:void(0)" onclick="showAllemail_div4('+i+')">'+i+'</a></li >';
+						   				   }
+							}
+						else{
+							for(var i =1;i<=length;i++){
+								if(i==pageno)
+									html2 += '<li class="active" id="orderA_5_div4"><a href="javascript:void(0)" onclick="showAllemail_div4('+i+')">'+i+'</a></li >';
+									else
+
+										html2 += '<li id="orderA_5_div4"><a href="javascript:void(0)" onclick="showAllemail_div4('+i+')">'+i+'</a></li >';
+						   				   }
+						}
+					$("#pages_d5_div4").after(html2);
+					}
+					else{
+						var html2="";
+						if(pagenum>=length){
+						for(var i =pageno-(length-1-pagenum+pageno);i<=pagenum;i++){
+
+
+							 if(i==pageno)
+								html2 += '<li class="active" id="orderA_5_div4"><a href="javascript:void(0)" onclick="showAllemail_div4('+i+')">'+i+'</a></li >';
+							else
+								html2 += '<li id="orderA_5_div4"><a href="javascript:void(0)" onclick="showAllemail_div4('+i+')">'+i+'</a></li >';
+						   }
+						$("#pages_d5_div4").after(html2);
+						}
+						else{
+							for(var i =1;i<=pagenum;i++){
+								 if(i==pageno)
+									html2 += '<li class="active" id="orderA_5_div4"><a href="javascript:void(0)" onclick="showAllemail_div4('+i+')">'+i+'</a></li >';
+								else
+									html2 += '<li id="orderA_5_div4"><a href="javascript:void(0)" onclick="showAllemail_div4('+i+')">'+i+'</a></li >';
+							   }
+							$("#pages_d5_div4").after(html2);
+						}
+					}
+				}
+				else{
+					if(pageno==pagenum){
+						var html2="";
+						for(var i =pageno-length+1>0?pageno-length+1:1;i<=pagenum;i++){
+						 if(i==pageno)
+							html2 += '<li class="active" id="orderA_5_div4"><a href="javascript:void(0)" onclick="showAllemail_div4('+i+')">'+i+'</a></li >';
+						else
+							html2 += '<li id="orderA_5_div4"><a href="javascript:void(0)" onclick="showAllemail_div4('+i+')">'+i+'</a></li >';
+					   }
+						$("#pages_d5_div4").after(html2);
+					}
+				}
+			}
+
+				$("#tot1_d5_div4").empty();
+				$("#pages1_d5_div4").empty();
+				$("#pages2_d5_div4").empty();
+				var html3 ='<span >共'+pagesum+'条，当前'+pageno+'/'+pagenum+'页</span>';
+				$("#tot1_d5_div4").append(html3);
+
+				var html5 = '<a href="javascript:void(0)" onclick="showAllemail_div4('+pageno+'-1<1?1:'+pageno+'-1)"><</a>';
+				$("#pages1_d5_div4").append(html5);
+				var html4 = '<a href="javascript:void(0)" onclick="showAllemail_div4('+pageno+'+1>'+pagenum+'?'+pagenum+':'+pageno+'+1)">></a>';
+				$("#pages2_d5_div4").append(html4);
+				//分页结束
+					
+				$("#email_div4").empty();
+				$("#emailtou_div4").empty();
+				var htmltou ='<tr>'+
+								'<th class="alcenter">收藏</th>'+
+								'<th class="alcenter">协同分析</th>'+
+								'<th class="alcenter">邮件主题</th>'+
+								'<th class="alcenter">发件人</th>'+
+								'<th class="alcenter">收件人</th>'+
+								'<th class="alcenter">IP</th>'+
+								'<th class="alcenter">发送日期</th>'+
+								'<th class="alcenter">附件</th>'+
+							'</tr>';
+				$("#emailtou_div4").append(htmltou);	
+
+				read000_div4=0;
+				var sumi=0;
+				var emailDTOList = data.emailDTOList;
+				 $.each(emailDTOList,function(i,item){
+					var towho =item.toWho;//收件人
+					if(towho!=null){
+						var towhos = towho.split(";;");
+						var towhonum = towhos.length;
+						if(towhonum>1){
+							towho=towhos[0];
+						}
+					}
+					
+					var str =item.subject ;
+					var substr="";
+					if(str.length>25){
+						substr = str.substring(0,25) + "...";
+					}else{
+						substr=str;
+					}
+					var str =item.fromWho ;
+					var substr2="";
+					if(str.length>35){
+						substr2 = str.substring(0,35) + "...";
+					}else{
+						substr2=str;
+					}
+					var str =item.toWho ;
+					var substr1="";
+					if(str.length>45){
+						substr1 = str.substring(0,45) + "...";
+					}else{
+						substr1=str;
+					}
+					var fujian =item.attachmentname;
+					var fuj ="";
+					//有附件显示
+					if(fujian.length>0){
+						fuj ='src="<%=basePath%>template/img/fujian.png"';
+					}
+					var star;
+					var star2=item.star;
+					if(star2==0){
+						star="star2";
+					}if(star2==1){
+						star="star";
+					}
+					var read;
+					var read2=item.read;
+					if(read2==0){
+						read="read";
+						var subjectStyle = '<td id ="emailboldSubject_div4'+i+'" data-toggle="modal" data-target="#myModals_div4" onclick="showdetails_div4('+i+')" style="text-align:left; vertical-align:middle;font-weight:bold;">'+substr+'</td>';
+					}if(read2==1){
+						read="unread";
+						var subjectStyle = '<td id ="emailboldSubject_div4'+i+'" data-toggle="modal" data-target="#myModals_div4" onclick="showdetails_div4('+i+')" style="text-align:left; vertical-align:middle;">'+substr+'</td>';
+					}
+					var html =  '<tr>'+
+									'<td style="text-align:left;  vertical-align: middle;"><img id ="emailStar_div4'+i+'" data-target="#myModalfavorite_div4" data-toggle="modal" onclick="upemailstar_div4('+i+')" src="<%=basePath%>template/img/'+star+'.png"/></td>'+
+									'<td id ="emailbold_div4'+i+'" data-toggle="modal" data-target="#myModals_div4" onclick="showdetails_div4('+i+')" style="text-align:left; vertical-align: middle;"><img id = "read_div4'+i+'" src="<%=basePath%>template/img/'+read+'.png" /></td>'+
+									subjectStyle+
+									'<td id ="emailbold_div4'+i+'" data-toggle="modal" data-target="#myModals_div4" onclick="showdetails_div4('+i+')" style="text-align:left; vertical-align: middle;">'+substr2+'</td>'+
+									'<td id ="emailbold_div4'+i+'" data-toggle="modal" data-target="#myModals_div4" onclick="showdetails_div4('+i+')" style="text-align:left; vertical-align: middle;">'+substr1+'</td>'+
+									'<td id ="emailbold_div4'+i+'" data-toggle="modal" data-target="#myModals_div4" onclick="showdetails_div4('+i+')" style="text-align:left; vertical-align: middle;">'+item.ip+'</td>'+
+									'<td id ="emailbold_div4'+i+'" data-toggle="modal" data-target="#myModals_div4" onclick="showdetails_div4('+i+')" style="text-align:left; vertical-align:middle;">'+item.date+'</td>'+
+									'<td id ="emailbold_div4'+i+'" data-toggle="modal" data-target="#myModals_div4" onclick="showdetails_div4('+i+')" style="text-align:left; vertical-align:middle;"><img id = "fujian_div4'+i+'" '+fuj+' />'+
+									
+									'<div id="emaildetails0_div4'+i+'" style=" display:none;">'+item.esID+'</div>'+
+									'<div id="emaildetails1_div4'+i+'" style=" display:none;">'+item.subject+'</div>'+
+									'<div id="emaildetails2_div4'+i+'" style=" display:none;">'+item.fromWho+'</div>'+
+									'<div id="emaildetails3_div4'+i+'" style=" display:none;">'+item.toWho+'</div>'+
+									'<div id="emaildetails4_div4'+i+'" style=" display:none;">'+item.date+'</div>'+
+									'<div id="emaildetails5_div4'+i+'" style=" display:none;">'+item.content+'</div>'+
+									'<div id="emaildetails6_div4'+i+'" style=" display:none;">'+item.downloadUrl+'</div>'+
+									'<div id="emaildetails7_div4'+i+'" style=" display:none;">'+item.read+'</div>'+
+									'<div id="emaildetails8_div4'+i+'" style=" display:none;">'+item.star+'</div>'+
+									'<div id="emaildetails9_div4'+i+'" style=" display:none;">'+item.attachmentname+'</div>'+
+									'</td>'+
+								'</tr>';
+					$("#email_div4").append(html);	
+					sumi=i+1; 
+				 }); 
+				 read000_div4=read00;
+				 $("#emailnum_div4").html("/全部"+total+"封");
+				 $("#emailsumnum_div4").html("共搜索到" + total + "个结果");
+				 $("#email0_div4").html("未读"+read00+"封");
+				 if(sumi==0){
+					 $("#email_div4").empty();
+					 $("#emailtou_div4").empty();
+						var html01 = '<table style="border-bottom: 1px solid #DDDDDD; width: 1600px; height: 90px;" >'+
+											'<tr>'+
+										'</tr>'+
+										'<tr>'+
+									'</tr>'+
+										'<tr>'+
+											'<td>未找到相关内容</td>'+
+										'</tr>'+
+									'</table>';
+						$("#email_div4").append(html01);	
+				 }
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+				/* alert("失败"); */
+			}
+		});
+	} 
+	
+	//点击邮件显示详情
+	function showdetails_div4(i){
+		var esId = $("#emaildetails0_div4"+i+"").html();
+		var emailsubject = $("#emaildetails1_div4"+i+"").html();//document.getElementById("emaildetails1"+i+"").innerHTML;
+		var emailtoWho = $("#emaildetails2_div4"+i+"").html();
+		var emailfromWho = $("#emaildetails3_div4"+i+"").html();
+		var emaildate = $("#emaildetails4_div4"+i+"").html();
+		var emailcontent = $("#emaildetails5_div4"+i+"").html();
+		var emlpath = $("#emaildetails6_div4"+i+"").html();
+		var read = $("#emaildetails7_div4"+i+"").html();
+		var star = $("#emaildetails8_div4"+i+"").html();
+		
+		$("#stari_div4").html(i);
+		$("#esId_div4").html(esId);
+		$("#emailsubject_div4").html("邮件标题 : "+emailsubject);
+		$("#emailtoWho_div4").html("发件人 : "+emailtoWho);
+		$("#emailfromWho_div4").html("收件人 : "+emailfromWho);
+		$("#emaildate_div4").html(emaildate);
+		$("#emailcontent_div4").html(emailcontent);
+		$("#emailurl_div4").html(emlpath);	
+		$("#emailstar_div4").html(star);
+		var star2;
+		if(star==0){
+			star2="star2";
+		}if(star==1){
+			star2="star";
+		}
+		var read2;
+		if(read==0){
+			read2="unread";
+		}if(star==1){
+			read2="read";
+		}
+		<%-- document.getElementById("stars_div4").src = "<%=basePath%>template/img/"+star2+".png"; --%>
+		//判断邮件是否已读
+		if(read==0){
+			//未读数-1
+			read000_div4=read000_div4-1;
+			//改变图标
+			document.getElementById("read_div4"+i).src = "<%=basePath%>template/img/unread.png";
+			//修改未读数
+			$("#email0_div4").html("未读"+read000_div4+"封");
+			//修改主题显示
+			$("#emailboldSubject_div4"+i).css("font-weight","");
+			//修改邮件状态
+			upemailstatus_div4(1,esId);
+		}
+	}
+
+	function downloadEML(){
+		var emlpath = document.getElementById("emailurl").innerText;
+		$("#url").attr("href","<%=basePath %>admin/downloadEML.php?emlpath="+emlpath);
+	} 
+
+	//修改邮件状态 
+	function upemailstatus_div4(read,esId){
+		var read2="";
+		if(read==0){
+			read2=1;
+		}if(read==1){
+			read2=0;
+		}
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>emaiExcavatel/upEmailStatus.php",
+			data : {
+				"star":"",
+				"esId":esId,
+				"read":read
+			},
+			dataType : "json",
+			async: true,
+			success : function(data) {
+				if(read==0){ 
+					document.getElementById("emailstar_div4").innerText=1;
+				}
+				if(read==1){
+					document.getElementById("emailstar_div4").innerText=0;
+				}
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+				/* alert("失败!"); */
+			}
+		});	
+	} 
+	
+	//div4      点击弹出收藏或者取消框
+	function upemailstar_div4(i){
+		var emailESId = $("#emaildetails0_div4"+i+"").html();
+		var emailStarFlag = $("#emaildetails8_div4"+i+"").html();
+		
+		if(emailStarFlag=='1'){
+			$(("#"+'emailStar_div4'+i)).attr('data-target',"#cancelFavorite_div4");
+			//取消收藏
+			$('#cancelPicId_div4').val(emailESId);
+			$('#cancelPicNumber_div4').val(i);
+			$('#cancelPicFlag_div4').val(emailStarFlag);
+		}else {
+			//进行收藏
+			$(("#"+'emailStar_div4'+i)).attr('data-target',"#myModalfavorite_div4");
+			$('#picId_div4').val(emailESId);
+			$('#picNumber_div4').val(i);
+			$('#picFlag_div4').val('0');
+		} 
+	}
+	//取消收藏
+	function cancelFavorite_div4(){
+		var esid=$('#cancelPicId_div4').val();
+		var i=$('#cancelPicNumber_div4').val();
+		var flag=$('#cancelPicFlag_div4').val();
+		doAddOrCancelFavorite_div4(esid,flag,i,'');
+	}
+	//执行收藏
+	function addFavorite_div4(){
+		var values=[];
+		$("input[name='ids_favo']:checked").each(function(){
+			values.push($(this).val());
+		});
+		if(values.length==0){
+			alert('请先选中类别');
+		}else{
+			var esid=$('#picId_div4').val();
+			var i=$('#picNumber_div4').val();
+			var flag=$('#picFlag_div4').val();
+			doAddOrCancelFavorite_div4(esid,flag,i,values.toString());
+		}
+	}
+	//取消或者收藏
+	function doAddOrCancelFavorite_div4(esid,flag,i,values){
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>admin/favoEmail.php",
+			data : {
+				'esid':esid,
+				'flag':flag,
+				'emailLabel':values
+			},
+			dataType : "json",
+			async: true,
+			success : function(data) {
+				//进行收藏
+				if(flag==0){
+					var src="<%=basePath%>"+"template/img/star.png";
+					$(("#"+'emailStar_div4'+i)).attr('src',src);
+					alert("收藏成功！");
+					document.getElementById("emaildetails8_div4"+i+"").innerText=1;
+				}
+				//取消收藏
+				if(flag==1){
+					var src="<%=basePath%>"+"template/img/star2.png";
+					$(("#"+'emailStar_div4'+i)).attr('src',src);
+					document.getElementById("emaildetails8_div4"+i+"").innerText=0;
+				}
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+				/* alert('请求收藏失败'); */
+			}
+		})
+	}
+	//div2      点击弹出收藏或者取消框
+	function upemailstar_div2(i){
+		var emailESId = $("#emaildetails0_div2"+i+"").html();
+		var emailStarFlag = $("#emaildetails8_div2"+i+"").html();
+		if(emailStarFlag=='1'){
+			$(("#"+'emailStar_div2'+i)).attr('data-target',"#cancelFavorite_div2");
+			//取消收藏
+			$('#cancelPicId_div2').val(emailESId);
+			$('#cancelPicNumber_div2').val(i);
+			$('#cancelPicFlag_div2').val(emailStarFlag);
+		}else {
+			//进行收藏
+			$(("#"+'emailStar_div2'+i)).attr('data-target',"#myModalfavorite_div2");
+			$('#picId_div2').val(emailESId);
+			$('#picNumber_div2').val(i);
+			$('#picFlag_div2').val('0');
+		} 
+	}
+	//取消收藏
+	function cancelFavorite_div2(){
+		var esid=$('#cancelPicId_div2').val();
+		var i=$('#cancelPicNumber_div2').val();
+		var flag=$('#cancelPicFlag_div2').val();
+		doAddOrCancelFavorite_div2(esid,flag,i,'');
+	}
+	//执行收藏
+	function addFavorite_div2(){
+		var values=[];
+		$("input[name='ids_favo']:checked").each(function(){
+			values.push($(this).val());
+		});
+		if(values.length==0){
+			alert('请先选中类别');
+		}else{
+			var esid=$('#picId_div2').val();
+			var i=$('#picNumber_div2').val();
+			var flag=$('#picFlag_div2').val();
+			doAddOrCancelFavorite_div2(esid,flag,i,values.toString());
+		}
+	}
+	//取消或者收藏
+	function doAddOrCancelFavorite_div2(esid,flag,i,values){
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>admin/favoEmail.php",
+			data : {
+				'esid':esid,
+				'flag':flag,
+				'emailLabel':values
+			},
+			dataType : "json",
+			async: true,
+			success : function(data) {
+				//进行收藏
+				if(flag==0){
+					var src="<%=basePath%>"+"template/img/star.png";
+					$(("#"+'emailStar_div2'+i)).attr('src',src);
+					alert("收藏成功！");
+					document.getElementById("emaildetails8_div2"+i+"").innerText=1;
+				}
+				//取消收藏
+				if(flag==1){
+					var src="<%=basePath%>"+"template/img/star2.png";
+					$(("#"+'emailStar_div2'+i)).attr('src',src);
+					document.getElementById("emaildetails8_div2"+i+"").innerText=0;
+				}
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+				/* alert('请求收藏失败'); */
+			}
+		})
+	}//div3      点击弹出收藏或者取消框
+	function upemailstar_div3(i){
+		var emailESId = $("#emaildetails0_div3"+i+"").html();
+		var emailStarFlag = $("#emaildetails8_div3"+i+"").html();
+		if(emailStarFlag=='1'){
+			$(("#"+'emailStar_div3'+i)).attr('data-target',"#cancelFavorite_div3");
+			//取消收藏
+			$('#cancelPicId_div3').val(emailESId);
+			$('#cancelPicNumber_div3').val(i);
+			$('#cancelPicFlag_div3').val(emailStarFlag);
+		}else {
+			//进行收藏
+			$(("#"+'emailStar_div3'+i)).attr('data-target',"#myModalfavorite_div3");
+			$('#picId_div3').val(emailESId);
+			$('#picNumber_div3').val(i);
+			$('#picFlag_div3').val('0');
+		} 
+	}
+	//取消收藏
+	function cancelFavorite_div3(){
+		var esid=$('#cancelPicId_div3').val();
+		var i=$('#cancelPicNumber_div3').val();
+		var flag=$('#cancelPicFlag_div3').val();
+		doAddOrCancelFavorite_div3(esid,flag,i,'');
+	}
+	//执行收藏
+	function addFavorite_div3(){
+		var values=[];
+		$("input[name='ids_favo']:checked").each(function(){
+			values.push($(this).val());
+		});
+		if(values.length==0){
+			alert('请先选中类别');
+		}else{
+			var esid=$('#picId_div3').val();
+			var i=$('#picNumber_div3').val();
+			var flag=$('#picFlag_div3').val();
+			doAddOrCancelFavorite_div3(esid,flag,i,values.toString());
+		}
+	}
+	//取消或者收藏
+	function doAddOrCancelFavorite_div3(esid,flag,i,values){
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>admin/favoEmail.php",
+			data : {
+				'esid':esid,
+				'flag':flag,
+				'emailLabel':values
+			},
+			dataType : "json",
+			async: true,
+			success : function(data) {
+				//进行收藏
+				if(flag==0){
+					var src="<%=basePath%>"+"template/img/star.png";
+					$(("#"+'emailStar_div3'+i)).attr('src',src);
+					alert("收藏成功！");
+					document.getElementById("emaildetails8_div3"+i+"").innerText=1;
+				}
+				//取消收藏
+				if(flag==1){
+					var src="<%=basePath%>"+"template/img/star2.png";
+					$(("#"+'emailStar_div3'+i)).attr('src',src);
+					document.getElementById("emaildetails8_div3"+i+"").innerText=0;
+				}
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+				/* alert('请求收藏失败'); */
+			}
+		})
+	}
+	</script>
+	<script>
+	justAddrs = new Array();
+	function getIpAddress(){
+		$.ajax({
+			type : "POST",
+			url : "<%=basePath%>admin/getEmail_getIpAddress.php",
+			data : {
+                
+			},
+			dataType : "json",
+			async: true,
+			success : function(data) {
+				$.each(data,function(i,item){
+					justAddrs[i] = item;
+				});
+				init_for_d6();
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+				/* alert("失败"); */
+			}
+		});
+	}
+	
+	function exportMail() {
+		$("#urlMail").attr("href","<%=basePath %>ExportDomainMailWorkSpace.php");
+	}
+	/* =========================================================================================================
+		=========================================联系人分析插件1=====================================================
+		======================================================================================================*/
+		function contactsAnalyze(){
+			var startTime = $("#startDate_div3").val();
+			var endTime = $("#endDate_div3").val();
+			var suspectsName = $("#suspectsName_d3").val();
+			$.ajax({
+				type : "POST",
+				url : "<%=basePath%>emaiExcavatel/contactsAnalyze.php",
+				data : {
+					"caseidStr":caseidStr,
+					"startDate":startTime,
+					"endDate":endTime,
+					"suspectsName":suspectsName
+				},
+				dataType : "json",
+				async: true,
+				success : function(data) {
+					// 联系人分析的插件显示
+					  var nodes = [ ];
+					  var links = [ ];//连线
+					  var a=0; 
+					  
+					  var categorycase="";
+					  var categories = []; 
+					    
+					 $.each(data,function(i,item){
+						 var size = Math.sqrt(item.value); 
+						  var caseName=item.caseName;
+						 if(i==0){
+							 categorycase = caseName;
+							var categorie = {
+							            name: caseName 
+							        };
+							categories.push(categorie);
+						 }else{
+							 if(caseName!=categorycase){
+								 var categorie2 = {
+								            name: caseName 
+								        };
+								 categories.push(categorie2);
+							 }
+							 categorycase = caseName;
+						 } 
+						 var node={
+								 id : item.id,
+			                     category : item.category*1,
+			                     name : "邮箱: "+item.name+"  次数",
+			                    // symbol : '11111111111111111111111111',
+			                     value : item.value,
+			                     symbolSize :size+10*size
+			                    };
+					
+						 var to=item.toWho;
+						var tos = to.split("/");
+						 $.each(tos,function(k,item3){
+							 $.each(data,function(j,item2){
+								 var name = item2.name;
+								 var id = item2.id;
+								 if(item3==name){
+									 if(item.id!=id){
+										 var link= {
+													source : item.id,
+													target : id
+												  };  
+										 links.push(link); 
+									 }
+								 }
+							 });
+						 });
+						 nodes.push(node);  
+					 });			
+						var myChart6 = echarts.init(document.getElementById('mainCase'));
+						myChart6.showLoading();
+						$.get('<%=basePath%>template/js/cutover/les-miserables.gexf', function(xml) {
+							myChart6.hideLoading();
+						    var graph = echarts.dataTool.gexf.parse(xml);
+						    graph.nodes.forEach(function (node) {
+						        node.itemStyle = null;
+						        node.symbolSize = 10;
+						        node.value = node.symbolSize;
+						        node.category = node.attributes.modularity_class;
+						        node.x = node.y = null;
+						        node.draggable = true;
+						    });
+						    option = {
+						        title: {
+						            text: '',
+						            subtext: 'Default layout',
+						            top: 'bottom',
+						            left: 'right'
+						        },
+						        tooltip: {},
+						        legend: [{
+						            data: categories.map(function (a) {
+						                return a.name;
+						            })
+						        }],
+						        animation: false,
+						        series : [
+						            {
+						                name: '详情',
+						                type: 'graph',
+						                layout: 'force',
+						                data:nodes,// graph.nodes,
+					                    links:links,// graph.links,
+						                categories: categories,
+						                roam: true,
+						                label: {
+						                    normal: {
+						                        position: 'right'
+						                    }
+						                },
+						                force: {
+						                    repulsion: 100
+						                }
+						            }
+						        ]
+						    };
+
+						    myChart6.setOption(option);
+						}, 'xml'); 	
+					
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+					/* alert("失败"); */
+				}
+			});	
+		} 	
+		/* =========================================================================================================
+		=========================================联系人分析插件2=====================================================
+		======================================================================================================*/
+		function contactsAnalyze2(){
+			var startTime = $("#startDate_div3").val();
+			var endTime = $("#endDate_div3").val();
+			var suspectsName = $("#suspectsName_d3").val();
+			$.ajax({
+				type : "POST",
+				url : "<%=basePath%>emaiExcavatel/contactsAnalyze2.php",
+				data : {
+					"caseidStr":caseidStr,
+					"startDate":startTime,
+					"endDate":endTime,
+					"suspectsName":suspectsName
+				},
+				dataType : "json",
+				async: true,
+				success : function(data) {
+					// 联系人分析的插件显示
+					  var nodes = [ ];
+					  var links1 = [ ];//连线
+					  var a=0; 
+					  var datanodes=data.nodes;
+					  var datalinks=data.links;
+					  var cate="";
+					  var categorycase="";
+					  var categories = []; 
+					  var categories2 = []; 
+					  
+					  $.each(datanodes,function(i,item1){
+						  var caseName=item1.caseName;
+						  var category=item1.category;
+						  var cat=100;
+						  for(var i =0;i<100;i++){
+							  if(category==i){
+								  cat=i;
+							  }
+						  }
+						  var node={
+								    name: item1.name,
+						            category: item1.isSuspect,
+						            itemStyle: {
+						                normal: {
+						                    label: {
+						                        textStyle: {
+						                            color: '#f90'
+						                        }
+						                    }
+						                },
+						                emphasis: {
+						                    color: "#000"
+						                }
+						            }
+				                    };
+						  nodes.push(node); 
+						 });
+					 $.each(datalinks,function(j,item2){
+						 var link= {
+								    source: item2.fromWho,
+						            target: item2.toWho,
+						            value: item2.value
+								  };  
+						 links1.push(link); 
+					 });
+					 var myChart8 = echarts.init(document.getElementById('mainSuspect'));
+					 option8 = {
+					     tooltip: {
+					         show: false
+					     },
+					     legend: {
+					         x: "center",
+					         //data: categories2
+					     },
+					     animation: false,
+					     series: [{
+					         type: 'graph',
+					         layout: 'force',
+					         symbol: "circle",
+					         symbolSize: 50,
+					         roam: true, //禁止用鼠标滚轮缩小放大效果
+					         edgeSymbol: ['circle', 'arrow'],
+					         edgeSymbolSize: [0, 10],
+					         // 连接线上的文字
+					         focusNodeAdjacency: true, //划过只显示对应关系
+					         edgeLabel: {
+					             normal: {
+					                 show: true,
+					                 textStyle: {
+					                     fontSize: 20
+					                 },
+					                 formatter: "{c}"
+					             }
+					         },
+					         categories: [{
+					             name: '0',
+					             itemStyle: {
+					                 normal: {
+					                     color: "#009800",
+					                 }
+					             }
+					         }, {
+					             name: '1',
+					             itemStyle: {
+					                 normal: {
+					                     color: "#4592FF",
+					                 }
+					             }
+					         }],
+					         lineStyle: {
+					             normal: {
+					                 opacity: 1,
+					                 width: 2,
+					                 curveness: 0
+					             }
+					         },
+					         // 圆圈内的文字
+					         label: {
+					             normal: {
+					                 show: true
+					             }
+					         },
+					         force: {
+					             repulsion: 5000
+					         },
+					         data: nodes,
+					         links: links1
+					     }]
+					 };	
+					 myChart8.setOption(option8);
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+					/* alert("失败123"); */
+				}
+			});	
+		} 	
+		//折叠
+		function testOfSearch(obj){
+		  var div1=document.getElementById("searchOfForm");
+		  
+		  if(div1.style.display=="block"){
+		    div1.style.display="none";
+		    obj.src="<%=basePath %>template/img/downXia.png";
+		  }else{
+		    div1.style.display="block";
+		    obj.src="<%=basePath %>template/img/addevidence.png";
+		  }
+		}
+		//弹出框    新建标签div1
+		function addFavoLabelOfEmail() {
+			var favoLabelName = $("#favoLabelNameOfEmail").val();
+			$.ajax({
+				type : "POST",
+				url : "<%=basePath%>admin/addFavoLabel.php",
+				data : {
+					'favoLabelName':favoLabelName
+				},
+				dataType : "json",
+				async: true,
+				success : function(data) {
+					showAllLabelOfDoc();
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+					alert('新建标签失败');
+				}
+			})
+		}
+		
+		//弹出框    新建标签div2
+		function addFavoLabelOfEmail_div2() {
+			var favoLabelName = $("#favoLabelNameOfEmail_div2").val();
+			$.ajax({
+				type : "POST",
+				url : "<%=basePath%>admin/addFavoLabel.php",
+				data : {
+					'favoLabelName':favoLabelName
+				},
+				dataType : "json",
+				async: true,
+				success : function(data) {
+					showAllLabelOfDoc();
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+					alert('新建标签失败');
+				}
+			})
+		}
+		//弹出框    新建标签div3
+		function addFavoLabelOfEmail_div3() {
+			var favoLabelName = $("#favoLabelNameOfEmail_div3").val();
+			$.ajax({
+				type : "POST",
+				url : "<%=basePath%>admin/addFavoLabel.php",
+				data : {
+					'favoLabelName':favoLabelName
+				},
+				dataType : "json",
+				async: true,
+				success : function(data) {
+					showAllLabelOfDoc();
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+					alert('新建标签失败');
+				}
+			})
+		}
+		//弹出框    新建标签div4
+		function addFavoLabelOfEmail_div4() {
+			var favoLabelName = $("#favoLabelNameOfEmail_div4").val();
+			$.ajax({
+				type : "POST",
+				url : "<%=basePath%>admin/addFavoLabel.php",
+				data : {
+					'favoLabelName':favoLabelName
+				},
+				dataType : "json",
+				async: true,
+				success : function(data) {
+					showAllLabelOfDoc();
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+					alert('新建标签失败');
+				}
+			})
+		}
+</script>
+</body>
+</html>
